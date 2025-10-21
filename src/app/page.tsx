@@ -31,6 +31,7 @@ import {
   Wind,
   Droplets,
   Loader2,
+  Tractor,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
@@ -44,7 +45,7 @@ const weatherData = {
   location: 'Dhaka, Bangladesh',
   temp: 32,
   conditionKey: 'dashboard.weather.condition.partlyCloudy',
-  icon: <CloudSun className="size-10 text-yellow-400" />,
+  icon: <CloudSun className="h-6 w-6 text-yellow-400" />,
   humidity: '78%',
   wind: '12 km/h',
 };
@@ -87,10 +88,10 @@ export default function DashboardPage() {
         icon: <CloudSun className="size-8 text-primary" />,
       },
       {
-        titleKey: 'dashboard.feature.cropPlanning.title',
-        descriptionKey: 'dashboard.feature.cropPlanning.description',
-        href: '/crop-planning',
-        icon: <ClipboardList className="size-8 text-primary" />,
+        titleKey: 'dashboard.feature.myCrops.title',
+        descriptionKey: 'dashboard.feature.myCrops.description',
+        href: '/my-crops',
+        icon: <Tractor className="size-8 text-primary" />,
       },
       {
         titleKey: 'dashboard.feature.community.title',
@@ -109,7 +110,7 @@ export default function DashboardPage() {
     return (
         <SidebarInset>
         <AppHeader />
-        <main className="flex-1 p-4 md:p-6 space-y-6">
+        <main className="flex-1 space-y-6 p-4 md:p-6">
             <Card className="overflow-hidden">
               <Carousel 
                 className="w-full"
@@ -120,7 +121,7 @@ export default function DashboardPage() {
                 <CarouselContent>
                   {slideshowImages.map((image) => (
                     <CarouselItem key={image.id}>
-                      <div className="relative h-56 sm:h-80 w-full">
+                      <div className="relative h-56 w-full sm:h-80">
                         <Image
                           src={image.imageUrl}
                           alt={image.description}
@@ -138,56 +139,58 @@ export default function DashboardPage() {
               </Carousel>
             </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="bg-blue-900/10 dark:bg-blue-500/10 border-blue-200 dark:border-blue-900">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <Card className="border-blue-200 bg-blue-900/10 dark:border-blue-900 dark:bg-blue-500/10">
                      <CardHeader className="p-3">
-                        <CardTitle className="font-headline text-base flex items-center justify-between">
-                            <span>{t('dashboard.weather.title')}</span>
-                            <span className="font-medium">{weatherData.temp}°C</span>
-                        </CardTitle>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="font-headline text-base">
+                                {t('dashboard.weather.title')}
+                            </CardTitle>
+                            <span className="text-sm font-medium">{weatherData.temp}°C</span>
+                        </div>
                         <CardDescription className="flex items-center gap-1 text-xs"><MapPin className="size-3"/>{weatherData.location}</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-3 pt-0 flex items-center justify-between gap-4 text-center">
+                    <CardContent className="flex items-center justify-between gap-4 p-3 pt-0 text-center">
                         <div className="flex flex-col items-center">
                             {weatherData.icon}
-                            <p className="text-muted-foreground text-xs mt-1">{t(weatherData.conditionKey)}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{t(weatherData.conditionKey)}</p>
                         </div>
                         <div className="flex gap-4 text-left">
                             <div className="flex items-center gap-2">
                                 <Droplets className="size-4 text-blue-400"/>
                                 <div>
                                     <p className="text-xs text-muted-foreground">Humidity</p>
-                                    <p className="font-bold text-sm">{weatherData.humidity}</p>
+                                    <p className="text-sm font-bold">{weatherData.humidity}</p>
                                 </div>
                             </div>
                              <div className="flex items-center gap-2">
                                 <Wind className="size-4 text-gray-400"/>
                                  <div>
                                     <p className="text-xs text-muted-foreground">Wind</p>
-                                    <p className="font-bold text-sm">{weatherData.wind}</p>
+                                    <p className="text-sm font-bold">{weatherData.wind}</p>
                                 </div>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                 <Card className="bg-green-900/10 dark:bg-green-500/10 border-green-200 dark:border-green-900">
+                 <Card className="border-green-200 bg-green-900/10 dark:border-green-900 dark:bg-green-500/10">
                      <CardHeader className="p-3">
                         <CardTitle className="font-headline text-base">AI Seasonal Suggestions</CardTitle>
                         <CardDescription className="text-xs">Based on your region's current conditions</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-3 pt-0 flex items-center justify-center min-h-[78px]">
+                    <CardContent className="flex min-h-[46px] items-center justify-center p-3 pt-0">
                       {isPending && <Loader2 className="size-6 animate-spin text-primary" />}
                       {!isPending && seasonalCrops && (
                          <div className="w-full space-y-1">
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
+                            <div className="grid grid-cols-2 gap-2 text-center md:grid-cols-3">
                               {seasonalCrops.suggestedCrops.map(crop => (
-                                  <div key={crop} className="bg-background/50 rounded-lg p-1">
-                                      <p className="font-bold text-xs">{crop}</p>
+                                  <div key={crop} className="rounded-lg bg-background/50 p-1">
+                                      <p className="text-xs font-bold">{crop}</p>
                                   </div>
                               ))}
                             </div>
-                            <p className="text-xs text-muted-foreground text-center pt-1">{seasonalCrops.reasoning}</p>
+                            <p className="pt-1 text-center text-xs text-muted-foreground">{seasonalCrops.reasoning}</p>
                          </div>
                       )}
                        {!isPending && !seasonalCrops && (
@@ -200,14 +203,14 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3">
             {features.map((feature) => (
                 <Link href={feature.href} key={feature.href}>
-                <Card className="flex h-full flex-col justify-between transition-all hover:shadow-md hover:-translate-y-1">
+                <Card className="flex h-full flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-md">
                     <CardHeader className="p-4">
                     <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
                         <CardTitle className="font-headline text-base sm:text-xl">
                             {t(feature.titleKey)}
                         </CardTitle>
-                        <CardDescription className="hidden sm:block text-xs sm:text-sm">{t(feature.descriptionKey)}</CardDescription>
+                        <CardDescription className="hidden text-xs sm:block sm:text-sm">{t(feature.descriptionKey)}</CardDescription>
                         </div>
                         {React.cloneElement(feature.icon, { className: 'size-6 sm:size-8 text-primary shrink-0 ml-2' })}
                     </div>

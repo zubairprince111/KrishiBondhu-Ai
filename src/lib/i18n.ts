@@ -17,9 +17,9 @@ export const translations = {
     en: 'Weather Alerts',
     bn: 'আবহাওয়ার সতর্কতা',
   },
-  'app.header.title.cropPlanning': {
-    en: 'Crop Planning Tool',
-    bn: 'ফসল পরিকল্পনা টুল',
+  'app.header.title.myCrops': {
+    en: 'My Crops',
+    bn: 'আমার ফসল',
   },
   'app.header.title.community': {
     en: 'Community Chat',
@@ -66,13 +66,13 @@ export const translations = {
     en: 'Weather',
     bn: 'আবহাওয়া',
   },
-  'sidebar.nav.cropPlanning': {
-    en: 'Crop Planning',
-    bn: 'ফসল পরিকল্পনা',
+  'sidebar.nav.myCrops': {
+    en: 'My Crops',
+    bn: 'আমার ফসল',
   },
   'sidebar.nav.community': {
     en: 'Community',
-    bn: 'কমিউনিটি',
+    bn: 'کমিউনিটি',
   },
   'sidebar.nav.marketInfo': {
     en: 'Market Info',
@@ -109,7 +109,7 @@ export const translations = {
   },
   'dashboard.seasonalCrops.ausRice.name': {
     en: 'Aus Rice',
-    bn: 'আউশ ধান',
+    bn: 'আউש ধান',
   },
   'dashboard.seasonalCrops.ausRice.reason': {
     en: 'Monsoon season staple',
@@ -171,17 +171,17 @@ export const translations = {
     en: 'Real-time forecasts and warnings.',
     bn: 'রিয়েল-টাইম পূর্বাভাস ও সতর্কতা।',
   },
-  'dashboard.feature.cropPlanning.title': {
-    en: 'Crop Planning Tool',
-    bn: 'ফসল পরিকল্পনা টুল',
+  'dashboard.feature.myCrops.title': {
+    en: 'My Crops',
+    bn: 'আমার ফসল',
   },
-  'dashboard.feature.cropPlanning.description': {
-    en: 'Get suggestions for your next harvest.',
-    bn: 'আপনার পরবর্তী ফসলের জন্য পরামর্শ পান।',
+  'dashboard.feature.myCrops.description': {
+    en: 'Get personalized guidance for your crops.',
+    bn: 'আপনার ফসলের জন্য ব্যক্তিগতকৃত নির্দেশিকা পান।',
   },
   'dashboard.feature.community.title': {
     en: 'Community Chat',
-    bn: 'কমিউনিটি চ্যাট',
+    bn: 'کমিউনিটি চ্যাট',
   },
   'dashboard.feature.community.description': {
     en: 'Connect with other farmers.',

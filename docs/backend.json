@@ -42,6 +42,41 @@
         "address"
       ]
     },
+    "UserCrop": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserCrop",
+      "type": "object",
+      "description": "Represents a crop a user is currently farming, with AI-driven guidance.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user's crop entry."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to the UserProfile."
+        },
+        "cropName": {
+          "type": "string",
+          "description": "The name of the crop being farmed."
+        },
+        "region": {
+          "type": "string",
+          "description": "The geographical region where the crop is being farmed."
+        },
+        "sowingDate": {
+          "type": "string",
+          "format": "date",
+          "description": "The date when the crop seeds were sown."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current growth stage of the crop.",
+          "enum": ["Sowing", "Germination", "Vegetative", "Flowering", "Harvesting", "Post-Harvest"]
+        }
+      },
+      "required": ["id", "userProfileId", "cropName", "region", "sowingDate", "status"]
+    },
     "CropIssue": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "CropIssue",
@@ -226,6 +261,26 @@
         }
       },
       {
+        "path": "/users/{userId}/user_crops/{userCropId}",
+        "definition": {
+          "entityName": "UserCrop",
+          "schema": {
+            "$ref": "#/backend/entities/UserCrop"
+          },
+          "description": "Stores the crops a user is currently farming. Accessible only by the respective user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "userCropId",
+              "description": "The unique identifier for the user's crop entry."
+            }
+          ]
+        }
+      },
+      {
         "path": "/users/{userId}/crop_issues/{cropIssueId}",
         "definition": {
           "entityName": "CropIssue",
@@ -298,6 +353,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore structure prioritizes authorization independence and clarity for the KrishiBondhu AI application. User profiles are stored under `/users/{userId}` for private user data, ensuring simple path-based ownership. Crop issues, community posts are stored under the user profiles `/users/{userId}/crop_issues/{cropIssueId}` and `/users/{userId}/community_posts/{communityPostId}` respectively to provide a clear hierarchical access and prevent unwanted access from other users. Weather alerts are stored under `/weather_alerts/{weatherAlertId}` as a global collection. Market prices are stored under `/market_prices/{marketPriceId}` to be accessible to all users. This structure supports the QAPs by segregating data based on access requirements and utilizing path-based ownership for private user data. The denormalization of user profile information into crop issues and community posts are not needed because the data is always queried in the scope of the user."
+    "reasoning": "The Firestore structure prioritizes authorization independence and clarity for the KrishiBondhu AI application. User profiles are stored under `/users/{userId}` for private user data, ensuring simple path-based ownership. User's currently farmed crops are stored under `/users/{userId}/user_crops/{userCropId}`. Crop issues, community posts are stored under the user profiles `/users/{userId}/crop_issues/{cropIssueId}` and `/users/{userId}/community_posts/{communityPostId}` respectively to provide a clear hierarchical access and prevent unwanted access from other users. Weather alerts are stored under `/weather_alerts/{weatherAlertId}` as a global collection. Market prices are stored under `/market_prices/{marketPriceId}` to be accessible to all users. This structure supports the QAPs by segregating data based on access requirements and utilizing path-based ownership for private user data. The denormalization of user profile information into crop issues and community posts are not needed because the data is always queried in the scope of the user."
   }
 }

@@ -11,7 +11,7 @@ import {
 import {
   suggestOptimalCrops,
   type OptimalCropSuggestionInput,
-  OptimalCropSuggestionOutput,
+  type OptimalCropSuggestionOutput,
 } from '@/ai/flows/optimal-crop-suggestion';
 import {
   findGovernmentSchemes,
@@ -21,6 +21,10 @@ import {
   findMarketPrices,
   type MarketPriceFinderInput,
 } from '@/ai/flows/market-price-finder';
+import {
+  getCropGuidance,
+  type CropGuidanceInput,
+} from '@/ai/flows/crop-guidance-flow';
 
 function getCurrentSeason(): string {
   const month = new Date().getMonth(); // 0-11
@@ -68,18 +72,16 @@ export async function getVoiceAssistance(input: MatiAIVoiceAssistanceInput) {
   }
 }
 
-export async function getOptimalCrops(input: OptimalCropSuggestionInput) {
-  try {
-    const result = await suggestOptimalCrops(input);
-    return {data: result, error: null};
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      error: 'Failed to get crop suggestions. Please try again.',
-    };
-  }
+export async function fetchCropGuidance(input: CropGuidanceInput) {
+    try {
+        const result = await getCropGuidance(input);
+        return { data: result, error: null };
+    } catch (error) {
+        console.error(error);
+        return { data: null, error: 'Failed to get crop guidance. Please try again.' };
+    }
 }
+
 
 export async function getGovernmentSchemes(input: GovernmentSchemeFinderInput) {
   try {

@@ -26,6 +26,7 @@ import {
   LogIn,
   LogOut,
   User,
+  Tractor,
 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
@@ -47,7 +48,7 @@ const navItems: NavItem[] = [
   { href: '/crop-doctor', labelKey: 'sidebar.nav.cropDoctor', icon: Leaf },
   { href: '/voice-assistant', labelKey: 'sidebar.nav.matiAI', icon: Mic },
   { href: '/weather', labelKey: 'sidebar.nav.weather', icon: CloudSun },
-  { href: '/crop-planning', labelKey: 'sidebar.nav.cropPlanning', icon: ClipboardList },
+  { href: '/my-crops', labelKey: 'sidebar.nav.myCrops', icon: Tractor },
   { href: '/community', labelKey: 'sidebar.nav.community', icon: MessageSquare },
   { href: '/market-info', labelKey: 'sidebar.nav.marketInfo', icon: Landmark },
 ];
