@@ -24,7 +24,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b border-primary/20 bg-primary px-4 text-primary-foreground md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-primary/20 bg-primary px-4 text-primary-foreground md:px-6">
        <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-[var(--sidebar-width-mobile)] p-0">
             <SheetTitle className="sr-only">Main Navigation Menu</SheetTitle>
@@ -38,20 +38,20 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
             <span className="sr-only">Toggle Menu</span>
         </Button>
         {titleKey ? (
-           <h1 className="font-headline text-2xl font-semibold">
+           <h1 className="font-headline text-xl md:text-2xl font-semibold">
             {t(titleKey)}
           </h1>
         ) : (
           <Link href="/" className="flex items-center gap-2">
             <Sprout className="size-8 text-white" />
-            <h1 className="font-headline text-2xl font-semibold">
+            <h1 className="font-headline text-xl sm:text-2xl font-semibold hidden sm:block">
               {t('app.header.title.welcome')}
             </h1>
           </Link>
         )}
       </div>
       <div className="flex items-center gap-2">
-        <Label htmlFor="language-switch" className="text-sm font-medium">
+        <Label htmlFor="language-switch" className="text-sm font-medium hidden sm:block">
           {t('app.header.lang.en')}
         </Label>
         <Switch
@@ -60,7 +60,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
           onCheckedChange={handleLanguageChange}
           aria-label="Language switch"
         />
-        <Label htmlFor="language-switch" className="text-sm font-medium">
+        <Label htmlFor="language-switch" className="text-sm font-medium hidden sm:block">
           {t('app.header.lang.bn')}
         </Label>
       </div>
