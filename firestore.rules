@@ -1,194 +1,168 @@
 /**
- * @fileoverview Firestore Security Rules for KrishiBondhu AI Application
+ * @fileoverview Firestore Security Rules for KrishiBondhu AI application.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user-specific data and allows public read access for weather alerts and market prices.
+ * This ruleset enforces a strict user-ownership model for user-specific data while allowing public read access to general information like weather alerts and market prices.
  *
  * Data Structure:
- * - User profiles and their related data (crops, crop issues, community posts) are nested under /users/{userId}.
- * - Weather alerts and market prices are stored in top-level collections (/weather_alerts, /market_prices) for public access.
+ * - /users/{userId}: Stores user profiles, accessible only to the respective user.
+ * - /users/{userId}/user_crops/{userCropId}: Stores crops being farmed by a user, accessible only to that user.
+ * - /users/{userId}/crop_issues/{cropIssueId}: Stores crop issues reported by a user, accessible only to that user.
+ * - /users/{userId}/community_posts/{communityPostId}: Stores community posts created by a user, accessible only to that user.
+ * - /weather_alerts/{weatherAlertId}: Stores weather alerts, publicly accessible.
+ * - /market_prices/{marketPriceId}: Stores market prices, publicly accessible.
  *
  * Key Security Decisions:
- * - User data is strictly controlled by the owning user.
- * - Weather alerts and market prices are publicly readable.
- * - Data consistency between paths and document IDs is enforced on creation and updates to prevent unauthorized data manipulation.
- * - Listing of user subcollections (user_crops, crop_issues, community_posts) is allowed only by the owner.
+ * - User data is strictly segregated under the /users/{userId} path.
+ * - Only authenticated users can access their own data.
+ * - Public read access is granted for weather alerts and market prices.
+ * - Listing of user documents and subcollections is allowed only to the owner, except for `community_posts` which cannot be listed.
  *
  * Denormalization for Authorization:
- *  Not needed in this configuration.
- *
- * Structural Segregation:
- *  Uses separate collections for public (weather alerts, market prices) and private (user profiles, crops, issues, posts) data.
+ * Not required. The data is always queried in the scope of the user.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
+     * @description Checks if the request is authenticated.
+     * @path N/A
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the authenticated user's UID matches the provided userId.
+     * @path N/A
+     * @param {string} userId - The user ID to compare against.
+     * @return {bool} - True if the user is signed in and the UID matches the userId.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the authenticated user's UID matches the provided userId and the resource exists.
+     * @path N/A
+     * @param {string} userId - The user ID to compare against.
+     * @return {bool} - True if the user is signed in, the UID matches the userId and the resource exists.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+    
+    /**
+     * @description Grants access to user profiles.
      * @path /users/{userId}
-     * @allow (create) User with ID 'user123' creates their profile.
-     *   request.auth.uid: 'user123', request.resource.data.id: 'user123'
-     * @allow (get, update, delete) User with ID 'user123' reads/modifies their profile.
-     *   request.auth.uid: 'user123', resource.data.id: 'user123'
-     * @deny (create) User with ID 'user123' attempts to create a profile for 'user456'.
-     *   request.auth.uid: 'user123', request.resource.data.id: 'user456'
-     * @deny (update, delete) User with ID 'user123' attempts to modify profile 'user456'.
-     *   request.auth.uid: 'user123', resource.data.id: 'user456'
-     * @principle Enforces document ownership for writes.
+     * @allow (create) - User with UID 'user123' can create their own profile document.
+     * @allow (get) - User with UID 'user123' can read their own profile document.
+     * @allow (update) - User with UID 'user123' can update their own profile document.
+     * @allow (delete) - User with UID 'user123' can delete their own profile document.
+     * @deny (create) - User with UID 'user456' cannot create a profile document for 'user123'.
+     * @deny (get) - User with UID 'user456' cannot read the profile document of 'user123'.
+     * @principle Enforces document ownership for writes and reads; validates relational integrity on create.
      */
     match /users/{userId} {
-      // Allow a user to read their own profile.
-      allow get: if isSignedIn() && isOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if false; // Listing user documents is not permitted
 
-      // Allow a user to create their own profile, enforcing ID consistency.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-
-      // Allow a user to update their own profile, enforcing ID immutability.
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-
-      // Allow a user to delete their own profile.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-
-      // Prevent listing of all user profiles.
-      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to user crop documents.
+     * @description Grants access to user crops.
      * @path /users/{userId}/user_crops/{userCropId}
-     * @allow (create) User with ID 'user123' creates a crop entry.
-     *   request.auth.uid: 'user123', request.resource.data.userProfileId: 'user123'
-     * @allow (get, update, delete) User with ID 'user123' reads/modifies their crop entry.
-     *   request.auth.uid: 'user123', resource.data.userProfileId: 'user123'
-     * @deny (create) User with ID 'user123' attempts to create a crop entry for 'user456'.
-     *   request.auth.uid: 'user123', request.resource.data.userProfileId: 'user456'
-     * @deny (update, delete) User with ID 'user123' attempts to modify crop entry 'user456'.
-     *   request.auth.uid: 'user123', resource.data.userProfileId: 'user456'
-     * @principle Enforces document ownership for writes.
+     * @allow (create) - User with UID 'user123' can create a crop document under their profile.
+     * @allow (get) - User with UID 'user123' can read a crop document under their profile.
+     * @allow (list) - User with UID 'user123' can list crop documents under their profile.
+     * @allow (update) - User with UID 'user123' can update a crop document under their profile.
+     * @allow (delete) - User with UID 'user123' can delete a crop document under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a crop document under 'user123's profile.
+     * @deny (get) - User with UID 'user456' cannot read a crop document under 'user123's profile.
+     * @principle Enforces document ownership for writes and reads.
      */
     match /users/{userId}/user_crops/{userCropId} {
-      // Allow the owner to read the crop data.
-      allow get: if isSignedIn() && isOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
 
-      // Allow the owner to list the crop data
-      allow list: if isSignedIn() && isOwner(userId);
-
-      // Allow the owner to create crop data, enforcing userProfileId consistency.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userProfileId == userId;
-
-      // Allow the owner to update their crop data, enforcing userProfileId immutability.
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
-
-      // Allow the owner to delete their crop data.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userProfileId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to crop issue documents.
+     * @description Grants access to user reported crop issues.
      * @path /users/{userId}/crop_issues/{cropIssueId}
-     * @allow (create) User with ID 'user123' creates a crop issue.
-     *   request.auth.uid: 'user123', request.resource.data.userProfileId: 'user123'
-     * @allow (get, update, delete) User with ID 'user123' reads/modifies their crop issue.
-     *   request.auth.uid: 'user123', resource.data.userProfileId: 'user123'
-     * @deny (create) User with ID 'user123' attempts to create a crop issue for 'user456'.
-     *   request.auth.uid: 'user123', request.resource.data.userProfileId: 'user456'
-     * @deny (update, delete) User with ID 'user123' attempts to modify crop issue 'user456'.
-     *   request.auth.uid: 'user123', resource.data.userProfileId: 'user456'
-     * @principle Enforces document ownership for writes.
+     * @allow (create) - User with UID 'user123' can create a crop issue document under their profile.
+     * @allow (get) - User with UID 'user123' can read a crop issue document under their profile.
+     * @allow (list) - User with UID 'user123' can list crop issue documents under their profile.
+     * @allow (update) - User with UID 'user123' can update a crop issue document under their profile.
+     * @allow (delete) - User with UID 'user123' can delete a crop issue document under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a crop issue document under 'user123's profile.
+     * @deny (get) - User with UID 'user456' cannot read a crop issue document under 'user123's profile.
+     * @principle Enforces document ownership for writes and reads.
      */
     match /users/{userId}/crop_issues/{cropIssueId} {
-      // Allow the owner to read the crop issue.
-      allow get: if isSignedIn() && isOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
 
-      // Allow the owner to list the crop issue
-      allow list: if isSignedIn() && isOwner(userId);
-
-      // Allow the owner to create crop issue, enforcing userProfileId consistency.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userProfileId == userId;
-
-      // Allow the owner to update their crop issue, enforcing userProfileId immutability.
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
-
-      // Allow the owner to delete their crop issue.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userProfileId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
+      allow delete: if isExistingOwner(userId);
     }
 
-     /**
-     * @description Controls access to community post documents.
+    /**
+     * @description Grants access to community posts created by the user.
      * @path /users/{userId}/community_posts/{communityPostId}
-     * @allow (create) User with ID 'user123' creates a community post.
-     *   request.auth.uid: 'user123', request.resource.data.userProfileId: 'user123'
-     * @allow (get, update, delete) User with ID 'user123' reads/modifies their community post.
-     *   request.auth.uid: 'user123', resource.data.userProfileId: 'user123'
-     * @deny (create) User with ID 'user123' attempts to create a community post for 'user456'.
-     *   request.auth.uid: 'user123', request.resource.data.userProfileId: 'user456'
-     * @deny (update, delete) User with ID 'user123' attempts to modify community post 'user456'.
-     *   request.auth.uid: 'user123', resource.data.userProfileId: 'user456'
-     * @principle Enforces document ownership for writes.
+     * @allow (create) - User with UID 'user123' can create a community post document under their profile.
+     * @allow (get) - User with UID 'user123' can read a community post document under their profile.
+     * @allow (update) - User with UID 'user123' can update a community post document under their profile.
+     * @allow (delete) - User with UID 'user123' can delete a community post document under their profile.
+     * @deny (create) - User with UID 'user456' cannot create a community post document under 'user123's profile.
+     * @deny (get) - User with UID 'user456' cannot read a community post document under 'user123's profile.
+     * @principle Enforces document ownership for writes and reads.
      */
     match /users/{userId}/community_posts/{communityPostId} {
-      // Allow the owner to read the community post.
-      allow get: if isSignedIn() && isOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if false; // Listing of community posts under a user is not permitted
 
-      // Allow the owner to list the community post
-      allow list: if isSignedIn() && isOwner(userId);
-
-      // Allow the owner to create community post, enforcing userProfileId consistency.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userProfileId == userId;
-
-      // Allow the owner to update their community post, enforcing userProfileId immutability.
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
-
-      // Allow the owner to delete their community post.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userProfileId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userProfileId == resource.data.userProfileId;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to weather alert documents.
+     * @description Grants public read access to weather alerts.
      * @path /weather_alerts/{weatherAlertId}
-     * @allow (get, list) Any user can read weather alerts.
-     * @deny (create, update, delete) No user can create, update, or delete weather alerts.
-     * @principle Allows public read access.
+     * @allow (get) - Any user, signed in or not, can read a weather alert document.
+     * @allow (list) - Any user, signed in or not, can list weather alert documents.
+     * @deny (create) - No one can create weather alerts through the client.
+     * @principle Allows public read access to general information.
      */
     match /weather_alerts/{weatherAlertId} {
-      // Allow anyone to read weather alerts.
-      allow get, list: if true;
+      allow get: if true;
+      allow list: if true;
 
-      // Only allow authenticated users to create, update, and delete weather alerts.
-      // TODO: Add role-based authorization for managing weather alerts.
-      allow create, update, delete: if false;
+      allow create, update, delete: if false; // Only server can modify
     }
 
     /**
-     * @description Controls access to market price documents.
+     * @description Grants public read access to market prices.
      * @path /market_prices/{marketPriceId}
-     * @allow (get, list) Any user can read market prices.
-     * @deny (create, update, delete) No user can create, update, or delete market prices.
-     * @principle Allows public read access.
+     * @allow (get) - Any user, signed in or not, can read a market price document.
+     * @allow (list) - Any user, signed in or not, can list market price documents.
+     * @deny (create) - No one can create market prices through the client.
+     * @principle Allows public read access to general information.
      */
     match /market_prices/{marketPriceId} {
-      // Allow anyone to read market prices.
-      allow get, list: if true;
+      allow get: if true;
+      allow list: if true;
 
-      // Only allow authenticated users to create, update, and delete market prices.
-      // TODO: Add role-based authorization for managing market prices.
-      allow create, update, delete: if false;
+      allow create, update, delete: if false; // Only server can modify
     }
-  }
-
-  // Helper function to determine if the user is signed in.
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  // Helper function to determine if the user is the owner of the resource.
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-  // Helper function to determine if the user is the owner of the resource and the resource exists.
-  function isExistingOwner(userId) {
-    return isSignedIn() && isOwner(userId) && resource != null;
   }
 }
