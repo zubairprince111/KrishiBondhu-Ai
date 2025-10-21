@@ -229,7 +229,7 @@ export default function DashboardPage() {
                 <Link href={feature.href} key={feature.href}>
                 <Card className={cn(
                     "flex h-full flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-md",
-                     feature.isHighlighted && "bg-primary/10 border-primary/20"
+                     feature.isHighlighted && "bg-primary/20 border-primary/50"
                 )}>
                     <CardHeader className="p-4">
                     <div className="flex items-start justify-between gap-2">
