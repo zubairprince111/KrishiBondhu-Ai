@@ -9,12 +9,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { fetchCropGuidance } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wand2, CheckCircle, Circle, Tractor, CalendarDays, Timer } from 'lucide-react';
+import { Loader2, Wand2, CheckCircle, Circle, Tractor, Timer } from 'lucide-react';
 import type { CropGuidanceOutput } from '@/ai/flows/crop-guidance-flow';
 import { useLanguage } from '@/context/language-context';
 import {
@@ -34,9 +33,9 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
-import { differenceInDays, addDays, format } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
-
+import { Checkbox } from '@/components/ui/checkbox';
 
 type CropDetailsClientPageProps = {
   landId: string;
@@ -64,7 +63,6 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
   const { data: crop, isLoading: isCropLoading } = useDoc(cropDocRef);
 
   useEffect(() => {
-    // If there's a crop, but it has no guidance, fetch it.
     if (crop && !crop.guidance && !isGuidanceLoading && cropDocRef && land) {
       startGuidanceLoading(async () => {
         const { data: guidanceData, error } = await fetchCropGuidance({
@@ -79,15 +77,12 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
             description: 'Could not fetch AI guidance for this crop.',
           });
         } else if (guidanceData) {
-          // Save the guidance back to the document
           await updateDoc(cropDocRef, { guidance: guidanceData });
         }
       });
     }
   }, [crop, land, cropDocRef, isGuidanceLoading, toast]);
 
-
-  // Derive result from the crop document itself now
   const result: CropGuidanceOutput | null = crop?.guidance || null;
 
   const cropNameTranslationKey = `myCrops.form.cropName.options.${(crop?.cropName || '').toLowerCase()}` as const;
@@ -95,28 +90,52 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
   const sowingDate = crop?.sowingDate ? new Date(crop.sowingDate) : null;
   const daysPassed = sowingDate ? differenceInDays(new Date(), sowingDate) : 0;
 
-  // Re-calculate the isCompleted status on the client side based on the current date
-  const clientSideGuidance = result?.guidance.map(step => {
+  const handleTaskToggle = async (stepTitle: string, isCompleted: boolean) => {
+    if (!cropDocRef || !result) return;
+
+    const newGuidance = {
+        ...result,
+        guidance: result.guidance.map(step =>
+            step.title === stepTitle ? { ...step, isCompleted } : step
+        ),
+    };
+
+    try {
+        await updateDoc(cropDocRef, { guidance: newGuidance });
+    } catch (error) {
+        console.error("Failed to update task status:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Update Failed',
+            description: 'Could not save your changes. Please try again.',
+        });
+    }
+  };
+
+
+  // Client-side calculation based on time, for suggesting which accordion item to open.
+  const timeBasedGuidance = result?.guidance.map(step => {
       const completedStepsDuration = result.guidance
           .slice(0, result.guidance.indexOf(step))
           .reduce((acc, s) => acc + s.durationInDays, 0);
       return {
           ...step,
-          isCompleted: daysPassed >= completedStepsDuration,
+          isTimeCompleted: daysPassed >= completedStepsDuration,
       };
   });
+
+  // The currently active stage is the first one that isn't completed by time.
+  const currentStageByTime = timeBasedGuidance?.find(step => !step.isTimeCompleted);
+
+  const stageDuration = currentStageByTime?.durationInDays ?? 0;
   
-  const currentStageInfo = clientSideGuidance?.find(step => !step.isCompleted);
-  const stageDuration = currentStageInfo?.durationInDays ?? 0;
-  
-  const completedStagesDuration = clientSideGuidance
-    ?.filter(step => step.isCompleted && step.title !== currentStageInfo?.title)
+  const completedStagesDuration = timeBasedGuidance
+    ?.filter(step => step.isTimeCompleted && step.title !== currentStageByTime?.title)
     .reduce((acc, step) => acc + step.durationInDays, 0) ?? 0;
     
   const daysIntoCurrentStage = Math.max(0, daysPassed - completedStagesDuration);
   const daysRemaining = Math.max(0, stageDuration - daysIntoCurrentStage);
   const progressPercentage = stageDuration > 0 ? (daysIntoCurrentStage / stageDuration) * 100 : 0;
-
 
   return (
     <SidebarInset>
@@ -172,7 +191,7 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
                         <div>
                              <Progress value={progressPercentage} className="h-2" />
                              <p className="mt-2 text-center text-xs text-muted-foreground">
-                                {currentStageInfo?.title ?? 'Completed'} Stage Progress
+                                {currentStageByTime?.title ?? 'Completed'} Stage Progress
                             </p>
                         </div>
                     </CardContent>
@@ -200,21 +219,25 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
                         type="single"
                         collapsible
                         className="w-full"
-                        defaultValue={currentStageInfo?.title}
+                        defaultValue={currentStageByTime?.title}
                       >
-                        {clientSideGuidance && clientSideGuidance.map((step) => (
+                        {result.guidance.map((step) => (
                           <AccordionItem value={step.title} key={step.title}>
                             <AccordionTrigger>
-                              <div className="flex items-center gap-3">
-                                {step.isCompleted ? (
-                                  <CheckCircle className="size-5 text-green-500" />
-                                ) : (
-                                  <Circle className="size-5 text-muted-foreground" />
-                                )}
+                              <div className="flex flex-1 items-center gap-3">
+                                <Checkbox
+                                  id={`task-${step.title}`}
+                                  checked={step.isCompleted}
+                                  onCheckedChange={(checked) => {
+                                      handleTaskToggle(step.title, !!checked);
+                                  }}
+                                  onClick={(e) => e.stopPropagation()} // Prevent accordion from toggling
+                                  className="size-5"
+                                />
                                 <span className="font-semibold">{step.title}</span>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="pl-8 text-muted-foreground space-y-2">
+                            <AccordionContent className="pl-10 text-muted-foreground space-y-2">
                                 <div className="flex items-center gap-2 text-xs">
                                     <Timer className="size-4"/>
                                     <span>Typical Duration: {step.durationInDays} days</span>
