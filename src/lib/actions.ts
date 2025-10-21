@@ -16,6 +16,10 @@ import {
   findGovernmentSchemes,
   type GovernmentSchemeFinderInput,
 } from '@/ai/flows/government-scheme-finder';
+import {
+  findMarketPrices,
+  type MarketPriceFinderInput,
+} from '@/ai/flows/market-price-finder';
 
 export async function getVoiceAssistance(
   input: MatiAIVoiceAssistanceInput
@@ -60,4 +64,19 @@ export async function getGovernmentSchemes(
       error: 'Failed to find government schemes. Please try again.',
     };
   }
+}
+
+export async function getMarketPrices(
+  input: MarketPriceFinderInput
+) {
+    try {
+        const result = await findMarketPrices(input);
+        return { data: result, error: null };
+    } catch (error) {
+        console.error(error);
+        return {
+            data: null,
+            error: 'Failed to find market prices. Please try again.',
+        };
+    }
 }

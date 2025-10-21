@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition, useState } from 'react';
+import { useTransition, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,9 +13,11 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { getGovernmentSchemes } from '@/lib/actions';
+import { getGovernmentSchemes, getMarketPrices } from '@/lib/actions';
 import { Loader2, ReceiptText, Search, Tag, Wand2 } from 'lucide-react';
 import type { GovernmentSchemeFinderOutput } from '@/ai/flows/government-scheme-finder';
+import type { MarketPriceSchema } from '@/ai/flows/market-price-finder';
+
 import {
   Select,
   SelectContent,
@@ -24,15 +26,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-
-const marketPrices = [
-  { crop: 'ধান (Paddy)', price: '৳1,200 / কুইন্টাল', location: 'ঢাকা' },
-  { crop: 'আলু (Potato)', price: '৳25 / কেজি', location: 'রাজশাহী' },
-  { crop: 'পাট (Jute)', price: '৳2,500 / মণ', location: 'খুলনা' },
-  { crop: 'গম (Wheat)', price: '৳30 / কেজি', location: 'রংপুর' },
-  { crop: 'টমেটো (Tomato)', price: '৳40 / কেজি', location: 'চট্টগ্রাম' },
-];
-
 const formSchema = z.object({
   crop: z.string().min(2, 'Crop name is required.'),
   region: z.string().min(2, 'Region is required.'),
@@ -40,13 +33,27 @@ const formSchema = z.object({
 
 export default function MarketInfoPage() {
     const [isPending, startTransition] = useTransition();
+    const [isPricesPending, startPricesTransition] = useTransition();
     const [result, setResult] = useState<GovernmentSchemeFinderOutput | null>(null);
+    const [marketPrices, setMarketPrices] = useState<z.infer<typeof MarketPriceSchema>[]>([]);
     const { toast } = useToast();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: { crop: '', region: '' },
     });
+
+    useEffect(() => {
+        startPricesTransition(async () => {
+            const { data, error } = await getMarketPrices({ region: 'Bangladesh' });
+            if (error) {
+                toast({ variant: 'destructive', title: 'Error fetching prices', description: error });
+            } else if (data) {
+                setMarketPrices(data.prices);
+            }
+        });
+    }, [toast]);
+
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         setResult(null);
@@ -158,27 +165,34 @@ export default function MarketInfoPage() {
              <Card className="mt-6">
                 <CardHeader>
                     <CardTitle className="font-headline">Today's Market Prices</CardTitle>
-                    <CardDescription>Daily prices from major markets across Bangladesh. (Data is for demonstration)</CardDescription>
+                    <CardDescription>Daily prices from major markets across Bangladesh, updated in real-time.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Crop</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead>Market Location</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {marketPrices.map((item) => (
-                                <TableRow key={item.crop}>
-                                    <TableCell className="font-medium">{item.crop}</TableCell>
-                                    <TableCell>{item.price}</TableCell>
-                                    <TableCell>{item.location}</TableCell>
+                    {isPricesPending ? (
+                         <div className="flex items-center justify-center p-8">
+                            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+                            <span>Fetching latest prices...</span>
+                        </div>
+                    ) : (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Crop</TableHead>
+                                    <TableHead>Price</TableHead>
+                                    <TableHead>Market Location</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {marketPrices.map((item) => (
+                                    <TableRow key={item.crop}>
+                                        <TableCell className="font-medium">{item.crop}</TableCell>
+                                        <TableCell>{item.price}</TableCell>
+                                        <TableCell>{item.location}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
                 </CardContent>
              </Card>
           </TabsContent>
