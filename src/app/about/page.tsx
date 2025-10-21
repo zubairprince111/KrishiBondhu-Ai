@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { CheckCircle } from 'lucide-react';
@@ -72,6 +72,9 @@ export default function AboutPage() {
                     We dream of a Bangladesh where every farmer feels supported, confident, and proud of the fruits of their labor — and we are here to make that dream real.
                 </p>
             </CardContent>
+             <CardFooter className="justify-center text-center text-sm text-muted-foreground">
+                <p>Made by Abdullah Al Jubair prince</p>
+            </CardFooter>
         </Card>
       </main>
     </SidebarInset>
