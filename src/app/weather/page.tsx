@@ -8,6 +8,7 @@ import { useLanguage } from '@/context/language-context';
 const weatherData = {
   current: {
     location: 'Dhaka, Bangladesh',
+    bengaliSeasonKey: 'weather.season.summer',
     temp: 32,
     condition: 'Partly Cloudy',
     icon: <CloudSun className="size-16 text-yellow-500" />,
@@ -38,7 +39,7 @@ export default function WeatherPage() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div>
                         <CardTitle className="font-headline">Current Weather</CardTitle>
-                        <CardDescription className="flex items-center gap-1"><MapPin className="size-4"/>{weatherData.current.location}</CardDescription>
+                        <CardDescription className="flex items-center gap-1"><MapPin className="size-4"/>{weatherData.current.location} &bull; {t(weatherData.current.bengaliSeasonKey)}</CardDescription>
                     </div>
                      <div className="flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive">
                         <Zap className="size-4"/>

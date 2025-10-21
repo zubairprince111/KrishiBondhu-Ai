@@ -163,6 +163,11 @@ export const translations = {
     en: 'Type your question in English or Bangla...',
     bn: 'আপনার প্রশ্ন বাংলায় টাইপ করুন...',
   },
+  // Weather Page
+  'weather.season.summer': {
+    en: 'Summer',
+    bn: 'গ্রীষ্মকাল',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;
