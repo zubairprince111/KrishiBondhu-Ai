@@ -85,6 +85,10 @@ export const translations = {
     en: 'Admin',
     bn: 'অ্যাডমিন',
   },
+  'sidebar.nav.profile': {
+    en: 'Profile',
+    bn: 'প্রোফাইল',
+  },
   // Dashboard Page
   'dashboard.weather.title': {
     en: 'Daily Weather',

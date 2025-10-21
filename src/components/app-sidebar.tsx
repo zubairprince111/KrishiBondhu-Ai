@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarSeparator,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
   BarChart,
@@ -23,9 +24,25 @@ import {
   Mic,
   Shield,
   Sprout,
+  LogIn,
+  LogOut,
+  User,
 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from './ui/button';
+
 
 type NavItem = {
     href: string;
@@ -51,6 +68,12 @@ const secondaryNavItems: NavItem[] = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
   return (
     <Sidebar className="hidden border-r md:flex">
@@ -98,6 +121,45 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
+        <SidebarFooter>
+        {isUserLoading ? (
+          <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
+        ) : user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex w-full items-center justify-start gap-2 p-2">
+                <Avatar className="size-8">
+                  <AvatarFallback>{user.isAnonymous ? 'G' : user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="truncate text-sm font-medium">
+                  {user.isAnonymous ? 'Guest User' : user.email}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Link href="/profile">
+                <DropdownMenuItem>
+                  <User className="mr-2" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <SidebarMenuButton asChild>
+            <Link href="/login">
+              <LogIn />
+              <span>Login</span>
+            </Link>
+          </SidebarMenuButton>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
