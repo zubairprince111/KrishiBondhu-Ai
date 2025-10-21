@@ -155,7 +155,7 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
 
   const renderGrowthStage = (sowingDate: string) => {
     if (!sowingDate) return null;
-    const { stage, stageKey } = getGrowthStage(new Date(sowingDate));
+    const { stageKey } = getGrowthStage(new Date(sowingDate));
     return t(stageKey);
   };
 
@@ -188,7 +188,7 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
             </div>
              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button disabled={isLandLoading}>
+                    <Button disabled={isLandLoading} size="sm">
                       <PlusCircle className="size-5 sm:mr-2"/>
                       <span className="hidden sm:inline">{t('myCrops.crops.addCropButton')}</span>
                     </Button>
