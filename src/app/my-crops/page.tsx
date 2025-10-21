@@ -64,6 +64,10 @@ export default function MyCropsPage() {
     { value: 'Potato', labelKey: 'myCrops.form.cropName.options.potato' },
     { value: 'Tomato', labelKey: 'myCrops.form.cropName.options.tomato' },
     { value: 'Lentil', labelKey: 'myCrops.form.cropName.options.lentil' },
+    { value: 'Maize', labelKey: 'myCrops.form.cropName.options.maize' },
+    { value: 'Sugarcane', labelKey: 'myCrops.form.cropName.options.sugarcane' },
+    { value: 'Onion', labelKey: 'myCrops.form.cropName.options.onion' },
+    { value: 'Mustard', labelKey: 'myCrops.form.cropName.options.mustard' },
   ] as const;
 
   const regionOptions = [

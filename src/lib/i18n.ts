@@ -6,11 +6,11 @@ export const translations = {
     bn: 'কৃষিবন্ধু',
   },
   'app.header.title.cropDoctor': {
-    en: 'AI Crop Doctor',
+    en: 'Crop Doctor',
     bn: 'ফসল ডাক্তার',
   },
   'app.header.title.voiceAssistant': {
-    en: 'Voice Assistant (Mati AI)',
+    en: 'Mati AI',
     bn: 'মাটি Ai',
   },
   'app.header.title.weather': {
@@ -148,7 +148,7 @@ export const translations = {
     bn: 'শীত মৌসুমের প্রিয়',
   },
   'dashboard.feature.cropDoctor.title': {
-    en: 'AI Crop Doctor',
+    en: 'Crop Doctor',
     bn: 'ফসল ডাক্তার',
   },
   'dashboard.feature.cropDoctor.description': {
@@ -261,6 +261,22 @@ export const translations = {
   'myCrops.form.cropName.options.lentil': {
     en: 'Lentil (মসুর ডাল)',
     bn: 'মসুর ডাল',
+  },
+   'myCrops.form.cropName.options.maize': {
+    en: 'Maize (ভুট্টা)',
+    bn: 'ভুট্টা',
+  },
+  'myCrops.form.cropName.options.sugarcane': {
+    en: 'Sugarcane (আখ)',
+    bn: 'আখ',
+  },
+  'myCrops.form.cropName.options.onion': {
+    en: 'Onion (পেঁয়াজ)',
+    bn: 'পেঁয়াজ',
+  },
+  'myCrops.form.cropName.options.mustard': {
+    en: 'Mustard (সরিষা)',
+    bn: 'সরিষা',
   },
   'myCrops.form.region.label': {
     en: 'Region',
