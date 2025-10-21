@@ -1,12 +1,56 @@
+'use client';
+
+import { useState } from 'react';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { FilePlus, FilePen, FileX, Upload, Users, BarChart } from 'lucide-react';
+import { FilePen, Upload, Users, BarChart, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Image from 'next/image';
 
 export default function AdminPage() {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { toast } = useToast();
+  const slideshowImages = PlaceHolderImages.filter(p => p.id.startsWith('slideshow-'));
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = () => {
+    if (selectedFile) {
+      // Simulate upload
+      toast({
+        title: 'Upload Successful',
+        description: `File "${selectedFile.name}" has been uploaded.`,
+      });
+      setSelectedFile(null);
+      // Here you would typically call a server action to handle the file
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'No File Selected',
+        description: 'Please select a file to upload.',
+      });
+    }
+  };
+
   return (
     <SidebarInset>
       <AppHeader title="Admin Panel" />
@@ -62,14 +106,48 @@ export default function AdminPage() {
                             <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <Label htmlFor="picture">Add New Image</Label>
                                 <div className="flex w-full max-w-sm items-center space-x-2">
-                                    <Input id="picture" type="file" />
-                                    <Button size="sm"><Upload className="mr-2"/>Upload</Button>
+                                    <Input id="picture" type="file" onChange={handleFileChange} />
+                                    <Button size="sm" onClick={handleUpload}><Upload className="mr-2"/>Upload</Button>
                                 </div>
                             </div>
-                            <p className="text-sm text-muted-foreground">Current Images: 3</p>
+                            <p className="text-sm text-muted-foreground">Current Images: {slideshowImages.length}</p>
                         </CardContent>
                         <CardFooter>
-                            <Button variant="secondary">Manage Slideshow</Button>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="secondary">Manage Slideshow</Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[625px]">
+                                    <DialogHeader>
+                                        <DialogTitle>Manage Slideshow Images</DialogTitle>
+                                        <DialogDescription>
+                                            Review and remove images from the main dashboard slideshow.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid grid-cols-2 gap-4 py-4">
+                                        {slideshowImages.map(image => (
+                                            <div key={image.id} className="relative group">
+                                                <Image
+                                                    src={image.imageUrl}
+                                                    alt={image.description}
+                                                    width={300}
+                                                    height={200}
+                                                    className="rounded-md object-cover"
+                                                />
+                                                 <Button variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <X className="size-4"/>
+                                                    <span className="sr-only">Remove Image</span>
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <DialogFooter>
+                                        <DialogClose asChild>
+                                            <Button type="button" variant="secondary">Close</Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </CardFooter>
                     </Card>
                      <Card className="flex flex-col">
