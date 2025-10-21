@@ -3,7 +3,7 @@ import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Linkedin, Facebook } from 'lucide-react';
 
 export default function AboutPage() {
   const aboutImage = PlaceHolderImages.find(p => p.id === 'community-post-1');
@@ -72,8 +72,16 @@ export default function AboutPage() {
                     We dream of a Bangladesh where every farmer feels supported, confident, and proud of the fruits of their labor — and we are here to make that dream real.
                 </p>
             </CardContent>
-             <CardFooter className="justify-center text-center text-sm text-muted-foreground">
+             <CardFooter className="flex-col gap-2 justify-center text-center text-sm text-muted-foreground">
                 <p>Made by Abdullah Al Jubair prince</p>
+                <div className="flex items-center gap-4">
+                  <a href="#" aria-label="LinkedIn" className="text-muted-foreground transition-colors hover:text-primary">
+                    <Linkedin className="size-5" />
+                  </a>
+                  <a href="#" aria-label="Facebook" className="text-muted-foreground transition-colors hover:text-primary">
+                    <Facebook className="size-5" />
+                  </a>
+                </div>
             </CardFooter>
         </Card>
       </main>
