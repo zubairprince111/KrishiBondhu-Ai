@@ -20,6 +20,7 @@ import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebas
 import { collection, serverTimestamp, doc, addDoc, updateDoc, arrayUnion, arrayRemove, query, orderBy, Timestamp } from 'firebase/firestore';
 import { addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { formatDistanceToNow } from 'date-fns';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const postFormSchema = z.object({
   content: z.string().min(1, 'Post content cannot be empty.'),
@@ -29,20 +30,46 @@ const commentFormSchema = z.object({
   content: z.string().min(1, 'Comment content cannot be empty.'),
 });
 
-function PostCard({ post }: { post: any }) {
+// Demo data
+const demoPosts = [
+    {
+        id: 'demo-1',
+        authorName: 'Abul Kashem',
+        authorAvatarUrl: PlaceHolderImages.find(p => p.id === 'avatar-1')?.imageUrl || '',
+        content: 'আমার ধানের জমিতে বাদামী দাগ দেখা যাচ্ছে। এর সমাধান কী হতে পারে? কেউ কি সাহায্য করতে পারেন?',
+        imageURL: PlaceHolderImages.find(p => p.id === 'crop-disease')?.imageUrl || '',
+        timestamp: new Timestamp(Math.floor(Date.now() / 1000) - 3600, 0), // 1 hour ago
+        likes: ['demo-user-1', 'demo-user-2'],
+        comments: [
+            { id: 'comment-1', authorName: 'Rahima Begum', content: 'এটা বাদামী দাগ রোগ হতে পারে। কপার অক্সিক্লোরাইড স্প্রে করতে পারেন।', timestamp: new Timestamp(Math.floor(Date.now() / 1000) - 1800, 0) }
+        ]
+    },
+    {
+        id: 'demo-2',
+        authorName: 'Jamila Khatun',
+        authorAvatarUrl: PlaceHolderImages.find(p => p.id === 'avatar-3')?.imageUrl || '',
+        content: 'সবার ফলন কেমন হচ্ছে এই মৌসুমে? আমার টমেটো গাছগুলো এবার অনেক ভালো ফলন দিয়েছে। সঠিক সময়ে সার দেওয়ায় शायदকাজে দিয়েছে।',
+        imageURL: '',
+        timestamp: new Timestamp(Math.floor(Date.now() / 1000) - 86400, 0), // 1 day ago
+        likes: ['demo-user-3'],
+        comments: []
+    }
+];
+
+function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
   const { user } = useUser();
   const firestore = useFirestore();
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
 
   const postDocRef = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || isDemo) return null;
     return doc(firestore, 'community_posts', post.id);
-  }, [firestore, post.id]);
+  }, [firestore, post.id, isDemo]);
 
   const commentsQuery = useMemoFirebase(() => {
-    if (!postDocRef) return null;
+    if (isDemo || !postDocRef) return null;
     return query(collection(postDocRef, 'comments'), orderBy('timestamp', 'desc'));
-  }, [postDocRef]);
+  }, [postDocRef, isDemo]);
 
   const { data: comments, isLoading: areCommentsLoading } = useCollection(commentsQuery);
   
@@ -52,7 +79,7 @@ function PostCard({ post }: { post: any }) {
   });
 
   const handleLike = () => {
-    if (!user || !postDocRef) return;
+    if (!user || !postDocRef || isDemo) return;
     const hasLiked = post.likes?.includes(user.uid);
     updateDocumentNonBlocking(postDocRef, {
       likes: hasLiked ? arrayRemove(user.uid) : arrayUnion(user.uid),
@@ -60,7 +87,7 @@ function PostCard({ post }: { post: any }) {
   };
 
   const onCommentSubmit = (values: z.infer<typeof commentFormSchema>) => {
-     if (!user || !commentsQuery) return;
+     if (!user || isDemo || !commentsQuery) return;
     const commentData = {
         authorId: user.uid,
         authorName: user.displayName || user.email || 'Anonymous',
@@ -72,9 +99,10 @@ function PostCard({ post }: { post: any }) {
     commentForm.reset();
   };
 
-  const hasLiked = user ? post.likes?.includes(user.uid) : false;
+  const finalComments = isDemo ? post.comments : comments;
+  const hasLiked = user && !isDemo ? post.likes?.includes(user.uid) : false;
   const likeCount = post.likes?.length || 0;
-  const commentCount = comments?.length || 0;
+  const commentCount = finalComments?.length || 0;
 
   return (
     <Card>
@@ -106,7 +134,7 @@ function PostCard({ post }: { post: any }) {
         )}
       </CardContent>
       <CardFooter className="flex justify-start gap-4 border-t pt-4">
-        <Button variant={hasLiked ? 'default' : 'ghost'} size="sm" className="flex items-center gap-1" onClick={handleLike} disabled={!user}>
+        <Button variant={hasLiked ? 'default' : 'ghost'} size="sm" className="flex items-center gap-1" onClick={handleLike} disabled={!user || isDemo}>
           <ThumbsUp className="size-4" />
           <span>{likeCount} {likeCount === 1 ? 'Like' : 'Likes'}</span>
         </Button>
@@ -122,7 +150,7 @@ function PostCard({ post }: { post: any }) {
                 <DialogTitle>Comments on {post.authorName}'s post</DialogTitle>
             </DialogHeader>
             <div className="max-h-[400px] overflow-y-auto space-y-4 p-4">
-              {areCommentsLoading ? <Loader2 className="animate-spin" /> : comments?.map((comment: any) => (
+              {areCommentsLoading ? <Loader2 className="animate-spin" /> : finalComments?.map((comment: any) => (
                   <div key={comment.id} className="flex items-start gap-3">
                       <Avatar className="size-8">
                         <AvatarImage src={comment.authorAvatarUrl} />
@@ -137,9 +165,9 @@ function PostCard({ post }: { post: any }) {
                       </div>
                   </div>
               ))}
-              {comments?.length === 0 && !areCommentsLoading && <p className="text-center text-muted-foreground">No comments yet.</p>}
+              {finalComments?.length === 0 && !areCommentsLoading && <p className="text-center text-muted-foreground">No comments yet.</p>}
             </div>
-            {user && (
+            {user && !isDemo && (
                  <Form {...commentForm}>
                     <form onSubmit={commentForm.handleSubmit(onCommentSubmit)} className="flex items-start gap-2 pt-4 border-t">
                         <Avatar className="size-9">
@@ -261,6 +289,8 @@ export default function CommunityPage() {
   }, [firestore]);
   
   const { data: posts, isLoading: arePostsLoading } = useCollection(postsQuery);
+  
+  const showDemoPosts = !arePostsLoading && (!posts || posts.length === 0);
 
   return (
     <SidebarInset>
@@ -274,6 +304,11 @@ export default function CommunityPage() {
           {posts?.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
+
+          {showDemoPosts && demoPosts.map((post) => (
+             <PostCard key={post.id} post={post} isDemo={true} />
+          ))}
+
         </div>
       </main>
     </SidebarInset>
