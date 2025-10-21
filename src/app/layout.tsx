@@ -32,7 +32,7 @@ export default function RootLayout({
               <SidebarProvider>
                 <div className="flex">
                   <AppSidebar />
-                  <div className="flex-1">{children}</div>
+                  <div className="flex-1 flex flex-col">{children}</div>
                 </div>
               </SidebarProvider>
             </SlideshowProvider>

@@ -13,7 +13,6 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
-  BarChart,
   ClipboardList,
   CloudSun,
   Info,
@@ -65,7 +64,7 @@ const secondaryNavItems: NavItem[] = [
     { href: '/admin', labelKey: 'sidebar.nav.admin', icon: Shield },
 ]
 
-export function AppSidebar() {
+export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const { t } = useLanguage();
   const { user, isUserLoading } = useUser();
@@ -74,9 +73,12 @@ export function AppSidebar() {
   const handleLogout = async () => {
     await signOut(auth);
   };
+  
+  const SidebarComponent = isMobile ? 'div' : Sidebar;
+  const sidebarProps = isMobile ? {className: "flex h-full flex-col border-r"} : {className: "hidden border-r md:flex"};
 
   return (
-    <Sidebar className="hidden border-r md:flex">
+    <SidebarComponent {...sidebarProps}>
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2">
           <Sprout className="size-8 text-primary" />
@@ -160,6 +162,6 @@ export function AppSidebar() {
           </SidebarMenuButton>
         )}
       </SidebarFooter>
-    </Sidebar>
+    </SidebarComponent>
   );
 }
