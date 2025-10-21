@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
@@ -11,6 +16,7 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
   SidebarFooter,
+  useSidebar
 } from '@/components/ui/sidebar';
 import {
   ClipboardList,
@@ -64,18 +70,18 @@ const secondaryNavItems: NavItem[] = [
     { href: '/admin', labelKey: 'sidebar.nav.admin', icon: Shield },
 ]
 
-export function AppSidebar() {
-  const pathname = usePathname();
-  const { t } = useLanguage();
-  const { user, isUserLoading } = useUser();
-  const auth = useAuth();
+function SidebarNavContent() {
+    const pathname = usePathname();
+    const { t } = useLanguage();
+    const { user, isUserLoading } = useUser();
+    const auth = useAuth();
 
-  const handleLogout = async () => {
-    await signOut(auth);
-  };
-  
+    const handleLogout = async () => {
+        await signOut(auth);
+    };
+
   return (
-    <Sidebar className="hidden md:flex">
+    <>
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2">
           <Sprout className="size-8 text-primary" />
@@ -159,103 +165,28 @@ export function AppSidebar() {
           </SidebarMenuButton>
         )}
       </SidebarFooter>
-    </Sidebar>
+    </>
   );
 }
 
-export function MobileAppSidebar() {
-  const pathname = usePathname();
-  const { t } = useLanguage();
-  const { user, isUserLoading } = useUser();
-  const auth = useAuth();
 
-  const handleLogout = async () => {
-    await signOut(auth);
-  };
+export function AppSidebar() {
+  const { isMobile, openMobile, setOpenMobile } = useSidebar();
+  
+  if (isMobile) {
+    return (
+        <Sheet open={openMobile} onOpenChange={setOpenMobile}>
+            <SheetContent side="left" className="p-0 w-[var(--sidebar-width-mobile)]">
+                <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+                <SidebarNavContent />
+            </SheetContent>
+        </Sheet>
+    )
+  }
   
   return (
-    <div className="flex h-full flex-col border-r">
-      <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2">
-          <Sprout className="size-8 text-primary" />
-          <h2 className="font-headline text-2xl font-semibold text-primary">
-            {t('sidebar.title')}
-          </h2>
-        </Link>
-      </SidebarHeader>
-      <SidebarContent className="flex flex-col justify-between">
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-              >
-                <Link href={item.href}>
-                  <item.icon />
-                  <span>{t(item.labelKey)}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-        
-        <SidebarMenu>
-            <SidebarSeparator />
-             {secondaryNavItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-              >
-                <Link href={item.href}>
-                  <item.icon />
-                  <span>{t(item.labelKey)}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
-        <SidebarFooter>
-        {isUserLoading ? (
-          <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
-        ) : user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex w-full items-center justify-start gap-2 p-2">
-                <Avatar className="size-8">
-                  <AvatarFallback>{user.isAnonymous ? 'G' : user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <span className="truncate text-sm font-medium">
-                  {user.isAnonymous ? 'Guest User' : user.email}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="right" align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <Link href="/profile">
-                <DropdownMenuItem>
-                  <User className="mr-2" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <SidebarMenuButton asChild>
-            <Link href="/login">
-              <LogIn />
-              <span>Login</span>
-            </Link>
-          </SidebarMenuButton>
-        )}
-      </SidebarFooter>
-    </div>
+    <Sidebar>
+      <SidebarNavContent />
+    </Sidebar>
   );
 }
