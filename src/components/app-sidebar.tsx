@@ -32,15 +32,9 @@ import type { TranslationKey } from '@/lib/i18n';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
+import { Label } from './ui/label';
+import { Switch } from './ui/switch';
 
 type NavItem = {
     href: string;
@@ -63,9 +57,9 @@ const secondaryNavItems: NavItem[] = [
     { href: '/admin', labelKey: 'sidebar.nav.admin', icon: Shield },
 ]
 
-function SidebarNavContent() {
+export function AppSidebar() {
     const pathname = usePathname();
-    const { t } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     const { user, isUserLoading } = useUser();
     const auth = useAuth();
     const { setOpen } = useSidebar();
@@ -76,6 +70,10 @@ function SidebarNavContent() {
     
     const handleLinkClick = () => {
         setOpen(false);
+    };
+
+    const handleLanguageChange = (checked: boolean) => {
+      setLanguage(checked ? 'bn' : 'en');
     };
 
   return (
@@ -127,35 +125,39 @@ function SidebarNavContent() {
         </SidebarMenu>
       </SidebarContent>
         <SidebarFooter>
+         <div className="flex items-center justify-center gap-2 border-t p-4">
+            <Label htmlFor="language-switch-sidebar" className="text-sm font-medium">
+              {t('app.header.lang.en')}
+            </Label>
+            <Switch
+              id="language-switch-sidebar"
+              checked={language === 'bn'}
+              onCheckedChange={handleLanguageChange}
+              aria-label="Language switch"
+            />
+            <Label htmlFor="language-switch-sidebar" className="text-sm font-medium">
+              {t('app.header.lang.bn')}
+            </Label>
+          </div>
+          <SidebarSeparator />
         {isUserLoading ? (
           <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
         ) : user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex w-full items-center justify-start gap-2 p-2">
-                <Avatar className="size-8">
-                  <AvatarFallback>{user.isAnonymous ? 'G' : user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <span className="truncate text-sm font-medium">
-                  {user.isAnonymous ? 'Guest User' : user.email}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="right" align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <Link href="/profile" onClick={handleLinkClick}>
-                <DropdownMenuItem>
-                  <User className="mr-2" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="p-2">
+            <Link href="/profile" onClick={handleLinkClick}>
+                <Button variant="ghost" className="flex w-full items-center justify-start gap-2 p-2">
+                    <Avatar className="size-8">
+                    <AvatarFallback>{user.isAnonymous ? 'G' : user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start">
+                        <span className="truncate text-sm font-medium">
+                        {user.isAnonymous ? 'Guest User' : 'My Account'}
+                        </span>
+                         {!user.isAnonymous && <span className="truncate text-xs text-muted-foreground">{user.email}</span>}
+                    </div>
+                </Button>
+            </Link>
+          </div>
         ) : (
           <SidebarMenuButton asChild tooltip="Login" onClick={handleLinkClick}>
             <Link href="/login">
@@ -167,8 +169,4 @@ function SidebarNavContent() {
       </SidebarFooter>
     </>
   );
-}
-
-export function AppSidebar() {
-  return <SidebarNavContent />;
 }
