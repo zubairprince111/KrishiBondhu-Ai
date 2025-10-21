@@ -75,7 +75,7 @@ export function AppSidebar() {
   };
   
   return (
-    <Sidebar className="hidden border-r md:flex">
+    <Sidebar className="hidden md:flex">
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2">
           <Sprout className="size-8 text-primary" />
@@ -91,7 +91,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.href}
-                tooltip={{ children: t(item.labelKey) }}
+                tooltip={t(item.labelKey)}
               >
                 <Link href={item.href}>
                   <item.icon />
@@ -109,7 +109,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.href}
-                tooltip={{ children: t(item.labelKey) }}
+                tooltip={t(item.labelKey)}
               >
                 <Link href={item.href}>
                   <item.icon />
@@ -151,7 +151,7 @@ export function AppSidebar() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <SidebarMenuButton asChild>
+          <SidebarMenuButton asChild tooltip="Login">
             <Link href="/login">
               <LogIn />
               <span>Login</span>
@@ -190,7 +190,6 @@ export function MobileAppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.href}
-                tooltip={{ children: t(item.labelKey) }}
               >
                 <Link href={item.href}>
                   <item.icon />
@@ -208,7 +207,6 @@ export function MobileAppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.href}
-                tooltip={{ children: t(item.labelKey) }}
               >
                 <Link href={item.href}>
                   <item.icon />

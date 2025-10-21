@@ -13,6 +13,7 @@ import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
 import { PanelLeft } from 'lucide-react';
 import { MobileAppSidebar } from '@/components/app-sidebar';
+import { useSidebar } from './ui/sidebar';
 
 type AppHeaderProps = {
   titleKey: TranslationKey;
@@ -20,6 +21,7 @@ type AppHeaderProps = {
 
 export function AppHeader({ titleKey }: AppHeaderProps) {
   const { language, setLanguage, t } = useLanguage();
+  const { toggleSidebar } = useSidebar();
   
   const handleLanguageChange = (checked: boolean) => {
     setLanguage(checked ? 'bn' : 'en');
@@ -28,17 +30,21 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b border-primary/20 bg-primary px-4 text-primary-foreground md:px-6">
       <div className="flex items-center gap-2">
-        <Sheet>
-            <SheetTrigger asChild>
-                <Button size="icon" variant="ghost" className="md:hidden">
+         <Button size="icon" variant="ghost" className="md:hidden" asChild>
+            <Sheet>
+                <SheetTrigger>
                     <PanelLeft className="size-5" />
                     <span className="sr-only">Toggle Menu</span>
-                </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0">
-                <MobileAppSidebar />
-            </SheetContent>
-        </Sheet>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0">
+                    <MobileAppSidebar />
+                </SheetContent>
+            </Sheet>
+        </Button>
+         <Button size="icon" variant="ghost" className="hidden md:flex" onClick={toggleSidebar}>
+            <PanelLeft className="size-5" />
+            <span className="sr-only">Toggle Menu</span>
+        </Button>
         <h1 className="font-headline text-2xl font-semibold">
           {t(titleKey)}
         </h1>
