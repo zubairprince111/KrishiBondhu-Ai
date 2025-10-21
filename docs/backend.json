@@ -366,7 +366,7 @@
         "definition": {
             "entityName": "CommunityPost",
             "schema": { "$ref": "#/entities/CommunityPost" },
-            "description": "This is a public collection. All authenticated users should have read access to these posts to see the community feed."
+            "description": "Stores all community posts. This collection is publicly readable by all authenticated users."
         }
       },
       {
@@ -374,7 +374,7 @@
           "definition": {
               "entityName": "Comment",
               "schema": { "$ref": "#/entities/Comment" },
-              "description": "Stores comments for a specific community post. This is a public collection, all authenticated users should have read access."
+              "description": "Stores comments for a specific community post. This collection is publicly readable by all authenticated users."
           }
       },
       {
