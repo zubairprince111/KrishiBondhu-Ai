@@ -94,6 +94,54 @@ export const translations = {
     en: 'Partly Cloudy',
     bn: 'আংশিক মেঘলা',
   },
+  'dashboard.seasonalCrops.jute.name': {
+    en: 'Jute',
+    bn: 'পাট',
+  },
+  'dashboard.seasonalCrops.jute.reason': {
+    en: 'Ideal for humid conditions',
+    bn: 'আর্দ্র আবহাওয়ার জন্য আদর্শ',
+  },
+  'dashboard.seasonalCrops.ausRice.name': {
+    en: 'Aus Rice',
+    bn: 'আউশ ধান',
+  },
+  'dashboard.seasonalCrops.ausRice.reason': {
+    en: 'Monsoon season staple',
+    bn: 'বর্ষা মৌসুমের প্রধান ফসল',
+  },
+  'dashboard.seasonalCrops.okra.name': {
+    en: 'Okra',
+    bn: 'ভেন্ডি',
+  },
+  'dashboard.seasonalCrops.okra.reason': {
+    en: 'Thrives in summer heat',
+    bn: 'গ্রীষ্মের তাপে ভাল জন্মে',
+  },
+  'dashboard.seasonalCrops.brinjal.name': {
+    en: 'Brinjal',
+    bn: 'বেগুন',
+  },
+  'dashboard.seasonalCrops.brinjal.reason': {
+    en: 'Good for this climate',
+    bn: 'এই আবহাওয়ার জন্য ভাল',
+  },
+  'dashboard.seasonalCrops.paddy.name': {
+    en: 'Paddy',
+    bn: 'ধান',
+  },
+  'dashboard.seasonalCrops.paddy.reason': {
+    en: 'High demand crop',
+    bn: 'উচ্চ চাহিদার ফসল',
+  },
+  'dashboard.seasonalCrops.potato.name': {
+    en: 'Potato',
+    bn: 'আলু',
+  },
+  'dashboard.seasonalCrops.potato.reason': {
+    en: 'Winter season favorite',
+    bn: 'শীত মৌসুমের প্রিয়',
+  },
   'dashboard.feature.cropDoctor.title': {
     en: 'AI Crop Doctor',
     bn: 'এআই ক্রপ ডক্টর',

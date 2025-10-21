@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import {
   Card,
@@ -35,6 +35,7 @@ import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useSlideshow } from '@/context/slideshow-context';
 import { useLanguage } from '@/context/language-context';
+import type { TranslationKey } from '@/lib/i18n';
 
 const weatherData = {
   location: 'Dhaka, Bangladesh',
@@ -45,18 +46,29 @@ const weatherData = {
   wind: '12 km/h',
 };
 
-const seasonalCrops = [
-    { name: 'Jute (পাট)', reason: 'Ideal for humid conditions'},
-    { name: 'Aus Rice (আউশ ধান)', reason: 'Monsoon season staple'},
-    { name: 'Okra (ভেন্ডি)', reason: 'Thrives in summer heat'},
+const allSeasonalCrops: { nameKey: TranslationKey; reasonKey: TranslationKey }[] = [
+    { nameKey: 'dashboard.seasonalCrops.jute.name', reasonKey: 'dashboard.seasonalCrops.jute.reason'},
+    { nameKey: 'dashboard.seasonalCrops.ausRice.name', reasonKey: 'dashboard.seasonalCrops.ausRice.reason'},
+    { nameKey: 'dashboard.seasonalCrops.okra.name', reasonKey: 'dashboard.seasonalCrops.okra.reason'},
+    { nameKey: 'dashboard.seasonalCrops.brinjal.name', reasonKey: 'dashboard.seasonalCrops.brinjal.reason'},
+    { nameKey: 'dashboard.seasonalCrops.paddy.name', reasonKey: 'dashboard.seasonalCrops.paddy.reason'},
+    { nameKey: 'dashboard.seasonalCrops.potato.name', reasonKey: 'dashboard.seasonalCrops.potato.reason'},
 ]
 
 export default function DashboardPage() {
     const { slideshowImages } = useSlideshow();
+    const [seasonalCrops, setSeasonalCrops] = useState<{ nameKey: TranslationKey; reasonKey: TranslationKey }[]>([]);
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: true })
     );
     const { t } = useLanguage();
+
+    useEffect(() => {
+        // Shuffle the array and take the first 3 to prevent hydration mismatch
+        const shuffled = [...allSeasonalCrops].sort(() => 0.5 - Math.random());
+        setSeasonalCrops(shuffled.slice(0, 3));
+    }, []);
+
 
     const features = [
       {
@@ -169,9 +181,9 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
                         {seasonalCrops.map(crop => (
-                             <div key={crop.name} className="bg-background/50 rounded-lg p-2">
-                                <p className="font-bold text-sm">{crop.name}</p>
-                                <p className="text-xs text-muted-foreground">{crop.reason}</p>
+                             <div key={crop.nameKey} className="bg-background/50 rounded-lg p-2">
+                                <p className="font-bold text-sm">{t(crop.nameKey)}</p>
+                                <p className="text-xs text-muted-foreground">{t(crop.reasonKey)}</p>
                             </div>
                         ))}
                     </CardContent>
