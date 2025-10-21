@@ -1,5 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRef } from 'react';
+import Autoplay from 'embla-carousel-autoplay';
 import {
   Card,
   CardContent,
@@ -76,53 +80,56 @@ const weatherData = {
 
 export default function DashboardPage() {
     const slideshowImages = PlaceHolderImages.filter(p => p.id.startsWith('slideshow-'));
+    const plugin = useRef(
+        Autoplay({ delay: 5000, stopOnInteraction: true })
+    );
 
     return (
         <SidebarInset>
         <AppHeader title="Dashboard" />
         <main className="flex-1 p-4 md:p-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <Card className="md:col-span-2">
-                    <CardHeader>
-                    <CardTitle className="font-headline">Photo Gallery</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                    <Carousel className="w-full">
-                        <CarouselContent>
-                        {slideshowImages.map((image) => (
-                            <CarouselItem key={image.id}>
-                            <div className="relative h-64 w-full">
-                                <Image
-                                src={image.imageUrl}
-                                alt={image.description}
-                                data-ai-hint={image.imageHint}
-                                fill
-                                className="rounded-md object-cover"
-                                />
+            <Card className="relative overflow-hidden">
+              <Carousel 
+                className="w-full"
+                plugins={[plugin.current]}
+                onMouseEnter={plugin.current.stop}
+                onMouseLeave={plugin.current.reset}
+              >
+                <CarouselContent>
+                  {slideshowImages.map((image) => (
+                    <CarouselItem key={image.id}>
+                      <div className="relative h-80 w-full">
+                        <Image
+                          src={image.imageUrl}
+                          alt={image.description}
+                          data-ai-hint={image.imageHint}
+                          fill
+                          className="object-cover"
+                        />
+                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
+              </Carousel>
+               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <Card className="max-w-md bg-white/20 backdrop-blur-sm text-white border-white/30">
+                         <CardHeader>
+                            <CardTitle className="font-headline text-white">Daily Weather</CardTitle>
+                            <CardDescription className="flex items-center gap-1 text-white/90"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-around gap-4 text-center">
+                            <div className='text-yellow-300'>{weatherData.icon}</div>
+                            <div>
+                                <p className="font-headline text-5xl font-bold">{weatherData.temp}°C</p>
+                                <p className="text-white/90">{weatherData.condition}</p>
                             </div>
-                            </CarouselItem>
-                        ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="left-2" />
-                        <CarouselNext className="right-2" />
-                    </Carousel>
-                    </CardContent>
-                </Card>
-
-                <Card className="flex flex-col">
-                    <CardHeader>
-                        <CardTitle className="font-headline">Daily Weather</CardTitle>
-                        <CardDescription className="flex items-center gap-1"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-                        {weatherData.icon}
-                        <div>
-                            <p className="font-headline text-5xl font-bold">{weatherData.temp}°C</p>
-                            <p className="text-muted-foreground">{weatherData.condition}</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </Card>
 
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
