@@ -45,10 +45,10 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: '/', labelKey: 'sidebar.nav.dashboard', icon: LayoutGrid },
+  { href: '/my-crops', labelKey: 'sidebar.nav.myCrops', icon: Tractor },
   { href: '/crop-doctor', labelKey: 'sidebar.nav.cropDoctor', icon: Leaf },
   { href: '/voice-assistant', labelKey: 'sidebar.nav.matiAI', icon: Mic },
   { href: '/weather', labelKey: 'sidebar.nav.weather', icon: CloudSun },
-  { href: '/my-crops', labelKey: 'sidebar.nav.myCrops', icon: Tractor },
   { href: '/community', labelKey: 'sidebar.nav.community', icon: MessageSquare },
   { href: '/market-info', labelKey: 'sidebar.nav.marketInfo', icon: Landmark },
 ];

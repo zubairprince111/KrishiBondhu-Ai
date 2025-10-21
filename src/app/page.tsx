@@ -40,6 +40,7 @@ import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
 import { suggestSeasonalCrops } from '@/lib/actions';
 import { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
+import { cn } from '@/lib/utils';
 
 const weatherData = {
   location: 'Dhaka, Bangladesh',
@@ -70,6 +71,13 @@ export default function DashboardPage() {
 
     const features = [
       {
+        titleKey: 'dashboard.feature.myCrops.title',
+        descriptionKey: 'dashboard.feature.myCrops.description',
+        href: '/my-crops',
+        icon: <Tractor className="size-8 text-primary" />,
+        isHighlighted: true,
+      },
+      {
         titleKey: 'dashboard.feature.cropDoctor.title',
         descriptionKey: 'dashboard.feature.cropDoctor.description',
         href: '/crop-doctor',
@@ -86,12 +94,6 @@ export default function DashboardPage() {
         descriptionKey: 'dashboard.feature.weather.description',
         href: '/weather',
         icon: <CloudSun className="size-8 text-primary" />,
-      },
-      {
-        titleKey: 'dashboard.feature.myCrops.title',
-        descriptionKey: 'dashboard.feature.myCrops.description',
-        href: '/my-crops',
-        icon: <Tractor className="size-8 text-primary" />,
       },
       {
         titleKey: 'dashboard.feature.community.title',
@@ -203,7 +205,10 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3">
             {features.map((feature) => (
                 <Link href={feature.href} key={feature.href}>
-                <Card className="flex h-full flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-md">
+                <Card className={cn(
+                    "flex h-full flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-md",
+                     feature.isHighlighted && "bg-primary/10 border-primary/20"
+                )}>
                     <CardHeader className="p-4">
                     <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
