@@ -59,15 +59,20 @@ export default function LoginPage() {
   const handleError = (error: AuthError) => {
     setIsLoading(null);
     let description = 'An unexpected error occurred. Please try again.';
+    
+    // Don't show a toast for user-cancelled popups
+    if (error.code === AuthErrorCodes.POPUP_CLOSED_BY_USER) {
+        return;
+    }
+    
     if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
         description = 'An account with this email already exists. Please sign in instead.';
     } else if (error.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS) {
         description = 'Invalid email or password. Please check your credentials and try again.';
     } else if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
         description = 'The password is too weak. Please use at least 6 characters.';
-    } else if (error.code === AuthErrorCodes.POPUP_CLOSED_BY_USER) {
-        description = 'The sign-in window was closed. Please try again.';
     }
+
     toast({
       variant: 'destructive',
       title: 'Authentication Failed',
@@ -83,7 +88,13 @@ export default function LoginPage() {
         const unsubscribe = auth.onAuthStateChanged(() => {});
         setTimeout(() => {
           const authError = (auth as any)._error;
-          if (authError) handleError(authError as AuthError);
+          if (authError) {
+            handleError(authError as AuthError)
+          } else {
+            // If there's no error after timeout, but also no user,
+            // it's likely a silent failure or popup close. Reset loading state.
+            setIsLoading(null);
+          }
           unsubscribe();
         }, 1500);
       }
