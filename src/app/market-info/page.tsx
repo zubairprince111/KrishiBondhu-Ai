@@ -16,6 +16,13 @@ import { useToast } from '@/hooks/use-toast';
 import { getGovernmentSchemes } from '@/lib/actions';
 import { Loader2, ReceiptText, Search, Tag, Wand2 } from 'lucide-react';
 import type { GovernmentSchemeFinderOutput } from '@/ai/flows/government-scheme-finder';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 
 const marketPrices = [
@@ -82,8 +89,22 @@ export default function MarketInfoPage() {
                                 )} />
                                 <FormField control={form.control} name="region" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Region (e.g., Dhaka, Rajshahi)</FormLabel>
-                                        <FormControl><Input placeholder="ঢাকা" {...field} /></FormControl>
+                                        <FormLabel>Region</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                          <FormControl>
+                                            <SelectTrigger><SelectValue placeholder="Select a region" /></SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                            <SelectItem value="Dhaka">Dhaka</SelectItem>
+                                            <SelectItem value="Chittagong">Chittagong</SelectItem>
+                                            <SelectItem value="Rajshahi">Rajshahi</SelectItem>
+                                            <SelectItem value="Khulna">Khulna</SelectItem>
+                                            <SelectItem value="Barisal">Barisal</SelectItem>
+                                            <SelectItem value="Sylhet">Sylhet</SelectItem>
+                                            <SelectItem value="Rangpur">Rangpur</SelectItem>
+                                            <SelectItem value="Mymensingh">Mymensingh</SelectItem>
+                                          </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
