@@ -1,3 +1,4 @@
+
 'use client';
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
@@ -19,9 +20,9 @@ export default function CropDoctorPage() {
         <div className="grid gap-8 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline">Upload Crop Image</CardTitle>
+              <CardTitle className="font-headline">{t('cropDoctor.upload.title')}</CardTitle>
               <CardDescription>
-                Take or upload a picture of the affected crop. Our AI will analyze it for you.
+                {t('cropDoctor.upload.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -37,10 +38,10 @@ export default function CropDoctorPage() {
                     />
                   </div>
                 )}
-                <p className="text-muted-foreground">A preview of your uploaded image will appear here.</p>
+                <p className="text-muted-foreground">{t('cropDoctor.upload.preview')}</p>
                 <Button>
                   <Upload className="mr-2" />
-                  Upload Image
+                  {t('cropDoctor.upload.button')}
                 </Button>
               </div>
             </CardContent>
@@ -50,35 +51,35 @@ export default function CropDoctorPage() {
             <CardHeader>
               <CardTitle className="font-headline flex items-center gap-2">
                 <Wand2 className="text-primary"/>
-                AI Analysis & Solution
+                {t('cropDoctor.analysis.title')}
               </CardTitle>
               <CardDescription>
-                Based on the image, here is our diagnosis and suggested actions.
+                {t('cropDoctor.analysis.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">
-                    <h3 className="font-headline text-lg font-semibold">Diagnosis: <span className="text-destructive font-medium">Leaf Blight</span></h3>
+                    <h3 className="font-headline text-lg font-semibold">{t('cropDoctor.analysis.diagnosisTitle')} <span className="text-destructive font-medium">{t('cropDoctor.analysis.diagnosisResult')}</span></h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        The symptoms visible on the leaf, such as the brown spots with yellow halos, are characteristic of Leaf Blight, a common fungal disease.
+                        {t('cropDoctor.analysis.diagnosisText')}
                     </p>
                 </div>
                 <div className="space-y-2">
-                    <h3 className="font-headline text-lg font-semibold">Recommended Actions (in Bangla):</h3>
+                    <h3 className="font-headline text-lg font-semibold">{t('cropDoctor.analysis.recommendationTitle')}</h3>
                     <ul className="list-disc space-y-2 pl-5 text-sm">
                         <li>
-                            <span className="font-semibold">সার প্রয়োগ:</span> আক্রান্ত পাতাগুলি সরিয়ে ফেলুন এবং একটি কপার-ভিত্তিক ছত্রাকনাশক প্রয়োগ করুন।
+                           {t('cropDoctor.analysis.action1')}
                         </li>
                         <li>
-                            <span className="font-semibold">পানি ব্যবস্থাপনা:</span> সকালে গাছের গোড়ায় জল দিন এবং পাতা ভেজানো থেকে বিরত থাকুন।
+                           {t('cropDoctor.analysis.action2')}
                         </li>
                         <li>
-                           <span className="font-semibold">প্রতিরোধ:</span> রোগ-প্রতিরোধী জাত লাগানোর কথা বিবেচনা করুন এবং ফসলের আবর্তন অনুশীলন করুন।
+                           {t('cropDoctor.analysis.action3')}
                         </li>
                     </ul>
                 </div>
                  <Button variant="secondary" className="w-full">
-                    Find Recommended Products
+                    {t('cropDoctor.analysis.findProductsButton')}
                 </Button>
             </CardContent>
           </Card>

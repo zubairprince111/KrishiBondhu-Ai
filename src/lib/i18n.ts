@@ -1,3 +1,4 @@
+
 export const translations = {
   // App Header
   'app.header.title.welcome': {
@@ -502,6 +503,64 @@ export const translations = {
   'myCrops.guide.loading': {
     en: 'Generating your personalized guide...',
     bn: 'আপনার ব্যক্তিগতকৃত নির্দেশিকা তৈরি করা হচ্ছে...',
+  },
+
+  // Crop Doctor Page
+  'cropDoctor.upload.title': {
+    en: 'Upload Crop Image',
+    bn: 'ফসলের ছবি আপলোড করুন',
+  },
+  'cropDoctor.upload.description': {
+    en: 'Take or upload a picture of the affected crop. Our AI will analyze it for you.',
+    bn: 'ক্ষতিগ্রস্ত ফসলের একটি ছবি তুলুন বা আপলোড করুন। আমাদের এআই আপনার জন্য এটি বিশ্লেষণ করবে।',
+  },
+  'cropDoctor.upload.preview': {
+    en: 'A preview of your uploaded image will appear here.',
+    bn: 'আপনার আপলোড করা ছবির একটি প্রিভিউ এখানে দেখা যাবে।',
+  },
+  'cropDoctor.upload.button': {
+    en: 'Upload Image',
+    bn: 'ছবি আপলোড করুন',
+  },
+  'cropDoctor.analysis.title': {
+    en: 'AI Analysis & Solution',
+    bn: 'এআই বিশ্লেষণ ও সমাধান',
+  },
+  'cropDoctor.analysis.description': {
+    en: 'Based on the image, here is our diagnosis and suggested actions.',
+    bn: 'ছবির উপর ভিত্তি করে, এখানে আমাদের রোগ নির্ণয় এবং প্রস্তাবিত পদক্ষেপ রয়েছে।',
+  },
+  'cropDoctor.analysis.diagnosisTitle': {
+    en: 'Diagnosis:',
+    bn: 'রোগ নির্ণয়:',
+  },
+  'cropDoctor.analysis.diagnosisResult': {
+    en: 'Leaf Blight',
+    bn: 'পাতার ব্লাইট',
+  },
+  'cropDoctor.analysis.diagnosisText': {
+    en: 'The symptoms visible on the leaf, such as the brown spots with yellow halos, are characteristic of Leaf Blight, a common fungal disease.',
+    bn: 'পাতায় দৃশ্যমান লক্ষণ, যেমন হলুদ আভা সহ বাদামী দাগ, পাতার ব্লাইট রোগের বৈশিষ্ট্য, যা একটি সাধারণ ছত্রাকজনিত রোগ।',
+  },
+  'cropDoctor.analysis.recommendationTitle': {
+    en: 'Recommended Actions:',
+    bn: 'প্রস্তাবিত পদক্ষেপ:',
+  },
+  'cropDoctor.analysis.action1': {
+    en: 'Remove affected leaves and apply a copper-based fungicide.',
+    bn: 'আক্রান্ত পাতাগুলি সরিয়ে ফেলুন এবং একটি কপার-ভিত্তিক ছত্রাকনাশক প্রয়োগ করুন।',
+  },
+  'cropDoctor.analysis.action2': {
+    en: 'Water at the base of the plant in the morning and avoid wetting the leaves.',
+    bn: 'সকালে গাছের গোড়ায় জল দিন এবং পাতা ভেজানো থেকে বিরত থাকুন।',
+  },
+  'cropDoctor.analysis.action3': {
+    en: 'Consider planting disease-resistant varieties and practice crop rotation.',
+    bn: 'রোগ-প্রতিরোধী জাত লাগানোর কথা বিবেচনা করুন এবং ফসলের আবর্তন অনুশীলন করুন।',
+  },
+  'cropDoctor.analysis.findProductsButton': {
+    en: 'Find Recommended Products',
+    bn: 'প্রস্তাবিত পণ্য খুঁজুন',
   },
 };
 
