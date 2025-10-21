@@ -1,12 +1,15 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { FilePen, Upload, Users, BarChart, X } from 'lucide-react';
+import { FilePen, Upload, Users, BarChart, X, Loader2, ShieldAlert } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -24,16 +27,24 @@ import { type ImagePlaceholder } from '@/lib/placeholder-images';
 import { useSlideshow } from '@/context/slideshow-context';
 import { useLanguage } from '@/context/language-context';
 
+// To change the admin user, replace this UID with the Firebase UID of the desired admin.
+const ADMIN_UID = 'P76Vj3U2aBV4exSSO4JUk4kmJca2';
+
 export default function AdminPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { slideshowImages, addImage, removeImage } = useSlideshow();
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
   const { t } = useLanguage();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    if (!isUserLoading && (!user || user.uid !== ADMIN_UID)) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -72,6 +83,25 @@ export default function AdminPage() {
         description: 'The image has been removed from the slideshow.',
     });
   };
+
+  if (isUserLoading || !user || user.uid !== ADMIN_UID) {
+    return (
+      <SidebarInset>
+        <AppHeader titleKey="app.header.title.admin" />
+        <main className="flex-1 p-4 md:p-6 flex items-center justify-center">
+            <Card className="max-w-md text-center">
+                <CardHeader>
+                    <CardTitle className="flex items-center justify-center gap-2"><ShieldAlert className="text-destructive"/>Access Denied</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground mb-4">You do not have permission to view this page. Redirecting...</p>
+                    <Loader2 className="size-8 animate-spin text-primary mx-auto" />
+                </CardContent>
+            </Card>
+        </main>
+      </SidebarInset>
+    );
+  }
 
   return (
     <SidebarInset>
@@ -199,3 +229,5 @@ export default function AdminPage() {
     </SidebarInset>
   );
 }
+
+    
