@@ -78,7 +78,7 @@ export default function AboutPage() {
                   <a href="https://www.linkedin.com/in/aajubairprincee?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BOBjZ6BNST1OABBMq5fmiNg%3D%3D" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-muted-foreground transition-colors hover:text-primary">
                     <Linkedin className="size-5" />
                   </a>
-                  <a href="#" aria-label="Facebook" className="text-muted-foreground transition-colors hover:text-primary">
+                  <a href="https://www.facebook.com/jubair.prince009/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-muted-foreground transition-colors hover:text-primary">
                     <Facebook className="size-5" />
                   </a>
                 </div>
