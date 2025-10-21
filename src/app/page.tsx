@@ -44,7 +44,7 @@ const weatherData = {
   location: 'Dhaka, Bangladesh',
   temp: 32,
   conditionKey: 'dashboard.weather.condition.partlyCloudy',
-  icon: <CloudSun className="size-10 md:size-12 text-yellow-400" />,
+  icon: <CloudSun className="size-10 text-yellow-400" />,
   humidity: '78%',
   wind: '12 km/h',
 };
@@ -108,7 +108,7 @@ export default function DashboardPage() {
 
     return (
         <SidebarInset>
-        <AppHeader titleKey="app.header.title.welcome" />
+        <AppHeader />
         <main className="flex-1 p-4 md:p-6 space-y-6">
             <Card className="overflow-hidden">
               <Carousel 
@@ -140,31 +140,31 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="bg-blue-900/10 dark:bg-blue-500/10 border-blue-200 dark:border-blue-900">
-                     <CardHeader className="p-4">
-                        <CardTitle className="font-headline text-lg md:text-xl flex items-center justify-between">
+                     <CardHeader className="p-3">
+                        <CardTitle className="font-headline text-base flex items-center justify-between">
                             <span>{t('dashboard.weather.title')}</span>
-                            <span className="text-base md:text-lg font-medium">{weatherData.temp}°C</span>
+                            <span className="font-medium">{weatherData.temp}°C</span>
                         </CardTitle>
-                        <CardDescription className="flex items-center gap-1 pt-1 text-xs md:text-sm"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
+                        <CardDescription className="flex items-center gap-1 text-xs"><MapPin className="size-3"/>{weatherData.location}</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-4 pt-0 flex items-center justify-between gap-4 text-center">
+                    <CardContent className="p-3 pt-0 flex items-center justify-between gap-4 text-center">
                         <div className="flex flex-col items-center">
                             {weatherData.icon}
-                            <p className="text-muted-foreground text-xs md:text-sm mt-1">{t(weatherData.conditionKey)}</p>
+                            <p className="text-muted-foreground text-xs mt-1">{t(weatherData.conditionKey)}</p>
                         </div>
                         <div className="flex gap-4 text-left">
                             <div className="flex items-center gap-2">
-                                <Droplets className="size-5 text-blue-400"/>
+                                <Droplets className="size-4 text-blue-400"/>
                                 <div>
                                     <p className="text-xs text-muted-foreground">Humidity</p>
-                                    <p className="font-bold text-sm md:text-base">{weatherData.humidity}</p>
+                                    <p className="font-bold text-sm">{weatherData.humidity}</p>
                                 </div>
                             </div>
                              <div className="flex items-center gap-2">
-                                <Wind className="size-5 text-gray-400"/>
+                                <Wind className="size-4 text-gray-400"/>
                                  <div>
                                     <p className="text-xs text-muted-foreground">Wind</p>
-                                    <p className="font-bold text-sm md:text-base">{weatherData.wind}</p>
+                                    <p className="font-bold text-sm">{weatherData.wind}</p>
                                 </div>
                             </div>
                         </div>
@@ -172,18 +172,18 @@ export default function DashboardPage() {
                 </Card>
 
                  <Card className="bg-green-900/10 dark:bg-green-500/10 border-green-200 dark:border-green-900">
-                     <CardHeader className="p-4">
-                        <CardTitle className="font-headline text-lg md:text-xl">AI Seasonal Suggestions</CardTitle>
-                        <CardDescription className="text-xs md:text-sm">Based on your region's current conditions</CardDescription>
+                     <CardHeader className="p-3">
+                        <CardTitle className="font-headline text-base">AI Seasonal Suggestions</CardTitle>
+                        <CardDescription className="text-xs">Based on your region's current conditions</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-4 pt-0 flex items-center justify-center min-h-[100px]">
-                      {isPending && <Loader2 className="size-8 animate-spin text-primary" />}
+                    <CardContent className="p-3 pt-0 flex items-center justify-center min-h-[78px]">
+                      {isPending && <Loader2 className="size-6 animate-spin text-primary" />}
                       {!isPending && seasonalCrops && (
-                         <div className="w-full space-y-2">
+                         <div className="w-full space-y-1">
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
                               {seasonalCrops.suggestedCrops.map(crop => (
-                                  <div key={crop} className="bg-background/50 rounded-lg p-2">
-                                      <p className="font-bold text-sm">{crop}</p>
+                                  <div key={crop} className="bg-background/50 rounded-lg p-1">
+                                      <p className="font-bold text-xs">{crop}</p>
                                   </div>
                               ))}
                             </div>
