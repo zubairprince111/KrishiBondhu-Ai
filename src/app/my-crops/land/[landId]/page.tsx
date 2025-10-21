@@ -146,7 +146,7 @@ export default function LandDetailsPage({ params }: LandDetailsPageProps) {
 
     try {
       // Add the document optimistically
-      const newDocRef = await addDoc(landCropsQuery, cropData);
+      const newDocRef = await addDocumentNonBlocking(landCropsQuery, cropData);
       
       toast({
           title: t('myCrops.addCropDialog.toast.success.title'),
@@ -162,7 +162,7 @@ export default function LandDetailsPage({ params }: LandDetailsPageProps) {
         currentStage: values.status,
       });
 
-      if (guidanceData) {
+      if (guidanceData && newDocRef) {
         // Update the document with the fetched guidance
         updateDocumentNonBlocking(doc(firestore, newDocRef.path), { guidance: guidanceData });
       } else if (guidanceError) {

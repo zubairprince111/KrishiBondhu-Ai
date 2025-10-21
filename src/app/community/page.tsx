@@ -87,7 +87,7 @@ function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
   };
 
   const onCommentSubmit = (values: z.infer<typeof commentFormSchema>) => {
-     if (!user || isDemo || !commentsQuery) return;
+     if (!user || isDemo || !commentsQuery || !firestore) return;
     const commentData = {
         authorId: user.uid,
         authorName: user.displayName || user.email || 'Anonymous',
