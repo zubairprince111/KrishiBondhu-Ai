@@ -11,7 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const MarketPriceSchema = z.object({
+const MarketPriceSchema = z.object({
   crop: z.string().describe('The name of the crop in both English and Bengali.'),
   price: z.string().describe('The current market price with units, e.g., ৳1,200 / কুইন্টাল.'),
   location: z.string().describe('The market location, e.g., Dhaka.'),
@@ -28,7 +28,26 @@ const MarketPriceFinderOutputSchema = z.object({
 export type MarketPriceFinderOutput = z.infer<typeof MarketPriceFinderOutputSchema>;
 
 export async function findMarketPrices(input: MarketPriceFinderInput): Promise<MarketPriceFinderOutput> {
-  return marketPriceFinderFlow(input);
+  const llmResponse = await prompt(input);
+  const toolRequest = llmResponse.toolRequest();
+
+  if (!toolRequest) {
+      // This case is unlikely if the prompt is well-defined, but it's good practice to handle it.
+      // We can try to generate a response without the tool.
+      const fallbackResponse = await ai.generate({
+          prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
+          output: { schema: MarketPriceFinderOutputSchema },
+      });
+      return fallbackResponse.output!;
+  }
+  
+  // Call the tool. In a real scenario, this would be where you execute the tool's logic.
+  const toolResponse = await llmResponse.forward(toolRequest);
+
+  // Send the tool's response back to the model.
+  const finalResponse = await prompt(input, {toolResponse});
+
+  return finalResponse.output!;
 }
 
 const getMarketPricesTool = ai.defineTool(
@@ -69,32 +88,13 @@ const prompt = ai.definePrompt({
   `,
 });
 
-const marketPriceFinderFlow = ai.defineFlow(
+// Note: The flow is not exported because it's not an async function and would violate the 'use server' contract.
+// Instead, the exported `findMarketPrices` function directly implements the flow logic.
+ai.defineFlow(
   {
     name: 'marketPriceFinderFlow',
     inputSchema: MarketPriceFinderInputSchema,
     outputSchema: MarketPriceFinderOutputSchema,
   },
-  async (input) => {
-    const llmResponse = await prompt(input);
-    const toolRequest = llmResponse.toolRequest();
-
-    if (!toolRequest) {
-        // This case is unlikely if the prompt is well-defined, but it's good practice to handle it.
-        // We can try to generate a response without the tool.
-        const fallbackResponse = await ai.generate({
-            prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
-            output: { schema: MarketPriceFinderOutputSchema },
-        });
-        return fallbackResponse.output!;
-    }
-    
-    // Call the tool. In a real scenario, this would be where you execute the tool's logic.
-    const toolResponse = await llmResponse.forward(toolRequest);
-
-    // Send the tool's response back to the model.
-    const finalResponse = await prompt(input, {toolResponse});
-
-    return finalResponse.output!;
-  }
+  findMarketPrices
 );

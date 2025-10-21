@@ -16,7 +16,6 @@ import { useToast } from '@/hooks/use-toast';
 import { getGovernmentSchemes, getMarketPrices } from '@/lib/actions';
 import { Loader2, ReceiptText, Search, Tag, Wand2 } from 'lucide-react';
 import type { GovernmentSchemeFinderOutput } from '@/ai/flows/government-scheme-finder';
-import type { MarketPriceSchema } from '@/ai/flows/market-price-finder';
 
 import {
   Select,
@@ -29,6 +28,12 @@ import {
 const formSchema = z.object({
   crop: z.string().min(2, 'Crop name is required.'),
   region: z.string().min(2, 'Region is required.'),
+});
+
+const MarketPriceSchema = z.object({
+  crop: z.string(),
+  price: z.string(),
+  location: z.string(),
 });
 
 export default function MarketInfoPage() {
