@@ -32,21 +32,21 @@
     },
     {
       "id": "slideshow-1",
-      "description": "Lush green rice paddy field under a blue sky.",
-      "imageUrl": "https://drive.usercontent.google.com/download?id=1XbS8rwGxjVkt_cafSLihaJqO4n6AWnWD&export=view&authuser=0",
-      "imageHint": "rice paddy"
+      "description": "A beautiful tea plantation in the hills.",
+      "imageUrl": "https://images.unsplash.com/photo-1701680460149-d3884667b40b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0ZWElMjBwbGFudGF0aW9ufGVufDB8fHx8MTc2MTA0NTk1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tea plantation"
     },
     {
       "id": "slideshow-2",
-      "description": "A farmer inspecting their crops.",
-      "imageUrl": "",
-      "imageHint": "farmer crops"
+      "description": "A vibrant yellow mustard field under a clear blue sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1687840466714-c06204b409fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXN0YXJkJTIwZmllbGR8ZW58MHx8fHwxNzYxMDcyMDM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mustard field"
     },
     {
       "id": "slideshow-3",
-      "description": "Close-up of ripe wheat in a field.",
-      "imageUrl": "",
-      "imageHint": "wheat field"
+      "description": "A farmer working in a rice paddy field.",
+      "imageUrl": "https://images.unsplash.com/photo-1718968924561-a25d9ec0c3f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmYXJtZXIlMjB3b3JraW5nfGVufDB8fHx8MTc2MTA3MjAzOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmer working"
     }
   ]
 }
