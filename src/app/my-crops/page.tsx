@@ -131,7 +131,10 @@ export default function MyCropsPage() {
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button><PlusCircle className="mr-2" />{t('myCrops.lands.addLandButton')}</Button>
+                <Button>
+                  <PlusCircle className="size-5 sm:mr-2" />
+                  <span className="hidden sm:inline">{t('myCrops.lands.addLandButton')}</span>
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>

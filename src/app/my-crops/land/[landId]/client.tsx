@@ -188,7 +188,10 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
             </div>
              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button disabled={isLandLoading}><PlusCircle className="mr-2"/>{t('myCrops.crops.addCropButton')}</Button>
+                    <Button disabled={isLandLoading}>
+                      <PlusCircle className="size-5 sm:mr-2"/>
+                      <span className="hidden sm:inline">{t('myCrops.crops.addCropButton')}</span>
+                    </Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
