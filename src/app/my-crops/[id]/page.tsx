@@ -39,8 +39,7 @@ type CropDetailsPageProps = {
   params: { landId: string, id: string };
 };
 
-export default function CropDetailsPage({ params }: CropDetailsPageProps) {
-  const { id: cropId, landId } = params;
+export default function CropDetailsPage({ params: { id: cropId, landId } }: CropDetailsPageProps) {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<CropGuidanceOutput | null>(null);
   const { toast } = useToast();

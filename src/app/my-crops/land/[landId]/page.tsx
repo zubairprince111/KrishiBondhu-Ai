@@ -86,8 +86,7 @@ const cropOptions = [
 ] as const;
 
 
-export default function LandDetailsPage({ params }: LandDetailsPageProps) {
-  const { landId } = params;
+export default function LandDetailsPage({ params: { landId } }: LandDetailsPageProps) {
   const [isPending, setIsPending] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
