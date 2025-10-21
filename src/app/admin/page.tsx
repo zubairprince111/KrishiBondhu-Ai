@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
@@ -20,13 +21,17 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { type ImagePlaceholder } from '@/lib/placeholder-images';
-import Image from 'next/image';
 import { useSlideshow } from '@/context/slideshow-context';
 
 export default function AdminPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { slideshowImages, addImage, removeImage } = useSlideshow();
   const { toast } = useToast();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -125,7 +130,7 @@ export default function AdminPage() {
                                     <Button size="sm" onClick={handleUpload}><Upload className="mr-2"/>Upload</Button>
                                 </div>
                             </div>
-                            <p className="text-sm text-muted-foreground">Current Images: {slideshowImages.length}</p>
+                            {isClient && <p className="text-sm text-muted-foreground">Current Images: {slideshowImages.length}</p>}
                         </CardContent>
                         <CardFooter>
                             <Dialog>
