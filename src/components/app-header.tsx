@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
 import { PanelLeft } from 'lucide-react';
-import { AppSidebar } from '@/components/app-sidebar';
+import { MobileAppSidebar } from '@/components/app-sidebar';
 
 type AppHeaderProps = {
   titleKey: TranslationKey;
@@ -36,7 +36,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0">
-                <AppSidebar isMobile />
+                <MobileAppSidebar />
             </SheetContent>
         </Sheet>
         <h1 className="font-headline text-2xl font-semibold">
