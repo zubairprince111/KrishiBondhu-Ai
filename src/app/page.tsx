@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useTransition } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import {
   Card,
@@ -30,12 +30,15 @@ import {
   Sprout,
   Wind,
   Droplets,
+  Loader2,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useSlideshow } from '@/context/slideshow-context';
 import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
+import { suggestSeasonalCrops } from '@/lib/actions';
+import { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
 
 const weatherData = {
   location: 'Dhaka, Bangladesh',
@@ -46,27 +49,21 @@ const weatherData = {
   wind: '12 km/h',
 };
 
-const allSeasonalCrops: { nameKey: TranslationKey; reasonKey: TranslationKey }[] = [
-    { nameKey: 'dashboard.seasonalCrops.jute.name', reasonKey: 'dashboard.seasonalCrops.jute.reason'},
-    { nameKey: 'dashboard.seasonalCrops.ausRice.name', reasonKey: 'dashboard.seasonalCrops.ausRice.reason'},
-    { nameKey: 'dashboard.seasonalCrops.okra.name', reasonKey: 'dashboard.seasonalCrops.okra.reason'},
-    { nameKey: 'dashboard.seasonalCrops.brinjal.name', reasonKey: 'dashboard.seasonalCrops.brinjal.reason'},
-    { nameKey: 'dashboard.seasonalCrops.paddy.name', reasonKey: 'dashboard.seasonalCrops.paddy.reason'},
-    { nameKey: 'dashboard.seasonalCrops.potato.name', reasonKey: 'dashboard.seasonalCrops.potato.reason'},
-]
-
 export default function DashboardPage() {
     const { slideshowImages } = useSlideshow();
-    const [seasonalCrops, setSeasonalCrops] = useState<{ nameKey: TranslationKey; reasonKey: TranslationKey }[]>([]);
+    const [isPending, startTransition] = useTransition();
+    const [seasonalCrops, setSeasonalCrops] = useState<OptimalCropSuggestionOutput | null>(null);
+
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: true })
     );
     const { t } = useLanguage();
 
-    useEffect(() => {
-        // Shuffle the array and take the first 3 to prevent hydration mismatch
-        const shuffled = [...allSeasonalCrops].sort(() => 0.5 - Math.random());
-        setSeasonalCrops(shuffled.slice(0, 3));
+     useEffect(() => {
+        startTransition(async () => {
+            const { data } = await suggestSeasonalCrops();
+            setSeasonalCrops(data);
+        });
     }, []);
 
 
@@ -176,16 +173,26 @@ export default function DashboardPage() {
 
                  <Card className="bg-green-900/10 dark:bg-green-500/10 border-green-200 dark:border-green-900">
                      <CardHeader>
-                        <CardTitle className="font-headline text-lg">Seasonal Crop Suggestions</CardTitle>
+                        <CardTitle className="font-headline text-lg">AI Seasonal Suggestions</CardTitle>
                         <CardDescription>Based on your region's current conditions</CardDescription>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
-                        {seasonalCrops.map(crop => (
-                             <div key={crop.nameKey} className="bg-background/50 rounded-lg p-2">
-                                <p className="font-bold text-sm">{t(crop.nameKey)}</p>
-                                <p className="text-xs text-muted-foreground">{t(crop.reasonKey)}</p>
+                    <CardContent className="flex items-center justify-center min-h-[100px]">
+                      {isPending && <Loader2 className="size-8 animate-spin text-primary" />}
+                      {!isPending && seasonalCrops && (
+                         <div className="w-full space-y-2">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
+                              {seasonalCrops.suggestedCrops.map(crop => (
+                                  <div key={crop} className="bg-background/50 rounded-lg p-2">
+                                      <p className="font-bold text-sm">{crop}</p>
+                                  </div>
+                              ))}
                             </div>
-                        ))}
+                            <p className="text-xs text-muted-foreground text-center pt-1">{seasonalCrops.reasoning}</p>
+                         </div>
+                      )}
+                       {!isPending && !seasonalCrops && (
+                          <p className="text-sm text-muted-foreground">Could not load suggestions.</p>
+                       )}
                     </CardContent>
                 </Card>
             </div>
