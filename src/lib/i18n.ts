@@ -1,8 +1,8 @@
 export const translations = {
   // App Header
   'app.header.title.welcome': {
-    en: 'Welcome to KrishiBondhu',
-    bn: 'কৃষিবন্ধুতে স্বাগতম',
+    en: 'KrishiBondhu',
+    bn: 'কৃষিবন্ধু',
   },
   'app.header.title.cropDoctor': {
     en: 'AI Crop Doctor',
