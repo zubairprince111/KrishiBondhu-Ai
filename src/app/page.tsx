@@ -100,8 +100,8 @@ export default function DashboardPage() {
     return (
         <SidebarInset>
         <AppHeader titleKey="app.header.title.welcome" />
-        <main className="flex-1 p-4 md:p-6">
-            <Card className="relative overflow-hidden">
+        <main className="flex-1 p-4 md:p-6 space-y-6">
+            <Card className="overflow-hidden">
               <Carousel 
                 className="w-full"
                 plugins={[plugin.current]}
@@ -127,32 +127,34 @@ export default function DashboardPage() {
                 <CarouselPrevious className="absolute left-4" />
                 <CarouselNext className="absolute right-4" />
               </Carousel>
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 space-y-4">
-                <Card className="bg-black/30 backdrop-blur-lg text-white border-white/20">
+            </Card>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="bg-blue-900/10 dark:bg-blue-500/10 border-blue-200 dark:border-blue-900">
                      <CardHeader>
-                        <CardTitle className="font-headline text-white flex items-center justify-between">
+                        <CardTitle className="font-headline flex items-center justify-between">
                             <span>{t('dashboard.weather.title')}</span>
                             <span className="text-lg font-medium">{weatherData.temp}°C</span>
                         </CardTitle>
-                        <CardDescription className="flex items-center gap-1 text-white/90 pt-1"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
+                        <CardDescription className="flex items-center gap-1 pt-1"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex items-center justify-between gap-4 text-center">
                         <div className="flex flex-col items-center">
                             {weatherData.icon}
-                            <p className="text-white/90 text-sm mt-1">{t(weatherData.conditionKey)}</p>
+                            <p className="text-muted-foreground text-sm mt-1">{t(weatherData.conditionKey)}</p>
                         </div>
                         <div className="flex gap-4 text-left">
                             <div className="flex items-center gap-2">
-                                <Droplets className="size-5 text-blue-300"/>
+                                <Droplets className="size-5 text-blue-400"/>
                                 <div>
-                                    <p className="text-xs text-white/80">Humidity</p>
+                                    <p className="text-xs text-muted-foreground">Humidity</p>
                                     <p className="font-bold">{weatherData.humidity}</p>
                                 </div>
                             </div>
                              <div className="flex items-center gap-2">
-                                <Wind className="size-5 text-gray-300"/>
+                                <Wind className="size-5 text-gray-400"/>
                                  <div>
-                                    <p className="text-xs text-white/80">Wind</p>
+                                    <p className="text-xs text-muted-foreground">Wind</p>
                                     <p className="font-bold">{weatherData.wind}</p>
                                 </div>
                             </div>
@@ -160,24 +162,23 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                 <Card className="bg-black/30 backdrop-blur-lg text-white border-white/20">
+                 <Card className="bg-green-900/10 dark:bg-green-500/10 border-green-200 dark:border-green-900">
                      <CardHeader>
-                        <CardTitle className="font-headline text-white text-lg">Seasonal Crop Suggestions</CardTitle>
-                        <CardDescription className="text-white/90">Based on your region&apos;s current conditions</CardDescription>
+                        <CardTitle className="font-headline text-lg">Seasonal Crop Suggestions</CardTitle>
+                        <CardDescription>Based on your region's current conditions</CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center">
                         {seasonalCrops.map(crop => (
-                             <div key={crop.name} className="bg-white/10 rounded-lg p-2">
+                             <div key={crop.name} className="bg-background/50 rounded-lg p-2">
                                 <p className="font-bold text-sm">{crop.name}</p>
-                                <p className="text-xs text-white/80">{crop.reason}</p>
+                                <p className="text-xs text-muted-foreground">{crop.reason}</p>
                             </div>
                         ))}
                     </CardContent>
                 </Card>
-              </div>
-            </Card>
+            </div>
 
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
                 <Link href={feature.href} key={feature.href}>
                 <Card className="flex h-full flex-col justify-between transition-all hover:shadow-md hover:-translate-y-1">
@@ -197,7 +198,7 @@ export default function DashboardPage() {
             ))}
             </div>
 
-            <div className="mt-8">
+            <div >
             <Card className="bg-accent/50">
                 <CardHeader>
                 <div className="flex items-center gap-4">
