@@ -72,7 +72,7 @@ export const translations = {
   },
   'sidebar.nav.community': {
     en: 'Community',
-    bn: 'کমিউনিটি',
+    bn: 'কমিউনিটি',
   },
   'sidebar.nav.marketInfo': {
     en: 'Market Info',
@@ -109,7 +109,7 @@ export const translations = {
   },
   'dashboard.seasonalCrops.ausRice.name': {
     en: 'Aus Rice',
-    bn: 'আউש ধান',
+    bn: 'আউশ ধান',
   },
   'dashboard.seasonalCrops.ausRice.reason': {
     en: 'Monsoon season staple',
@@ -156,7 +156,7 @@ export const translations = {
     bn: 'ছবি থেকে ফসলের রোগ নির্ণয় করুন।',
   },
   'dashboard.feature.voiceAssistant.title': {
-    en: 'Voice Assistant (Mati AI)',
+    en: 'Mati AI',
     bn: 'মাটি Ai',
   },
   'dashboard.feature.voiceAssistant.description': {
@@ -181,7 +181,7 @@ export const translations = {
   },
   'dashboard.feature.community.title': {
     en: 'Community Chat',
-    bn: 'کমিউনিটি চ্যাট',
+    bn: 'কমিউনিটি',
   },
   'dashboard.feature.community.description': {
     en: 'Connect with other farmers.',
@@ -220,6 +220,151 @@ export const translations = {
   'weather.season.summer': {
     en: 'Summer',
     bn: 'গ্রীষ্মকাল',
+  },
+  // My Crops Page
+  'myCrops.title': {
+    en: 'My Active Crop',
+    bn: 'আমার সক্রিয় ফসল',
+  },
+  'myCrops.description': {
+    en: 'Select your crop to get personalized AI guidance from sowing to harvest.',
+    bn: 'বপন থেকে শুরু করে ফসল কাটা পর্যন্ত ব্যক্তিগতকৃত এআই নির্দেশিকা পেতে আপনার ফসল নির্বাচন করুন।',
+  },
+  'myCrops.form.cropName.label': {
+    en: 'Crop Name',
+    bn: 'ফসলের নাম',
+  },
+  'myCrops.form.cropName.placeholder': {
+    en: 'Select a crop',
+    bn: 'একটি ফসল নির্বাচন করুন',
+  },
+  'myCrops.form.cropName.options.rice': {
+    en: 'Rice (ধান)',
+    bn: 'ধান',
+  },
+  'myCrops.form.cropName.options.jute': {
+    en: 'Jute (পাট)',
+    bn: 'পাট',
+  },
+  'myCrops.form.cropName.options.wheat': {
+    en: 'Wheat (গম)',
+    bn: 'গম',
+  },
+  'myCrops.form.cropName.options.potato': {
+    en: 'Potato (আলু)',
+    bn: 'আলু',
+  },
+  'myCrops.form.cropName.options.tomato': {
+    en: 'Tomato (টমেটো)',
+    bn: 'টমেটো',
+  },
+  'myCrops.form.cropName.options.lentil': {
+    en: 'Lentil (মসুর ডাল)',
+    bn: 'মসুর ডাল',
+  },
+  'myCrops.form.region.label': {
+    en: 'Region',
+    bn: 'অঞ্চল',
+  },
+  'myCrops.form.region.placeholder': {
+    en: 'Select your region',
+    bn: 'আপনার অঞ্চল নির্বাচন করুন',
+  },
+  'myCrops.form.region.options.dhaka': {
+    en: 'Dhaka',
+    bn: 'ঢাকা',
+  },
+  'myCrops.form.region.options.chittagong': {
+    en: 'Chittagong',
+    bn: 'চট্টগ্রাম',
+  },
+  'myCrops.form.region.options.rajshahi': {
+    en: 'Rajshahi',
+    bn: 'রাজশাহী',
+  },
+  'myCrops.form.region.options.khulna': {
+    en: 'Khulna',
+    bn: 'খুলনা',
+  },
+  'myCrops.form.region.options.barisal': {
+    en: 'Barisal',
+    bn: 'বরিশাল',
+  },
+  'myCrops.form.region.options.sylhet': {
+    en: 'Sylhet',
+    bn: 'সিলেট',
+  },
+  'myCrops.form.region.options.rangpur': {
+    en: 'Rangpur',
+    bn: 'রংপুর',
+  },
+  'myCrops.form.region.options.mymensingh': {
+    en: 'Mymensingh',
+    bn: 'ময়মনসিংহ',
+  },
+  'myCrops.form.stage.label': {
+    en: 'Current Crop Stage',
+    bn: 'ফসলের বর্তমান পর্যায়',
+  },
+  'myCrops.form.stage.placeholder': {
+    en: 'Select current stage',
+    bn: 'বর্তমান পর্যায় নির্বাচন করুন',
+  },
+  'myCrops.form.stage.options.landPreparation': {
+    en: 'Land Preparation',
+    bn: 'জমি প্রস্তুতি',
+  },
+  'myCrops.form.stage.options.seedSowing': {
+    en: 'Seed Sowing',
+    bn: 'বীজ বপন',
+  },
+  'myCrops.form.stage.options.germination': {
+    en: 'Germination & Early Growth',
+    bn: 'অঙ্কুরোদ্গম ও প্রাথমিক বৃদ্ধি',
+  },
+  'myCrops.form.stage.options.vegetative': {
+    en: 'Vegetative Growth',
+    bn: 'শারীরবৃত্তীয় বৃদ্ধি',
+  },
+  'myCrops.form.stage.options.flowering': {
+    en: 'Flowering & Fruiting',
+    bn: 'ফুল ও ফল ধারণ',
+  },
+  'myCrops.form.stage.options.harvesting': {
+    en: 'Harvesting',
+    bn: 'ফসল সংগ্রহ',
+  },
+  'myCrops.form.stage.options.postHarvest': {
+    en: 'Post-Harvest',
+    bn: 'ফসল তোলার পরের কাজ',
+  },
+  'myCrops.form.button.submit': {
+    en: 'Get Guidance',
+    bn: 'নির্দেশিকা পান',
+  },
+  'myCrops.form.button.pending': {
+    en: 'Please wait',
+    bn: 'অনুগ্রহ করে অপেক্ষা করুন',
+  },
+  'myCrops.guide.title': {
+    en: 'AI Farming Guide',
+    bn: 'এআই কৃষি নির্দেশিকা',
+  },
+  'myCrops.guide.description': {
+    en: 'Your personalized step-by-step guide for growing',
+    bn: 'আপনার চাষের জন্য ব্যক্তিগতকৃত ধাপে ধাপে নির্দেশিকা',
+  },
+  'myCrops.guide.defaultCrop': {
+    en: 'your crop',
+    bn: 'আপনার ফসল',
+  },
+  'myCrops.guide.placeholder': {
+    en: 'Your personalized crop guide will appear here.',
+    bn: 'আপনার ব্যক্তিগতকৃত ফসল নির্দেশিকা এখানে প্রদর্শিত হবে।',
+  },
+  'myCrops.guide.loading': {
+    en: 'Generating your personalized guide...',
+    bn: 'আপনার ব্যক্তিগতকৃত নির্দেশিকা তৈরি করা হচ্ছে...',
   },
 };
 
