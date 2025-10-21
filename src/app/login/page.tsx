@@ -10,6 +10,7 @@ import {
   initiateEmailSignUp,
   initiateEmailSignIn,
   initiateAnonymousSignIn,
+  initiateGoogleSignIn,
 } from '@/firebase/non-blocking-login';
 import { useAuth } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -31,8 +32,16 @@ const signInSchema = z.object({
   password: z.string().min(1, 'Password is required.'),
 });
 
+const GoogleIcon = () => (
+    <svg className="size-4" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <title>Google</title>
+        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.05 1.05-2.86 3.28-7.84 3.28-5.74 0-10.4-4.57-10.4-10.33s4.66-10.33 10.4-10.33c3.34 0 5.38 1.34 6.6 2.52l2.84-2.78C19.11 1.76 16.25 0 12.48 0 5.88 0 0 5.74 0 12.42s5.88 12.42 12.48 12.42c7.2 0 12.12-4.13 12.12-12.36 0-.8-.08-1.55-.2-2.18z" />
+    </svg>
+);
+
+
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState< 'signIn' | 'signUp' | 'anonymous' | null >(null);
+  const [isLoading, setIsLoading] = useState< 'signIn' | 'signUp' | 'anonymous' | 'google' | null >(null);
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -56,6 +65,8 @@ export default function LoginPage() {
         description = 'Invalid email or password. Please check your credentials and try again.';
     } else if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
         description = 'The password is too weak. Please use at least 6 characters.';
+    } else if (error.code === AuthErrorCodes.POPUP_CLOSED_BY_USER) {
+        description = 'The sign-in window was closed. Please try again.';
     }
     toast({
       variant: 'destructive',
@@ -63,51 +74,45 @@ export default function LoginPage() {
       description,
     });
   };
+  
+  const handleAuthRedirect = (user: any) => {
+      if (user) {
+        router.push('/');
+      } else {
+        // This is a workaround to catch errors from non-blocking sign-in calls.
+        const unsubscribe = auth.onAuthStateChanged(() => {});
+        setTimeout(() => {
+          const authError = (auth as any)._error;
+          if (authError) handleError(authError as AuthError);
+          unsubscribe();
+        }, 1500);
+      }
+  }
 
   const onSignUp = (values: z.infer<typeof signUpSchema>) => {
     setIsLoading('signUp');
-    // We don't await here. onAuthStateChanged will handle the redirect.
     initiateEmailSignUp(auth, values.email, values.password);
-    // Monitor for errors specifically
-    auth.onAuthStateChanged(user => {
-      if (!user) { // Error state will be handled here if signup fails
-          const unsubscribe = auth.onAuthStateChanged(() => {}); // Dummy to get error
-          // This is a bit of a workaround to catch the error from the non-blocking call
-          setTimeout(() => {
-              const authError = (auth as any)._error;
-              if (authError) handleError(authError as AuthError);
-              unsubscribe();
-          }, 1500);
-      } else {
-        router.push('/');
-      }
-    });
+    auth.onAuthStateChanged(handleAuthRedirect);
   };
 
   const onSignIn = (values: z.infer<typeof signInSchema>) => {
     setIsLoading('signIn');
     initiateEmailSignIn(auth, values.email, values.password);
-     auth.onAuthStateChanged(user => {
-      if (user) {
-        router.push('/');
-      } else {
-          const unsubscribe = auth.onAuthStateChanged(() => {});
-           setTimeout(() => {
-              const authError = (auth as any)._error;
-              if (authError) handleError(authError as AuthError);
-              unsubscribe();
-          }, 1500);
-      }
-    });
+     auth.onAuthStateChanged(handleAuthRedirect);
   };
 
   const onAnonymousSignIn = () => {
     setIsLoading('anonymous');
     initiateAnonymousSignIn(auth);
-    auth.onAuthStateChanged(user => {
-      if (user) router.push('/');
-    });
+    auth.onAuthStateChanged(handleAuthRedirect);
   };
+
+  const onGoogleSignIn = () => {
+    setIsLoading('google');
+    initiateGoogleSignIn(auth);
+    auth.onAuthStateChanged(handleAuthRedirect);
+  };
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -187,15 +192,22 @@ export default function LoginPage() {
             </Card>
           </TabsContent>
         </Tabs>
+        
         <div className="relative my-4">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue as a guest</span>
+                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
         </div>
-        <Button variant="secondary" className="w-full" onClick={onAnonymousSignIn} disabled={!!isLoading}>
-            {isLoading === 'anonymous' ? <Loader2 className="animate-spin" /> : <><VenetianMask className="mr-2"/>Continue as Guest</>}
-        </Button>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Button variant="outline" onClick={onGoogleSignIn} disabled={!!isLoading}>
+                {isLoading === 'google' ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> Google</>}
+            </Button>
+            <Button variant="secondary" onClick={onAnonymousSignIn} disabled={!!isLoading}>
+                {isLoading === 'anonymous' ? <Loader2 className="animate-spin" /> : <><VenetianMask className="mr-2"/>Guest</>}
+            </Button>
+        </div>
       </div>
     </div>
   );
