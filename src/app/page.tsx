@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import {
   Card,
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                 <CarouselContent>
                   {slideshowImages.map((image) => (
                     <CarouselItem key={image.id}>
-                      <div className="relative h-80 w-full">
+                      <div className="relative h-56 sm:h-80 w-full">
                         <Image
                           src={image.imageUrl}
                           alt={image.description}
@@ -114,7 +114,7 @@ export default function DashboardPage() {
                 <CarouselPrevious className="left-4" />
                 <CarouselNext className="right-4" />
               </Carousel>
-               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
                     <Card className="max-w-md bg-white/20 backdrop-blur-sm text-white border-white/30">
                          <CardHeader>
                             <CardTitle className="font-headline text-white">Daily Weather</CardTitle>
@@ -131,19 +131,19 @@ export default function DashboardPage() {
                 </div>
             </Card>
 
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
                 <Link href={feature.href} key={feature.href}>
                 <Card className="flex h-full flex-col justify-between transition-all hover:shadow-md hover:-translate-y-1">
                     <CardHeader>
                     <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                        <CardTitle className="font-headline text-xl">
+                        <div className="space-y-1">
+                        <CardTitle className="font-headline text-lg sm:text-xl">
                             {feature.title}
                         </CardTitle>
-                        <CardDescription>{feature.description}</CardDescription>
+                        <CardDescription className="text-xs sm:text-sm">{feature.description}</CardDescription>
                         </div>
-                        {feature.icon}
+                        {React.cloneElement(feature.icon, { className: 'size-6 sm:size-8 text-primary shrink-0 ml-2' })}
                     </div>
                     </CardHeader>
                 </Card>

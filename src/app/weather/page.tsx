@@ -32,7 +32,7 @@ export default function WeatherPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div>
                         <CardTitle className="font-headline">Current Weather</CardTitle>
                         <CardDescription className="flex items-center gap-1"><MapPin className="size-4"/>{weatherData.current.location}</CardDescription>
@@ -52,7 +52,7 @@ export default function WeatherPage() {
                 <p className="text-xl text-muted-foreground">{weatherData.current.condition}</p>
               </div>
               <div className="flex flex-1 items-center justify-center">{weatherData.current.icon}</div>
-              <div className="grid flex-1 grid-cols-3 gap-4 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 flex-1 gap-4 text-center w-full">
                 <div>
                   <p className="text-sm text-muted-foreground">Humidity</p>
                   <p className="font-semibold">{weatherData.current.details.humidity}</p>
@@ -74,9 +74,9 @@ export default function WeatherPage() {
               <CardTitle className="font-headline">5-Day Forecast</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-4">
                 {weatherData.forecast.map((day) => (
-                  <div key={day.day} className="flex flex-col items-center gap-2 rounded-lg bg-background p-4 text-center">
+                  <div key={day.day} className="flex flex-col items-center gap-2 rounded-lg bg-background p-2 sm:p-4 text-center">
                     <p className="font-semibold">{day.day}</p>
                     {day.icon}
                     <p className="text-lg font-bold">{day.temp}°</p>

@@ -81,7 +81,7 @@ export default function AdminPage() {
                     <CardTitle className="font-headline">Administrator Controls</CardTitle>
                     <CardDescription>Manage application settings, users, and content from here.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <CardContent className="grid gap-6 sm:grid-cols-2">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-sm font-medium">User Management</CardTitle>
@@ -144,7 +144,7 @@ export default function AdminPage() {
                                             Review and remove images from the main dashboard slideshow.
                                         </DialogDescription>
                                     </DialogHeader>
-                                    <div className="grid grid-cols-2 gap-4 py-4 max-h-[60vh] overflow-y-auto">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 max-h-[60vh] overflow-y-auto">
                                         {slideshowImages.map(image => (
                                             <div key={image.id} className="relative group">
                                                 <Image
