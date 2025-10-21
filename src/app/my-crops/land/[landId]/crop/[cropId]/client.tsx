@@ -24,7 +24,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -44,8 +44,7 @@ type CropDetailsClientPageProps = {
 };
 
 export default function CropDetailsPageClient({ landId, cropId }: CropDetailsClientPageProps) {
-  const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<CropGuidanceOutput | null>(null);
+  const [isGuidanceLoading, startGuidanceLoading] = useTransition();
   const { toast } = useToast();
   const { t } = useLanguage();
   const { user } = useUser();
@@ -65,37 +64,53 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
   const { data: crop, isLoading: isCropLoading } = useDoc(cropDocRef);
 
   useEffect(() => {
-    if (crop && land) {
-      setResult(null);
-      startTransition(async () => {
-        const { data, error } = await fetchCropGuidance({
+    // If there's a crop, but it has no guidance, fetch it.
+    if (crop && !crop.guidance && !isGuidanceLoading && cropDocRef && land) {
+      startGuidanceLoading(async () => {
+        const { data: guidanceData, error } = await fetchCropGuidance({
             cropName: crop.cropName,
-            region: land?.location || 'Bangladesh',
+            region: land.location || 'Bangladesh',
             currentStage: crop.status,
         });
         if (error) {
           toast({
             variant: 'destructive',
             title: 'Error',
-            description: error,
+            description: 'Could not fetch AI guidance for this crop.',
           });
-        } else if (data) {
-          setResult(data);
+        } else if (guidanceData) {
+          // Save the guidance back to the document
+          await updateDoc(cropDocRef, { guidance: guidanceData });
         }
       });
     }
-  }, [crop, land, toast]);
+  }, [crop, land, cropDocRef, isGuidanceLoading, toast]);
+
+
+  // Derive result from the crop document itself now
+  const result: CropGuidanceOutput | null = crop?.guidance || null;
 
   const cropNameTranslationKey = `myCrops.form.cropName.options.${(crop?.cropName || '').toLowerCase()}` as const;
 
   const sowingDate = crop?.sowingDate ? new Date(crop.sowingDate) : null;
   const daysPassed = sowingDate ? differenceInDays(new Date(), sowingDate) : 0;
 
-  const currentStageInfo = result?.guidance.find(step => !step.isCompleted);
+  // Re-calculate the isCompleted status on the client side based on the current date
+  const clientSideGuidance = result?.guidance.map(step => {
+      const completedStepsDuration = result.guidance
+          .slice(0, result.guidance.indexOf(step))
+          .reduce((acc, s) => acc + s.durationInDays, 0);
+      return {
+          ...step,
+          isCompleted: daysPassed >= completedStepsDuration,
+      };
+  });
+  
+  const currentStageInfo = clientSideGuidance?.find(step => !step.isCompleted);
   const stageDuration = currentStageInfo?.durationInDays ?? 0;
   
-  const completedStagesDuration = result?.guidance
-    .filter(step => step.isCompleted && step.title !== currentStageInfo?.title)
+  const completedStagesDuration = clientSideGuidance
+    ?.filter(step => step.isCompleted && step.title !== currentStageInfo?.title)
     .reduce((acc, step) => acc + step.durationInDays, 0) ?? 0;
     
   const daysIntoCurrentStage = Math.max(0, daysPassed - completedStagesDuration);
@@ -131,11 +146,10 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
             </Breadcrumb>
         </div>
 
-        {isCropLoading || isPending ? (
+        {isCropLoading ? (
             <Card>
                 <CardContent className="flex min-h-80 flex-col items-center justify-center space-y-4 text-center">
                     <Loader2 className="size-12 animate-spin text-primary" />
-                    <p className="text-primary">{t('myCrops.guide.loading')}</p>
                 </CardContent>
             </Card>
         ) : crop ? (
@@ -176,7 +190,7 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {!result ? (
+                    {!result || isGuidanceLoading ? (
                        <div className="flex min-h-60 flex-col items-center justify-center space-y-4 text-center">
                             <Loader2 className="size-12 animate-spin text-primary" />
                             <p className="text-primary">{t('myCrops.guide.loading')}</p>
@@ -188,7 +202,7 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
                         className="w-full"
                         defaultValue={currentStageInfo?.title}
                       >
-                        {result.guidance.map((step) => (
+                        {clientSideGuidance && clientSideGuidance.map((step) => (
                           <AccordionItem value={step.title} key={step.title}>
                             <AccordionTrigger>
                               <div className="flex items-center gap-3">

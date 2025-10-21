@@ -104,6 +104,25 @@
         "status": {
           "type": "string",
           "description": "The current growth stage of the crop, calculated from sowing date."
+        },
+        "guidance": {
+            "type": "object",
+            "description": "The AI-generated step-by-step guidance plan for this crop.",
+            "properties": {
+                "guidance": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": { "type": "string" },
+                            "details": { "type": "string" },
+                            "isCompleted": { "type": "boolean" },
+                            "durationInDays": { "type": "number" }
+                        },
+                        "required": ["title", "details", "isCompleted", "durationInDays"]
+                    }
+                }
+            }
         }
       },
       "required": [
@@ -354,5 +373,3 @@
     "reasoning": "The Firestore structure is updated to support multiple lands per user. A new top-level collection `lands` is added under each user's document (`/users/{userId}/lands/{landId}`). The `crops` collection is now a subcollection of a `land`, enabling a many-to-many relationship between users and crops via lands. This is a more scalable and organized way to manage multiple farming plots. Other collections remain unchanged."
   }
 }
-
-    

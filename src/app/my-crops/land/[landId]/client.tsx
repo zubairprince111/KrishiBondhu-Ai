@@ -45,13 +45,14 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle, Tractor, ChevronRight, Sprout } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, serverTimestamp, doc } from 'firebase/firestore';
+import { collection, serverTimestamp, doc, addDoc, updateDoc } from 'firebase/firestore';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { fetchCropGuidance } from '@/lib/actions';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -126,7 +127,7 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
   });
 
   async function onSubmit(values: z.infer<typeof cropFormSchema>) {
-    if (!user || !firestore || !landDocRef) {
+    if (!user || !firestore || !landCropsQuery || !land) {
         toast({ variant: 'destructive', title: t('myCrops.addCropDialog.toast.error.title'), description: 'User or land not found.' });
         return;
     }
@@ -135,22 +136,39 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
     const cropData = {
         ...values,
         sowingDate: format(values.sowingDate, 'yyyy-MM-dd'),
-        status: values.status, // Use the user-selected status
+        status: values.status,
         userProfileId: user.uid,
         landId: landId,
         createdAt: serverTimestamp(),
+        guidance: null, // Initially null
     };
 
     try {
-      if (landCropsQuery) {
-        addDocumentNonBlocking(landCropsQuery, cropData);
-        toast({
-            title: t('myCrops.addCropDialog.toast.success.title'),
-            description: t('myCrops.addCropDialog.toast.success.description', { cropName: values.cropName }),
-        });
-        form.reset();
-        setIsDialogOpen(false);
+      // Add the document optimistically
+      const newDocRef = await addDoc(landCropsQuery, cropData);
+      
+      toast({
+          title: t('myCrops.addCropDialog.toast.success.title'),
+          description: t('myCrops.addCropDialog.toast.success.description', { cropName: values.cropName }),
+      });
+      form.reset();
+      setIsDialogOpen(false);
+
+      // Now, fetch the guidance in the background
+      const { data: guidanceData, error: guidanceError } = await fetchCropGuidance({
+        cropName: values.cropName,
+        region: land.location || 'Bangladesh',
+        currentStage: values.status,
+      });
+
+      if (guidanceData) {
+        // Update the document with the fetched guidance
+        updateDocumentNonBlocking(doc(firestore, newDocRef.path), { guidance: guidanceData });
+      } else if (guidanceError) {
+        console.error("Failed to fetch guidance for new crop:", guidanceError);
+        // Optional: show a non-blocking toast that guidance failed
       }
+
     } catch (error) {
        toast({
         variant: 'destructive',
