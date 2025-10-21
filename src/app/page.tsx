@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import {
   Card,
@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 
 const features = [
   {
@@ -79,10 +79,14 @@ const weatherData = {
 };
 
 export default function DashboardPage() {
-    const slideshowImages = PlaceHolderImages.filter(p => p.id.startsWith('slideshow-'));
+    const [slideshowImages, setSlideshowImages] = useState<ImagePlaceholder[]>([]);
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: true })
     );
+
+    useEffect(() => {
+        setSlideshowImages(PlaceHolderImages.filter(p => p.id.startsWith('slideshow-')));
+    }, []);
 
     return (
         <SidebarInset>

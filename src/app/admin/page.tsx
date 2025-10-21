@@ -19,13 +19,15 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import Image from 'next/image';
 
 export default function AdminPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [slideshowImages, setSlideshowImages] = useState<ImagePlaceholder[]>(
+    PlaceHolderImages.filter(p => p.id.startsWith('slideshow-'))
+  );
   const { toast } = useToast();
-  const slideshowImages = PlaceHolderImages.filter(p => p.id.startsWith('slideshow-'));
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -36,12 +38,18 @@ export default function AdminPage() {
   const handleUpload = () => {
     if (selectedFile) {
       // Simulate upload
+      const newImage: ImagePlaceholder = {
+        id: `slideshow-${Date.now()}`,
+        description: selectedFile.name,
+        imageUrl: URL.createObjectURL(selectedFile),
+        imageHint: 'new custom',
+      };
+      setSlideshowImages(prev => [...prev, newImage]);
       toast({
         title: 'Upload Successful',
-        description: `File "${selectedFile.name}" has been uploaded.`,
+        description: `File "${selectedFile.name}" has been added to the slideshow preview.`,
       });
       setSelectedFile(null);
-      // Here you would typically call a server action to handle the file
     } else {
       toast({
         variant: 'destructive',
@@ -49,6 +57,14 @@ export default function AdminPage() {
         description: 'Please select a file to upload.',
       });
     }
+  };
+  
+  const handleRemoveImage = (id: string) => {
+    setSlideshowImages(prev => prev.filter(image => image.id !== id));
+    toast({
+        title: 'Image Removed',
+        description: 'The image has been removed from the slideshow preview.',
+    });
   };
 
   return (
@@ -106,7 +122,7 @@ export default function AdminPage() {
                             <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <Label htmlFor="picture">Add New Image</Label>
                                 <div className="flex w-full max-w-sm items-center space-x-2">
-                                    <Input id="picture" type="file" onChange={handleFileChange} />
+                                    <Input id="picture" type="file" onChange={handleFileChange} accept="image/*"/>
                                     <Button size="sm" onClick={handleUpload}><Upload className="mr-2"/>Upload</Button>
                                 </div>
                             </div>
@@ -124,7 +140,7 @@ export default function AdminPage() {
                                             Review and remove images from the main dashboard slideshow.
                                         </DialogDescription>
                                     </DialogHeader>
-                                    <div className="grid grid-cols-2 gap-4 py-4">
+                                    <div className="grid grid-cols-2 gap-4 py-4 max-h-[60vh] overflow-y-auto">
                                         {slideshowImages.map(image => (
                                             <div key={image.id} className="relative group">
                                                 <Image
@@ -132,9 +148,9 @@ export default function AdminPage() {
                                                     alt={image.description}
                                                     width={300}
                                                     height={200}
-                                                    className="rounded-md object-cover"
+                                                    className="rounded-md object-cover aspect-[3/2]"
                                                 />
-                                                 <Button variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                 <Button variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleRemoveImage(image.id)}>
                                                     <X className="size-4"/>
                                                     <span className="sr-only">Remove Image</span>
                                                 </Button>
