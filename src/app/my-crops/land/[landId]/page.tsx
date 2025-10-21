@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState } from 'react';
@@ -306,5 +305,3 @@ export default function LandDetailsPage({ params: { landId } }: LandDetailsPageP
     </SidebarInset>
   );
 }
-
-    

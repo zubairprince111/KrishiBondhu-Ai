@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useTransition, useState, useEffect } from 'react';
@@ -168,5 +167,3 @@ export default function CropDetailsPage({ params: { id: cropId, landId } }: Crop
     </SidebarInset>
   );
 }
-
-    
