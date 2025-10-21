@@ -366,7 +366,7 @@
         "definition": {
             "entityName": "CommunityPost",
             "schema": { "$ref": "#/entities/CommunityPost" },
-            "description": "Stores all community posts, publicly readable."
+            "description": "Stores all community posts. This collection is publicly readable by all authenticated users."
         }
       },
       {
