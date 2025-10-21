@@ -27,6 +27,7 @@ import {
   Landmark,
   WifiOff,
   MapPin,
+  Sprout,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
@@ -113,11 +114,12 @@ export default function DashboardPage() {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-4" />
-                <CarouselNext className="right-4" />
+                <CarouselPrevious className="absolute left-4" />
+                <CarouselNext className="absolute right-4" />
               </Carousel>
-               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
-                    <Card className="max-w-md bg-white/20 backdrop-blur-sm text-white border-white/30">
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+                    <Card className="bg-white/20 backdrop-blur-sm text-white border-white/30">
                          <CardHeader>
                             <CardTitle className="font-headline text-white">{t('dashboard.weather.title')}</CardTitle>
                             <CardDescription className="flex items-center gap-1 text-white/90"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
@@ -130,7 +132,21 @@ export default function DashboardPage() {
                             </div>
                         </CardContent>
                     </Card>
+                     <Card className="bg-white/20 backdrop-blur-sm text-white border-white/30">
+                         <CardHeader>
+                            <CardTitle className="font-headline text-white">AI Crop Suggestion</CardTitle>
+                            <CardDescription className="text-white/90">Based on today&apos;s weather</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-center gap-4 text-center">
+                            <Sprout className="size-12 text-green-300" />
+                            <div className='text-left'>
+                                <p className="font-headline text-2xl font-bold">Jute (পাট)</p>
+                                <p className="text-white/90 text-sm">Ideal for current humid conditions.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
+              </div>
             </Card>
 
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
