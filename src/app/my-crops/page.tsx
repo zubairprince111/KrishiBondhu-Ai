@@ -145,13 +145,13 @@ export default function MyCropsPage() {
   ] as const;
 
   const stageOptions = [
-      { value: 'Land Preparation', labelKey: 'myCrops.form.stage.options.landPreparation' },
-      { value: 'Seed Sowing', labelKey: 'myCrops.form.stage.options.seedSowing' },
-      { value: 'Germination & Early Growth', labelKey: 'myCrops.form.stage.options.germination' },
-      { value: 'Vegetative Growth', labelKey: 'myCrops.form.stage.options.vegetative' },
-      { value: 'Flowering & Fruiting', labelKey: 'myCrops.form.stage.options.flowering' },
+      { value: 'Land Preparation', labelKey: 'myCrops.form.stage.options.landpreparation' },
+      { value: 'Seed Sowing', labelKey: 'myCrops.form.stage.options.seedsowing' },
+      { value: 'Germination & Early Growth', labelKey: 'myCrops.form.stage.options.germinationandearlygrowth' },
+      { value: 'Vegetative Growth', labelKey: 'myCrops.form.stage.options.vegetativegrowth' },
+      { value: 'Flowering & Fruiting', labelKey: 'myCrops.form.stage.options.floweringandfruiting' },
       { value: 'Harvesting', labelKey: 'myCrops.form.stage.options.harvesting' },
-      { value: 'Post-Harvest', labelKey: 'myCrops.form.stage.options.postHarvest' },
+      { value: 'Post-Harvest', labelKey: 'myCrops.form.stage.options.postharvest' },
   ] as const;
 
 
@@ -295,7 +295,7 @@ export default function MyCropsPage() {
                                 <CardContent className="p-4 flex items-center justify-between">
                                     <div>
                                         <h3 className="font-headline font-semibold">{t(`myCrops.form.cropName.options.${crop.cropName.toLowerCase()}` as any)}</h3>
-                                        <p className="text-sm text-muted-foreground">{t(`myCrops.form.region.options.${crop.region.toLowerCase()}` as any)} - {t(`myCrops.form.stage.options.${crop.status.toLowerCase().replace(/ & /g, '').replace(/ /g, '')}` as any)}</p>
+                                        <p className="text-sm text-muted-foreground">{t(`myCrops.form.region.options.${crop.region.toLowerCase()}` as any)} - {t(`myCrops.form.stage.options.${crop.status.toLowerCase().replace(/ & /g, 'and').replace(/ /g, '')}` as any)}</p>
                                     </div>
                                     <ChevronRight className="size-5 text-muted-foreground" />
                                 </CardContent>

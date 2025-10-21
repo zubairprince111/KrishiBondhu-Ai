@@ -383,7 +383,7 @@ export const translations = {
     en: 'Seed Sowing',
     bn: 'বীজ বপন',
   },
-  'myCrops.form.stage.options.germination&earlygrowth': {
+  'myCrops.form.stage.options.germinationandearlygrowth': {
     en: 'Germination & Early Growth',
     bn: 'অঙ্কুরোদ্গম ও প্রাথমিক বৃদ্ধি',
   },
@@ -391,7 +391,7 @@ export const translations = {
     en: 'Vegetative Growth',
     bn: 'শারীরবৃত্তীয় বৃদ্ধি',
   },
-  'myCrops.form.stage.options.flowering&fruiting': {
+  'myCrops.form.stage.options.floweringandfruiting': {
     en: 'Flowering & Fruiting',
     bn: 'ফুল ও ফল ধারণ',
   },
@@ -399,7 +399,7 @@ export const translations = {
     en: 'Harvesting',
     bn: 'ফসল সংগ্রহ',
   },
-  'myCrops.form.stage.options.post-harvest': {
+  'myCrops.form.stage.options.postharvest': {
     en: 'Post-Harvest',
     bn: 'ফসল তোলার পরের কাজ',
   },
