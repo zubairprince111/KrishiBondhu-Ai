@@ -19,14 +19,13 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
+import { type ImagePlaceholder } from '@/lib/placeholder-images';
 import Image from 'next/image';
+import { useSlideshow } from '@/context/slideshow-context';
 
 export default function AdminPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [slideshowImages, setSlideshowImages] = useState<ImagePlaceholder[]>(
-    PlaceHolderImages.filter(p => p.id.startsWith('slideshow-'))
-  );
+  const { slideshowImages, addImage, removeImage } = useSlideshow();
   const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +43,7 @@ export default function AdminPage() {
         imageUrl: URL.createObjectURL(selectedFile),
         imageHint: 'new custom',
       };
-      setSlideshowImages(prev => [...prev, newImage]);
+      addImage(newImage);
       toast({
         title: 'Upload Successful',
         description: `File "${selectedFile.name}" has been added to the slideshow preview.`,
@@ -60,10 +59,10 @@ export default function AdminPage() {
   };
   
   const handleRemoveImage = (id: string) => {
-    setSlideshowImages(prev => prev.filter(image => image.id !== id));
+    removeImage(id);
     toast({
         title: 'Image Removed',
-        description: 'The image has been removed from the slideshow preview.',
+        description: 'The image has been removed from the slideshow.',
     });
   };
 
