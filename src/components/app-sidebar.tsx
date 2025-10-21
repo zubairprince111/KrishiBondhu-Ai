@@ -1,0 +1,67 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from '@/components/ui/sidebar';
+import {
+  BarChart,
+  ClipboardList,
+  CloudSun,
+  Landmark,
+  LayoutGrid,
+  Leaf,
+  MessageSquare,
+  Mic,
+  Sprout,
+} from 'lucide-react';
+
+const navItems = [
+  { href: '/', label: 'Dashboard', icon: LayoutGrid },
+  { href: '/crop-doctor', label: 'Crop Doctor', icon: Leaf },
+  { href: '/voice-assistant', label: 'Mati AI', icon: Mic },
+  { href: '/weather', label: 'Weather', icon: CloudSun },
+  { href: '/crop-planning', label: 'Crop Planning', icon: ClipboardList },
+  { href: '/community', label: 'Community', icon: MessageSquare },
+  { href: '/market-info', label: 'Market Info', icon: Landmark },
+];
+
+export function AppSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <Sidebar className="border-r bg-card hidden md:flex">
+      <SidebarHeader>
+        <Link href="/" className="flex items-center gap-2">
+          <Sprout className="size-8 text-primary" />
+          <h2 className="font-headline text-2xl font-semibold text-primary">
+            KrishiBondhu
+          </h2>
+        </Link>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarMenu>
+          {navItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <Link href={item.href} legacyBehavior passHref>
+                <SidebarMenuButton
+                  isActive={pathname === item.href}
+                  tooltip={{ children: item.label }}
+                >
+                  <item.icon />
+                  <span>{item.label}</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
+    </Sidebar>
+  );
+}

@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "crop-disease",
+      "description": "A close-up of a plant leaf with signs of disease.",
+      "imageUrl": "https://images.unsplash.com/photo-1724301693358-090ac5f0be83?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkaXNlYXNlZCUyMGxlYWZ8ZW58MHx8fHwxNzYxMDQyNjg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "diseased leaf"
+    },
+    {
+      "id": "community-post-1",
+      "description": "A farmer standing in a lush green field.",
+      "imageUrl": "https://images.unsplash.com/photo-1623211268529-69c56e303312?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmYXJtZXIlMjBmaWVsZHxlbnwwfHx8fDE3NjA5NzI0NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmer field"
+    },
+    {
+      "id": "avatar-1",
+      "description": "Avatar for a community member.",
+      "imageUrl": "https://images.unsplash.com/photo-1615909495126-3554c248bf33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmYXJtZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjA5NTQwNTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmer portrait"
+    },
+    {
+      "id": "avatar-2",
+      "description": "Avatar for a community member.",
+      "imageUrl": "https://images.unsplash.com/photo-1599663868220-66fab4a7a5a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmYXJtZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjA5NTQwNTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmer portrait"
+    },
+    {
+      "id": "avatar-3",
+      "description": "Avatar for a community member.",
+      "imageUrl": "https://images.unsplash.com/photo-1582563556319-381ad4504ed9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMGZhcm1lcnxlbnwwfHx8fDE3NjA5ODQ4NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman farmer"
+    }
+  ]
 }
