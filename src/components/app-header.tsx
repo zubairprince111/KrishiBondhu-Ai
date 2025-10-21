@@ -5,6 +5,7 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -37,6 +38,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                     <span className="sr-only">Toggle Menu</span>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0">
+                    <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
                     <MobileAppSidebar />
                 </SheetContent>
             </Sheet>
