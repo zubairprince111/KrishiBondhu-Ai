@@ -9,16 +9,19 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import {
   BarChart,
   ClipboardList,
   CloudSun,
+  Info,
   Landmark,
   LayoutGrid,
   Leaf,
   MessageSquare,
   Mic,
+  Shield,
   Sprout,
 } from 'lucide-react';
 
@@ -31,6 +34,11 @@ const navItems = [
   { href: '/community', label: 'Community', icon: MessageSquare },
   { href: '/market-info', label: 'Market Info', icon: Landmark },
 ];
+
+const secondaryNavItems = [
+    { href: '/about', label: 'About', icon: Info },
+    { href: '/admin', label: 'Admin', icon: Shield },
+]
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -45,9 +53,27 @@ export function AppSidebar() {
           </h2>
         </Link>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="flex flex-col justify-between">
         <SidebarMenu>
           {navItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === item.href}
+                tooltip={{ children: item.label }}
+              >
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+        
+        <SidebarMenu>
+            <SidebarSeparator />
+             {secondaryNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
