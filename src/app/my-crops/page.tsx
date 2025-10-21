@@ -102,6 +102,10 @@ export default function MyCropsPage() {
                             <SelectItem value="Chittagong">Chittagong</SelectItem>
                             <SelectItem value="Rajshahi">Rajshahi</SelectItem>
                             <SelectItem value="Khulna">Khulna</SelectItem>
+                            <SelectItem value="Barisal">Barisal</SelectItem>
+                            <SelectItem value="Sylhet">Sylhet</SelectItem>
+                            <SelectItem value="Rangpur">Rangpur</SelectItem>
+                            <SelectItem value="Mymensingh">Mymensingh</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
