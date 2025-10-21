@@ -1,14 +1,17 @@
+
 'use client';
 import Image from 'next/image';
+import Link from 'next/link';
 import { AppHeader } from '@/components/app-header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
-import { ThumbsUp, MessageSquare, Send } from 'lucide-react';
+import { ThumbsUp, MessageSquare, Send, LogIn, Loader2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/context/language-context';
+import { useUser } from '@/firebase';
 
 const posts = [
   {
@@ -35,26 +38,62 @@ const posts = [
 export default function CommunityPage() {
   const getImage = (id: string) => PlaceHolderImages.find(p => p.id === id);
   const { t } = useLanguage();
+  const { user, isUserLoading } = useUser();
+
+  const renderNewPostCard = () => {
+    if (isUserLoading) {
+      return (
+        <Card>
+          <CardContent className="flex justify-center items-center p-8">
+            <Loader2 className="animate-spin text-primary"/>
+          </CardContent>
+        </Card>
+      );
+    }
+    
+    if (!user) {
+        return (
+            <Card>
+                 <CardHeader>
+                    <CardTitle className="font-headline">Join the Conversation</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                    <p className="text-muted-foreground mb-4">You must be logged in to create a post.</p>
+                    <Button asChild>
+                        <Link href="/login">
+                            <LogIn className="mr-2"/>
+                            Login / Sign Up
+                        </Link>
+                    </Button>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+            <CardTitle className="font-headline">Share with the Community</CardTitle>
+            </CardHeader>
+            <CardContent>
+            <div className="grid w-full gap-2">
+                <Textarea placeholder="আপনার অভিজ্ঞতা বা প্রশ্ন শেয়ার করুন..." />
+                <Button>
+                <Send className="mr-2" />
+                Post
+                </Button>
+            </div>
+            </CardContent>
+        </Card>
+    );
+  }
 
   return (
     <SidebarInset>
       <AppHeader titleKey="app.header.title.community" />
       <main className="flex-1 p-4 md:p-6">
         <div className="mx-auto max-w-2xl space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Share with the Community</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid w-full gap-2">
-                <Textarea placeholder="আপনার অভিজ্ঞতা বা প্রশ্ন শেয়ার করুন..." />
-                <Button>
-                  <Send className="mr-2" />
-                  Post
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {renderNewPostCard()}
 
           {posts.map((post) => {
             const avatar = getImage(post.avatarId);
