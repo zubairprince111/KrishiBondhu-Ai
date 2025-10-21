@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -14,7 +15,7 @@ import {z} from 'genkit';
 const CropGuidanceInputSchema = z.object({
   cropName: z.string().describe('The name of the crop.'),
   region: z.string().describe('The region where the crop is being grown.'),
-  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering).'),
+  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering). This is calculated from sowing date.'),
 });
 export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 
@@ -40,7 +41,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
 
 The guide should cover the entire lifecycle from land preparation to post-harvest.
-The user is currently at the '{{{currentStage}}}' stage. Mark all stages up to and including the current stage as completed.
+The farmer's crop is currently at the '{{{currentStage}}}' stage. Mark all stages up to and including the current stage as completed.
 
 Crop: {{{cropName}}}
 Region: {{{region}}}
@@ -69,3 +70,5 @@ const cropGuidanceFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

@@ -42,15 +42,51 @@
         "address"
       ]
     },
+    "Land": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Land",
+      "type": "object",
+      "description": "Represents a piece of land a user is farming.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A user-defined name for the land (e.g., North Field)."
+        },
+        "area": {
+          "type": "number",
+          "description": "The area of the land in acres or other units."
+        },
+        "areaUnit": {
+          "type": "string",
+          "description": "The unit for the area (e.g., acres, bigha)."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location or address of the land."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to the UserProfile."
+        }
+      },
+      "required": [
+        "name",
+        "userProfileId"
+      ]
+    },
     "UserCrop": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserCrop",
       "type": "object",
-      "description": "Represents a crop a user is currently farming, with AI-driven guidance.",
+      "description": "Represents a crop a user is currently farming on a specific land, with AI-driven guidance.",
       "properties": {
         "id": {
           "type": "string",
           "description": "Unique identifier for the user's crop entry."
+        },
+        "landId": {
+          "type": "string",
+          "description": "Reference to the Land."
         },
         "userProfileId": {
           "type": "string",
@@ -60,10 +96,6 @@
           "type": "string",
           "description": "The name of the crop being farmed."
         },
-        "region": {
-          "type": "string",
-          "description": "The geographical region where the crop is being farmed."
-        },
         "sowingDate": {
           "type": "string",
           "format": "date",
@@ -71,11 +103,17 @@
         },
         "status": {
           "type": "string",
-          "description": "The current growth stage of the crop.",
-          "enum": ["Sowing", "Germination", "Vegetative", "Flowering", "Harvesting", "Post-Harvest"]
+          "description": "The current growth stage of the crop, calculated from sowing date."
         }
       },
-      "required": ["id", "userProfileId", "cropName", "region", "sowingDate", "status"]
+      "required": [
+        "id",
+        "landId",
+        "userProfileId",
+        "cropName",
+        "sowingDate",
+        "status"
+      ]
     },
     "CropIssue": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -251,33 +289,25 @@
           "schema": {
             "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores user profiles, accessible only to the respective user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            }
-          ]
+          "description": "Stores user profiles, accessible only to the respective user."
         }
       },
       {
-        "path": "/users/{userId}/crops/{cropId}",
+        "path": "/users/{userId}/lands/{landId}",
+        "definition": {
+            "entityName": "Land",
+            "schema": { "$ref": "#/entities/Land" },
+            "description": "Stores lands owned by a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/lands/{landId}/crops/{cropId}",
         "definition": {
           "entityName": "UserCrop",
           "schema": {
-            "$ref": "#/backend/entities/UserCrop"
+            "$ref": "#/entities/UserCrop"
           },
-          "description": "Stores the crops a user is currently farming. Accessible only by the respective user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "cropId",
-              "description": "The unique identifier for the user's crop entry."
-            }
-          ]
+          "description": "Stores the crops a user is currently farming on a specific land. Accessible only by the respective user."
         }
       },
       {
@@ -285,19 +315,9 @@
         "definition": {
           "entityName": "CropIssue",
           "schema": {
-            "$ref": "#/backend/entities/CropIssue"
+            "$ref": "#/entities/CropIssue"
           },
-          "description": "Stores crop issues reported by users. Accessible only by the respective user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "cropIssueId",
-              "description": "The unique identifier for the crop issue."
-            }
-          ]
+          "description": "Stores crop issues reported by users. Accessible only by the respective user."
         }
       },
       {
@@ -305,19 +325,9 @@
         "definition": {
           "entityName": "CommunityPost",
           "schema": {
-            "$ref": "#/backend/entities/CommunityPost"
+            "$ref": "#/entities/CommunityPost"
           },
-          "description": "Stores community posts created by users. Accessible only by the respective user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "communityPostId",
-              "description": "The unique identifier for the community post."
-            }
-          ]
+          "description": "Stores community posts created by users. Accessible only by the respective user."
         }
       },
       {
@@ -325,15 +335,9 @@
         "definition": {
           "entityName": "WeatherAlert",
           "schema": {
-            "$ref": "#/backend/entities/WeatherAlert"
+            "$ref": "#/entities/WeatherAlert"
           },
-          "description": "Stores weather alerts, publicly accessible.",
-          "params": [
-            {
-              "name": "weatherAlertId",
-              "description": "The unique identifier for the weather alert."
-            }
-          ]
+          "description": "Stores weather alerts, publicly accessible."
         }
       },
       {
@@ -341,18 +345,14 @@
         "definition": {
           "entityName": "MarketPrice",
           "schema": {
-            "$ref": "#/backend/entities/MarketPrice"
+            "$ref": "#/entities/MarketPrice"
           },
-          "description": "Stores market prices, publicly accessible.",
-          "params": [
-            {
-              "name": "marketPriceId",
-              "description": "The unique identifier for the market price entry."
-            }
-          ]
+          "description": "Stores market prices, publicly accessible."
         }
       }
     ],
-    "reasoning": "The Firestore structure prioritizes authorization independence and clarity for the KrishiBondhu AI application. User profiles are stored under `/users/{userId}` for private user data, ensuring simple path-based ownership. User's currently farmed crops are stored under `/users/{userId}/crops/{cropId}`. Crop issues, community posts are stored under the user profiles `/users/{userId}/crop_issues/{cropIssueId}` and `/users/{userId}/community_posts/{communityPostId}` respectively to provide a clear hierarchical access and prevent unwanted access from other users. Weather alerts are stored under `/weather_alerts/{weatherAlertId}` as a global collection. Market prices are stored under `/market_prices/{marketPriceId}` to be accessible to all users. This structure supports the QAPs by segregating data based on access requirements and utilizing path-based ownership for private user data. The denormalization of user profile information into crop issues and community posts are not needed because the data is always queried in the scope of the user."
+    "reasoning": "The Firestore structure is updated to support multiple lands per user. A new top-level collection `lands` is added under each user's document (`/users/{userId}/lands/{landId}`). The `crops` collection is now a subcollection of a `land`, enabling a many-to-many relationship between users and crops via lands. This is a more scalable and organized way to manage multiple farming plots. Other collections remain unchanged."
   }
 }
+
+    

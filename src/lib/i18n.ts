@@ -221,56 +221,155 @@ export const translations = {
     en: 'Summer',
     bn: 'গ্রীষ্মকাল',
   },
-  // My Crops Page - List
-  'myCrops.list.title': {
-    en: 'My Tracked Crops',
-    bn: 'আমার ট্র্যাক করা ফসল',
+  // My Crops - Lands List
+  'myCrops.lands.title': {
+    en: 'My Lands',
+    bn: 'আমার জমি',
   },
-  'myCrops.list.description': {
-    en: 'Add and manage all the crops you are currently farming.',
-    bn: 'আপনি বর্তমানে চাষ করছেন এমন সমস্ত ফসল যোগ করুন এবং পরিচালনা করুন।',
+  'myCrops.lands.description': {
+    en: 'Manage your farm lands and the crops on them.',
+    bn: 'আপনার খামারের জমি এবং তার ফসল পরিচালনা করুন।',
   },
-  'myCrops.list.addButton': {
-    en: 'Add New Crop',
-    bn: 'নতুন ফসল যোগ করুন',
+  'myCrops.lands.addLandButton': {
+    en: 'Add New Land',
+    bn: 'নতুন জমি যোগ করুন',
   },
-  'myCrops.list.empty': {
-    en: 'You are not tracking any crops yet. Add one to get started!',
-    bn: 'আপনি এখনও কোনো ফসল ট্র্যাক করছেন না। শুরু করতে একটি যোগ করুন!',
+  'myCrops.lands.empty': {
+    en: 'No lands added yet. Add your first piece of land to start tracking crops.',
+    bn: 'এখনও কোন জমি যোগ করা হয়নি। ফসল ট্র্যাকিং শুরু করতে আপনার প্রথম জমি যোগ করুন।',
   },
-  'myCrops.addDialog.title': {
-    en: 'Add a New Crop to Track',
-    bn: 'ট্র্যাক করতে একটি নতুন ফসল যোগ করুন',
+  'myCrops.lands.totalCrops': {
+    en: '{{count}} crops',
+    bn: '{{count}}টি ফসল',
   },
-  'myCrops.addDialog.description': {
-    en: 'Fill in the details below to start receiving personalized guidance.',
-    bn: 'ব্যক্তিগত নির্দেশিকা পেতে নিচের বিবরণগুলি পূরণ করুন।',
+
+  // My Crops - Add Land Dialog
+  'myCrops.addLandDialog.title': {
+    en: 'Add a New Land',
+    bn: 'একটি নতুন জমি যোগ করুন',
   },
-  'myCrops.addDialog.submitButton': {
-    en: 'Add Crop',
-    bn: 'ফসল যোগ করুন',
+  'myCrops.addLandDialog.description': {
+    en: 'Enter the details for a piece of land you farm.',
+    bn: 'আপনি চাষ করেন এমন একটি জমির বিবরণ দিন।',
   },
-  'myCrops.addDialog.cancelButton': {
+  'myCrops.addLandDialog.nameLabel': {
+    en: 'Land Name',
+    bn: 'জমির নাম',
+  },
+  'myCrops.addLandDialog.namePlaceholder': {
+    en: 'e.g., North Field',
+    bn: 'যেমন, উত্তর মাঠ',
+  },
+  'myCrops.addLandDialog.locationLabel': {
+    en: 'Location',
+    bn: 'অবস্থান',
+  },
+  'myCrops.addLandDialog.locationPlaceholder': {
+    en: 'e.g., Village Name, Upazila',
+    bn: 'যেমন, গ্রামের নাম, উপজেলা',
+  },
+  'myCrops.addLandDialog.areaLabel': {
+    en: 'Area',
+    bn: 'আয়তন',
+  },
+  'myCrops.addLandDialog.areaUnitLabel': {
+    en: 'Unit',
+    bn: 'একক',
+  },
+  'myCrops.addLandDialog.areaUnit.acre': {
+    en: 'Acre',
+    bn: 'একর',
+  },
+  'myCrops.addLandDialog.areaUnit.bigha': {
+    en: 'Bigha',
+    bn: 'বিঘা',
+  },
+  'myCrops.addLandDialog.areaUnit.katha': {
+    en: 'Katha',
+    bn: 'কাঠা',
+  },
+  'myCrops.addLandDialog.submitButton': {
+    en: 'Add Land',
+    bn: 'জমি যোগ করুন',
+  },
+  'myCrops.addLandDialog.cancelButton': {
     en: 'Cancel',
     bn: 'বাতিল করুন',
   },
-  'myCrops.addDialog.toast.success.title': {
-    en: 'Crop Added!',
-    bn: 'ফসল যোগ করা হয়েছে!',
+  'myCrops.addLandDialog.toast.success.title': {
+    en: 'Land Added!',
+    bn: 'জমি যোগ করা হয়েছে!',
   },
-  'myCrops.addDialog.toast.success.description': {
-    en: 'You are now tracking {{cropName}}.',
-    bn: 'আপনি এখন {{cropName}} ট্র্যাক করছেন।',
+  'myCrops.addLandDialog.toast.success.description': {
+    en: 'Successfully added {{landName}}.',
+    bn: 'সফলভাবে {{landName}} যোগ করা হয়েছে।',
   },
-  'myCrops.addDialog.toast.error.title': {
+  'myCrops.addLandDialog.toast.error.title': {
     en: 'Error',
     bn: 'ত্রুটি',
   },
-  'myCrops.addDialog.toast.error.description': {
+  'myCrops.addLandDialog.toast.error.description': {
+    en: 'Could not add land. Please try again.',
+    bn: 'জমি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
+  },
+
+  // My Crops - Crops List (on Land Details page)
+  'myCrops.crops.title': {
+    en: 'Crops on this Land',
+    bn: 'এই জমির ফসল',
+  },
+  'myCrops.crops.description': {
+    en: 'All crops currently being tracked on {{landName}}.',
+    bn: '{{landName}} এ বর্তমানে ট্র্যাক করা সমস্ত ফসল।',
+  },
+  'myCrops.crops.addCropButton': {
+    en: 'Add New Crop',
+    bn: 'নতুন ফসল যোগ করুন',
+  },
+  'myCrops.crops.empty': {
+    en: 'No crops added to this land yet. Add one to get started!',
+    bn: 'এই জমিতে এখনও কোন ফসল যোগ করা হয়নি। শুরু করতে একটি যোগ করুন!',
+  },
+  'myCrops.crops.sownOn': {
+    en: 'Sown: {{date}}',
+    bn: 'বপন: {{date}}',
+  },
+
+  // My Crops Page - Add Crop Dialog
+  'myCrops.addCropDialog.title': {
+    en: 'Add a New Crop to Track',
+    bn: 'ট্র্যাক করতে একটি নতুন ফসল যোগ করুন',
+  },
+  'myCrops.addCropDialog.description': {
+    en: 'Fill in the details below to start receiving personalized guidance.',
+    bn: 'ব্যক্তিগত নির্দেশিকা পেতে নিচের বিবরণগুলি পূরণ করুন।',
+  },
+  'myCrops.addCropDialog.submitButton': {
+    en: 'Add Crop',
+    bn: 'ফসল যোগ করুন',
+  },
+  'myCrops.addCropDialog.cancelButton': {
+    en: 'Cancel',
+    bn: 'বাতিল করুন',
+  },
+  'myCrops.addCropDialog.toast.success.title': {
+    en: 'Crop Added!',
+    bn: 'ফসল যোগ করা হয়েছে!',
+  },
+  'myCrops.addCropDialog.toast.success.description': {
+    en: 'You are now tracking {{cropName}}.',
+    bn: 'আপনি এখন {{cropName}} ট্র্যাক করছেন।',
+  },
+  'myCrops.addCropDialog.toast.error.title': {
+    en: 'Error',
+    bn: 'ত্রুটি',
+  },
+  'myCrops.addCropDialog.toast.error.description': {
     en: 'Could not add crop. Please try again.',
     bn: 'ফসল যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
   },
-  // My Crops Page - Form
+
+  // My Crops - Form Fields
   'myCrops.form.cropName.label': {
     en: 'Crop Name',
     bn: 'ফসলের নাম',
@@ -280,86 +379,46 @@ export const translations = {
     bn: 'একটি ফসল নির্বাচন করুন',
   },
   'myCrops.form.cropName.options.rice': {
-    en: 'Rice (ধান)',
+    en: 'Rice',
     bn: 'ধান',
   },
   'myCrops.form.cropName.options.jute': {
-    en: 'Jute (পাট)',
+    en: 'Jute',
     bn: 'পাট',
   },
   'myCrops.form.cropName.options.wheat': {
-    en: 'Wheat (গম)',
+    en: 'Wheat',
     bn: 'গম',
   },
   'myCrops.form.cropName.options.potato': {
-    en: 'Potato (আলু)',
+    en: 'Potato',
     bn: 'আলু',
   },
   'myCrops.form.cropName.options.tomato': {
-    en: 'Tomato (টমেটো)',
+    en: 'Tomato',
     bn: 'টমেটো',
   },
   'myCrops.form.cropName.options.lentil': {
-    en: 'Lentil (মসুর ডাল)',
+    en: 'Lentil',
     bn: 'মসুর ডাল',
   },
    'myCrops.form.cropName.options.maize': {
-    en: 'Maize (ভুট্টা)',
+    en: 'Maize',
     bn: 'ভুট্টা',
   },
   'myCrops.form.cropName.options.sugarcane': {
-    en: 'Sugarcane (আখ)',
+    en: 'Sugarcane',
     bn: 'আখ',
   },
   'myCrops.form.cropName.options.onion': {
-    en: 'Onion (পেঁয়াজ)',
+    en: 'Onion',
     bn: 'পেঁয়াজ',
   },
   'myCrops.form.cropName.options.mustard': {
-    en: 'Mustard (সরিষা)',
+    en: 'Mustard',
     bn: 'সরিষা',
   },
-  'myCrops.form.region.label': {
-    en: 'Region',
-    bn: 'অঞ্চল',
-  },
-  'myCrops.form.region.placeholder': {
-    en: 'Select your region',
-    bn: 'আপনার অঞ্চল নির্বাচন করুন',
-  },
-  'myCrops.form.region.options.dhaka': {
-    en: 'Dhaka',
-    bn: 'ঢাকা',
-  },
-  'myCrops.form.region.options.chittagong': {
-    en: 'Chittagong',
-    bn: 'চট্টগ্রাম',
-  },
-  'myCrops.form.region.options.rajshahi': {
-    en: 'Rajshahi',
-    bn: 'রাজশাহী',
-  },
-  'myCrops.form.region.options.khulna': {
-    en: 'Khulna',
-    bn: 'খুলনা',
-  },
-  'myCrops.form.region.options.barisal': {
-    en: 'Barisal',
-    bn: 'বরিশাল',
-  },
-  'myCrops.form.region.options.sylhet': {
-    en: 'Sylhet',
-    bn: 'সিলেট',
-  },
-  'myCrops.form.region.options.rangpur': {
-    en: 'Rangpur',
-    bn: 'রংপুর',
-  },
-  'myCrops.form.region.options.mymensingh': {
-    en: 'Mymensingh',
-    bn: 'ময়মনসিংহ',
-  },
-   'myCrops.form.sowingDate.label': {
+  'myCrops.form.sowingDate.label': {
     en: 'Date of Sowing',
     bn: 'বপনের তারিখ',
   },
@@ -403,15 +462,8 @@ export const translations = {
     en: 'Post-Harvest',
     bn: 'ফসল তোলার পরের কাজ',
   },
-  'myCrops.form.button.submit': {
-    en: 'Get Guidance',
-    bn: 'নির্দেশিকা পান',
-  },
-  'myCrops.form.button.pending': {
-    en: 'Please wait',
-    bn: 'অনুগ্রহ করে অপেক্ষা করুন',
-  },
-  // My Crops Page - Guide
+
+  // My Crops - Crop Details & Guide
   'myCrops.guide.title': {
     en: 'AI Farming Guide',
     bn: 'এআই কৃষি নির্দেশিকা',
@@ -435,3 +487,5 @@ export const translations = {
 };
 
 export type TranslationKey = keyof typeof translations;
+
+    

@@ -1,8 +1,8 @@
+
 'use client';
 
 import { useTransition, useState, useEffect } from 'react';
 import { AppHeader } from '@/components/app-header';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -35,7 +35,7 @@ import {
 import Link from 'next/link';
 
 type CropDetailsPageProps = {
-  params: { id: string };
+  params: { landId: string, id: string };
 };
 
 export default function CropDetailsPage({ params }: CropDetailsPageProps) {
@@ -46,10 +46,16 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
   const { user } = useUser();
   const firestore = useFirestore();
 
+  const landDocRef = useMemoFirebase(() => {
+    if (!firestore || !user || !params.landId) return null;
+    return doc(firestore, 'users', user.uid, 'lands', params.landId);
+  }, [firestore, user, params.landId]);
+  const { data: land, isLoading: isLandLoading } = useDoc(landDocRef);
+
   const cropDocRef = useMemoFirebase(() => {
-    if (!firestore || !user || !params.id) return null;
-    return doc(firestore, 'users', user.uid, 'crops', params.id);
-  }, [firestore, user, params.id]);
+    if (!firestore || !user || !params.landId || !params.id) return null;
+    return doc(firestore, 'users', user.uid, 'lands', params.landId, 'crops', params.id);
+  }, [firestore, user, params.landId, params.id]);
 
   const { data: crop, isLoading: isCropLoading } = useDoc(cropDocRef);
 
@@ -59,7 +65,7 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
       startTransition(async () => {
         const { data, error } = await fetchCropGuidance({
             cropName: crop.cropName,
-            region: crop.region,
+            region: land?.location || 'Bangladesh', // Fallback to a general region
             currentStage: crop.status,
         });
         if (error) {
@@ -73,7 +79,7 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
         }
       });
     }
-  }, [crop, toast]);
+  }, [crop, land, toast]);
 
   const cropNameTranslationKey = `myCrops.form.cropName.options.${(crop?.cropName || '').toLowerCase()}` as const;
 
@@ -85,15 +91,21 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                        <Link href="/my-crops">{t('sidebar.nav.myCrops')}</Link>
-                    </BreadcrumbLink>
+                        <BreadcrumbLink asChild>
+                            <Link href="/my-crops">{t('sidebar.nav.myCrops')}</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                     <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link href={`/my-crops/land/${params.landId}`}>{isLandLoading ? <Loader2 className="size-4 animate-spin"/> : land?.name}</Link>
+                        </BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                    <BreadcrumbPage>
-                        {isCropLoading ? <Loader2 className="size-4 animate-spin"/> : t(cropNameTranslationKey)}
-                    </BreadcrumbPage>
+                        <BreadcrumbPage>
+                            {isCropLoading ? <Loader2 className="size-4 animate-spin"/> : t(cropNameTranslationKey)}
+                        </BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -155,3 +167,5 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
     </SidebarInset>
   );
 }
+
+    
