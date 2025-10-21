@@ -11,7 +11,7 @@ export const translations = {
   },
   'app.header.title.voiceAssistant': {
     en: 'Voice Assistant (Mati AI)',
-    bn: 'ভয়েস অ্যাসিস্ট্যান্ট (মাটি এআই)',
+    bn: 'মাটি Ai',
   },
   'app.header.title.weather': {
     en: 'Weather Alerts',
@@ -60,7 +60,7 @@ export const translations = {
   },
   'sidebar.nav.matiAI': {
     en: 'Mati AI',
-    bn: 'মাটি এআই',
+    bn: 'মাটি Ai',
   },
   'sidebar.nav.weather': {
     en: 'Weather',
@@ -157,7 +157,7 @@ export const translations = {
   },
   'dashboard.feature.voiceAssistant.title': {
     en: 'Voice Assistant (Mati AI)',
-    bn: 'ভয়েস অ্যাসিস্ট্যান্ট (মাটি এআই)',
+    bn: 'মাটি Ai',
   },
   'dashboard.feature.voiceAssistant.description': {
     en: 'Ask questions in Bangla.',
