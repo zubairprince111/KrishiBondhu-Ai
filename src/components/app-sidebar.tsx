@@ -44,7 +44,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="border-r bg-card hidden md:flex">
+    <Sidebar className="border-r bg-card md:flex">
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2">
           <Sprout className="size-8 text-primary" />
