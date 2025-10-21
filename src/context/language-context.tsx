@@ -16,16 +16,21 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const LOCAL_STORAGE_KEY = 'krishibondhu-language';
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>('bn');
 
   useEffect(() => {
     try {
       const storedLanguage = localStorage.getItem(LOCAL_STORAGE_KEY) as Language | null;
       if (storedLanguage && ['en', 'bn'].includes(storedLanguage)) {
         setLanguageState(storedLanguage);
+      } else {
+        // If no language is stored, it will use the initial state, which is now 'bn'
+        setLanguageState('bn');
       }
     } catch (error) {
       console.error("Failed to access localStorage:", error);
+      // Fallback to 'bn' if localStorage is not accessible
+      setLanguageState('bn');
     }
   }, []);
 
