@@ -22,7 +22,8 @@ export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 const GuidanceStepSchema = z.object({
     title: z.string().describe('The title of the guidance step.'),
     details: z.string().describe('A detailed description of the tasks and considerations for this step.'),
-    isCompleted: z.boolean().describe('Whether this step is considered completed based on the current stage.')
+    isCompleted: z.boolean().describe('Whether this step is considered completed based on the current stage.'),
+    durationInDays: z.number().describe('The typical duration of this stage in days.'),
 });
 
 const CropGuidanceOutputSchema = z.object({
@@ -43,6 +44,8 @@ const prompt = ai.definePrompt({
 The guide should cover the entire lifecycle from land preparation to post-harvest.
 The farmer's crop is currently at the '{{{currentStage}}}' stage. Mark all stages up to and including the current stage as completed.
 
+For each stage, provide a title, detailed actionable advice, and a typical duration in days.
+
 Crop: {{{cropName}}}
 Region: {{{region}}}
 
@@ -55,7 +58,7 @@ Generate guidance with the following stages:
 6. Harvesting
 7. Post-Harvest
 
-For each stage, provide a title and detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
+For each stage, provide a title, detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care, and its typical duration in days. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
 `,
 });
 
@@ -70,5 +73,3 @@ const cropGuidanceFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
