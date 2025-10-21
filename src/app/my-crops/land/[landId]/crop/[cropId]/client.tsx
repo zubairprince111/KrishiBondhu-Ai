@@ -106,7 +106,7 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
   return (
     <SidebarInset>
       <AppHeader titleKey="sidebar.nav.myCrops" />
-      <main className="flex-1 p-4 md:p-6">
+      <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="mb-4">
             <Breadcrumb>
                 <BreadcrumbList>
@@ -131,31 +131,16 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
             </Breadcrumb>
         </div>
 
-        <Card className="bg-primary/5">
-          <CardHeader>
-            <CardTitle className="font-headline flex items-center gap-2">
-              <Wand2 className="text-primary" />
-              {t('myCrops.guide.title')}
-            </CardTitle>
-            <CardDescription>
-              {t('myCrops.guide.description')}{' '}
-              {crop ? t(cropNameTranslationKey) : t('myCrops.guide.defaultCrop')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isCropLoading || isPending ? (
-              <div className="flex min-h-80 flex-col items-center justify-center space-y-4 text-center">
-                <Loader2 className="size-12 animate-spin text-primary" />
-                <p className="text-primary">{t('myCrops.guide.loading')}</p>
-              </div>
-            ) : !result ? (
-               <div className="flex min-h-80 flex-col items-center justify-center space-y-4 text-center">
-                    <Tractor className="size-12 text-muted-foreground"/>
-                    <p className="text-muted-foreground">{t('myCrops.guide.placeholder')}</p>
-                </div>
-            ) : (
-              <>
-                <Card className="mb-6">
+        {isCropLoading || isPending ? (
+            <Card>
+                <CardContent className="flex min-h-80 flex-col items-center justify-center space-y-4 text-center">
+                    <Loader2 className="size-12 animate-spin text-primary" />
+                    <p className="text-primary">{t('myCrops.guide.loading')}</p>
+                </CardContent>
+            </Card>
+        ) : crop ? (
+            <>
+                <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="font-headline text-lg">Growth Progress</CardTitle>
                     </CardHeader>
@@ -179,38 +164,64 @@ export default function CropDetailsPageClient({ landId, cropId }: CropDetailsCli
                     </CardContent>
                 </Card>
 
-                <Accordion
-                    type="single"
-                    collapsible
-                    className="w-full"
-                    defaultValue={currentStageInfo?.title}
-                >
-                    {result.guidance.map((step) => (
-                    <AccordionItem value={step.title} key={step.title}>
-                        <AccordionTrigger>
-                        <div className="flex items-center gap-3">
-                            {step.isCompleted ? (
-                            <CheckCircle className="size-5 text-green-500" />
-                            ) : (
-                            <Circle className="size-5 text-muted-foreground" />
-                            )}
-                            <span className="font-semibold">{step.title}</span>
+                <Card className="bg-primary/5">
+                  <CardHeader>
+                    <CardTitle className="font-headline flex items-center gap-2">
+                      <Wand2 className="text-primary" />
+                      {t('myCrops.guide.title')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('myCrops.guide.description')}{' '}
+                      {crop ? t(cropNameTranslationKey) : t('myCrops.guide.defaultCrop')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {!result ? (
+                       <div className="flex min-h-60 flex-col items-center justify-center space-y-4 text-center">
+                            <Loader2 className="size-12 animate-spin text-primary" />
+                            <p className="text-primary">{t('myCrops.guide.loading')}</p>
                         </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="pl-8 text-muted-foreground space-y-2">
-                            <div className="flex items-center gap-2 text-xs">
-                                <Timer className="size-4"/>
-                                <span>Typical Duration: {step.durationInDays} days</span>
-                            </div>
-                            <p>{step.details}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                    ))}
-                </Accordion>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                    ) : (
+                      <Accordion
+                        type="single"
+                        collapsible
+                        className="w-full"
+                        defaultValue={currentStageInfo?.title}
+                      >
+                        {result.guidance.map((step) => (
+                          <AccordionItem value={step.title} key={step.title}>
+                            <AccordionTrigger>
+                              <div className="flex items-center gap-3">
+                                {step.isCompleted ? (
+                                  <CheckCircle className="size-5 text-green-500" />
+                                ) : (
+                                  <Circle className="size-5 text-muted-foreground" />
+                                )}
+                                <span className="font-semibold">{step.title}</span>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="pl-8 text-muted-foreground space-y-2">
+                                <div className="flex items-center gap-2 text-xs">
+                                    <Timer className="size-4"/>
+                                    <span>Typical Duration: {step.durationInDays} days</span>
+                                </div>
+                                <p>{step.details}</p>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    )}
+                  </CardContent>
+                </Card>
+            </>
+        ) : (
+            <Card>
+                <CardContent className="flex min-h-80 flex-col items-center justify-center space-y-4 text-center">
+                    <Tractor className="size-12 text-muted-foreground"/>
+                    <p className="text-muted-foreground">Crop not found.</p>
+                </CardContent>
+            </Card>
+        )}
       </main>
     </SidebarInset>
   );
