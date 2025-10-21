@@ -33,10 +33,6 @@ export const translations = {
     en: 'About KrishiBondhu',
     bn: 'কৃষিবন্ধু সম্পর্কে',
   },
-  'app.header.title.admin': {
-    en: 'Admin Panel',
-    bn: 'অ্যাডমিন প্যানেল',
-  },
   'app.header.lang.en': {
     en: 'EN',
     bn: 'EN',
@@ -81,10 +77,6 @@ export const translations = {
   'sidebar.nav.about': {
     en: 'About',
     bn: 'সম্পর্কে',
-  },
-  'sidebar.nav.admin': {
-    en: 'Admin',
-    bn: 'অ্যাডমিন',
   },
   'sidebar.nav.profile': {
     en: 'Profile',

@@ -55,7 +55,6 @@ const navItems: NavItem[] = [
 
 const secondaryNavItems: NavItem[] = [
     { href: '/about', labelKey: 'sidebar.nav.about', icon: Info },
-    { href: '/admin', labelKey: 'sidebar.nav.admin', icon: Shield },
 ]
 
 export function AppSidebar() {
