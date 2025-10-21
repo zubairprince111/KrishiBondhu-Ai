@@ -86,7 +86,7 @@ export default function DashboardPage() {
 
     return (
         <SidebarInset>
-        <AppHeader title="Dashboard" />
+        <AppHeader title="Welcome to KrishiBondhu" />
         <main className="flex-1 p-4 md:p-6">
             <Card className="relative overflow-hidden">
               <Carousel 
