@@ -100,7 +100,12 @@ export default function MyCropsPage() {
           title: t('myCrops.addLandDialog.toast.success.title'),
           description: t('myCrops.addLandDialog.toast.success.description', { landName: values.name }),
         });
-        form.reset();
+        form.reset({
+          name: '',
+          location: '',
+          area: undefined,
+          areaUnit: 'acre',
+        });
         setIsDialogOpen(false);
       }
     } catch (error) {
@@ -144,7 +149,7 @@ export default function MyCropsPage() {
                     <FormField control={form.control} name="location" render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('myCrops.addLandDialog.locationLabel')}</FormLabel>
-                        <FormControl><Input placeholder={t('myCrops.addLandDialog.locationPlaceholder')} {...field} /></FormControl>
+                        <FormControl><Input placeholder={t('myCrops.addLandDialog.locationPlaceholder')} {...field} value={field.value ?? ''} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -152,7 +157,7 @@ export default function MyCropsPage() {
                         <FormField control={form.control} name="area" render={({ field }) => (
                           <FormItem className="flex-1">
                             <FormLabel>{t('myCrops.addLandDialog.areaLabel')}</FormLabel>
-                            <FormControl><Input type="number" placeholder="e.g., 5" {...field} /></FormControl>
+                            <FormControl><Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ''} /></FormControl>
                             <FormMessage />
                           </FormItem>
                         )} />
@@ -223,5 +228,3 @@ export default function MyCropsPage() {
     </SidebarInset>
   );
 }
-
-    
