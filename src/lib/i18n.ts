@@ -1,3 +1,4 @@
+
 export const translations = {
   // App Header
   'app.header.title.welcome': {
@@ -6,7 +7,7 @@ export const translations = {
   },
   'app.header.title.cropDoctor': {
     en: 'AI Crop Doctor',
-    bn: 'এআই ক্রপ ডক্টর',
+    bn: 'ফসল ডাক্তার',
   },
   'app.header.title.voiceAssistant': {
     en: 'Voice Assistant (Mati AI)',
@@ -55,7 +56,7 @@ export const translations = {
   },
   'sidebar.nav.cropDoctor': {
     en: 'Crop Doctor',
-    bn: 'ক্রপ ডক্টর',
+    bn: 'ফসল ডাক্তার',
   },
   'sidebar.nav.matiAI': {
     en: 'Mati AI',
@@ -148,7 +149,7 @@ export const translations = {
   },
   'dashboard.feature.cropDoctor.title': {
     en: 'AI Crop Doctor',
-    bn: 'এআই ক্রপ ডক্টর',
+    bn: 'ফসল ডাক্তার',
   },
   'dashboard.feature.cropDoctor.description': {
     en: 'Diagnose crop diseases from a picture.',
