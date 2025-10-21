@@ -3,11 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-} from '@/components/ui/sheet';
-import {
   SidebarContent,
   SidebarHeader,
   SidebarMenu,
@@ -175,14 +170,5 @@ function SidebarNavContent() {
 }
 
 export function AppSidebar() {
-  const { open, setOpen } = useSidebar();
-  
-  return (
-      <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="left" className="w-[var(--sidebar-width-mobile)] p-0">
-              <SheetTitle className="sr-only">Main Navigation Menu</SheetTitle>
-              <SidebarNavContent />
-          </SheetContent>
-      </Sheet>
-  )
+  return <SidebarNavContent />;
 }

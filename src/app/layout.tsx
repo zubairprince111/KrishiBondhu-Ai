@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { SlideshowProvider } from '@/context/slideshow-context';
 import { LanguageProvider } from '@/context/language-context';
@@ -30,7 +29,6 @@ export default function RootLayout({
           <LanguageProvider>
             <SlideshowProvider>
               <SidebarProvider>
-                <AppSidebar />
                 <main className="min-h-svh w-full bg-background">
                   {children}
                 </main>
