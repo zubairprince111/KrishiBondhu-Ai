@@ -1,30 +1,18 @@
+
 // IMPORTANT: This file is meant to be used for server-side actions and should not be modified.
 // Any changes to this file could lead to unexpected behavior and break the application.
 // To use these actions, import them in your client-side components and call them as needed.
 
 'use server';
 
-import {
-  matiAIVoiceAssistance,
-  type MatiAIVoiceAssistanceInput,
-} from '@/ai/flows/mati-ai-voice-assistance';
-import {
-  suggestOptimalCrops,
-  type OptimalCropSuggestionInput,
-  type OptimalCropSuggestionOutput,
-} from '@/ai/flows/optimal-crop-suggestion';
-import {
-  findGovernmentSchemes,
-  type GovernmentSchemeFinderInput,
-} from '@/ai/flows/government-scheme-finder';
-import {
-  findMarketPrices,
-  type MarketPriceFinderInput,
-} from '@/ai/flows/market-price-finder';
-import {
-  getCropGuidance,
-  type CropGuidanceInput,
-} from '@/ai/flows/crop-guidance-flow';
+import { aiCropDoctorAnalysis } from '@/ai/flows/ai-crop-doctor-analysis';
+import { matiAIVoiceAssistance } from '@/ai/flows/mati-ai-voice-assistance';
+import { suggestOptimalCrops } from '@/ai/flows/optimal-crop-suggestion';
+import { findGovernmentSchemes as findGovernmentSchemesFlow } from '@/ai/flows/government-scheme-finder';
+import { findMarketPrices } from '@/ai/flows/market-price-finder';
+import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
+import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
+
 
 function getCurrentSeason(): string {
   const month = new Date().getMonth(); // 0-11
@@ -38,11 +26,11 @@ function getCurrentSeason(): string {
 }
 
 export async function suggestSeasonalCrops(): Promise<{
-  data: OptimalCropSuggestionOutput | null;
+  data: any | null;
   error: string | null;
 }> {
   try {
-    const input: OptimalCropSuggestionInput = {
+    const input = {
       region: 'Bangladesh',
       currentSeason: getCurrentSeason(),
       soilType: 'Alluvial', // Using a common soil type for general suggestions
@@ -59,7 +47,7 @@ export async function suggestSeasonalCrops(): Promise<{
   }
 }
 
-export async function getVoiceAssistance(input: MatiAIVoiceAssistanceInput) {
+export async function getVoiceAssistance(input: any) {
   try {
     const result = await matiAIVoiceAssistance(input);
     return {data: result, error: null};
@@ -72,7 +60,7 @@ export async function getVoiceAssistance(input: MatiAIVoiceAssistanceInput) {
   }
 }
 
-export async function fetchCropGuidance(input: CropGuidanceInput) {
+export async function fetchCropGuidance(input: any) {
     try {
         const result = await getCropGuidance(input);
         return { data: result, error: null };
@@ -83,9 +71,9 @@ export async function fetchCropGuidance(input: CropGuidanceInput) {
 }
 
 
-export async function getGovernmentSchemes(input: GovernmentSchemeFinderInput) {
+export async function findGovernmentSchemes(input: any) {
   try {
-    const result = await findGovernmentSchemes(input);
+    const result = await findGovernmentSchemesFlow(input);
     return {data: result, error: null};
   } catch (error) {
     console.error(error);
@@ -96,7 +84,7 @@ export async function getGovernmentSchemes(input: GovernmentSchemeFinderInput) {
   }
 }
 
-export async function getMarketPrices(input: MarketPriceFinderInput) {
+export async function getMarketPrices(input: any) {
   try {
     const result = await findMarketPrices(input);
     return {data: result, error: null};
@@ -106,5 +94,25 @@ export async function getMarketPrices(input: MarketPriceFinderInput) {
       data: null,
       error: 'Failed to find market prices. Please try again.',
     };
+  }
+}
+
+export async function fetchWeatherAdvice(input: any) {
+  try {
+    const result = await getWeatherAdvice(input);
+    return { data: result, error: null };
+  } catch (error) {
+    console.error(error);
+    return { data: null, error: 'Failed to get weather advice. Please try again.' };
+  }
+}
+
+export async function analyzeCropImage(input: any) {
+  try {
+    const result = await aiCropDoctorAnalysis(input);
+    return { data: result, error: null };
+  } catch (error) {
+    console.error(error);
+    return { data: null, error: 'Failed to analyze crop image. Please try again.' };
   }
 }

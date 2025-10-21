@@ -4,8 +4,6 @@
  * @fileOverview A voice assistant AI agent for farmers, named Mati AI.
  *
  * - matiAIVoiceAssistance - A function that handles the voice assistance process.
- * - MatiAIVoiceAssistanceInput - The input type for the matiAIVoiceAssistance function.
- * - MatiAIVoiceAssistanceOutput - The return type for the matiAIVoiceAssistance function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -14,14 +12,14 @@ import {z} from 'genkit';
 const MatiAIVoiceAssistanceInputSchema = z.object({
   query: z.string().describe('The query from the farmer in Bangla.'),
 });
-export type MatiAIVoiceAssistanceInput = z.infer<
+type MatiAIVoiceAssistanceInput = z.infer<
   typeof MatiAIVoiceAssistanceInputSchema
 >;
 
 const MatiAIVoiceAssistanceOutputSchema = z.object({
   response: z.string().describe('The response from Mati AI in Bangla.'),
 });
-export type MatiAIVoiceAssistanceOutput = z.infer<
+type MatiAIVoiceAssistanceOutput = z.infer<
   typeof MatiAIVoiceAssistanceOutputSchema
 >;
 

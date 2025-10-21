@@ -1,4 +1,3 @@
-
 export const translations = {
   // App Header
   'app.header.title.welcome': {
@@ -94,10 +93,6 @@ export const translations = {
   'dashboard.weather.title': {
     en: 'Daily Weather',
     bn: 'দৈনিক আবহাওয়া',
-  },
-  'dashboard.weather.condition.partlyCloudy': {
-    en: 'Partly Cloudy',
-    bn: 'আংশিক মেঘলা',
   },
   'dashboard.seasonalCrops.jute.name': {
     en: 'Jute',
@@ -216,11 +211,35 @@ export const translations = {
     en: 'Type your question in English or Bangla...',
     bn: 'আপনার প্রশ্ন বাংলায় টাইপ করুন...',
   },
+  
   // Weather Page
-  'weather.season.summer': {
-    en: 'Summer',
-    bn: 'গ্রীষ্মকাল',
-  },
+  'weather.season.winter': { en: 'Winter', bn: 'শীতকাল' },
+  'weather.season.summer': { en: 'Summer', bn: 'গ্রীষ্মকাল' },
+  'weather.season.monsoon': { en: 'Monsoon', bn: 'বর্ষাকাল' },
+  'weather.season.autumn': { en: 'Autumn', bn: ' শরৎকাল' },
+  
+  // Weather Conditions
+  'weather.condition.clear': { en: 'Clear sky', bn: 'পরিষ্কার আকাশ' },
+  'weather.condition.mainlyClear': { en: 'Mainly clear', bn: 'মূলত পরিষ্কার' },
+  'weather.condition.partlyCloudy': { en: 'Partly cloudy', bn: 'আংশিক মেঘলা' },
+  'weather.condition.overcast': { en: 'Overcast', bn: 'মেঘলা' },
+  'weather.condition.fog': { en: 'Fog', bn: 'কুয়াশা' },
+  'weather.condition.rimeFog': { en: 'Depositing rime fog', bn: 'জমাট বাঁধা কুয়াশা' },
+  'weather.condition.drizzleLight': { en: 'Light drizzle', bn: 'হালকা গুঁড়ি গুঁড়ি বৃষ্টি' },
+  'weather.condition.drizzleModerate': { en: 'Moderate drizzle', bn: 'মাঝারি গুঁড়ি গুঁড়ি বৃষ্টি' },
+  'weather.condition.drizzleDense': { en: 'Dense drizzle', bn: 'ঘন গুঁড়ি গুঁড়ি বৃষ্টি' },
+  'weather.condition.rainSlight': { en: 'Slight rain', bn: 'হালকা বৃষ্টি' },
+  'weather.condition.rainModerate': { en: 'Moderate rain', bn: 'মাঝারি বৃষ্টি' },
+  'weather.condition.rainHeavy': { en: 'Heavy rain', bn: 'ভারী বৃষ্টি' },
+  'weather.condition.rainShowersSlight': { en: 'Slight rain showers', bn: 'হালকা ঝরনা' },
+  'weather.condition.rainShowersModerate': { en: 'Moderate rain showers', bn: 'মাঝারি ঝরনা' },
+  'weather.condition.rainShowersViolent': { en: 'Violent rain showers', bn: 'প্রচণ্ড ঝরনা' },
+  'weather.condition.thunderstormSlight': { en: 'Slight thunderstorm', bn: 'হালকা বজ্রঝড়' },
+  'weather.condition.thunderstormHailSlight': { en: 'Thunderstorm with slight hail', bn: 'শিলাবৃষ্টি সহ বজ্রঝড়' },
+  'weather.condition.thunderstormHailHeavy': { en: 'Thunderstorm with heavy hail', bn: 'ভারী শিলাবৃষ্টি সহ বজ্রঝড়' },
+  'weather.condition.unknown': { en: 'Unknown condition', bn: 'অজানা অবস্থা' },
+
+
   // My Crops - Lands List
   'myCrops.lands.title': {
     en: 'My Lands',
@@ -487,5 +506,3 @@ export const translations = {
 };
 
 export type TranslationKey = keyof typeof translations;
-
-    

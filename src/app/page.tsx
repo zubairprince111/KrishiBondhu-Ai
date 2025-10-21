@@ -41,20 +41,17 @@ import type { TranslationKey } from '@/lib/i18n';
 import { suggestSeasonalCrops } from '@/lib/actions';
 import { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
 import { cn } from '@/lib/utils';
-
-const weatherData = {
-  location: 'Dhaka, Bangladesh',
-  temp: 32,
-  conditionKey: 'dashboard.weather.condition.partlyCloudy',
-  icon: <CloudSun className="h-6 w-6 text-yellow-400" />,
-  humidity: '78%',
-  wind: '12 km/h',
-};
+import { useGeolocation } from '@/hooks/use-geolocation';
+import { getWeather, getConditionIcon, getConditionKey } from '@/lib/weather';
+import type { WeatherData } from '@/lib/weather';
 
 export default function DashboardPage() {
     const { slideshowImages } = useSlideshow();
     const [isPending, startTransition] = useTransition();
     const [seasonalCrops, setSeasonalCrops] = useState<OptimalCropSuggestionOutput | null>(null);
+    const { location, error: locationError } = useGeolocation();
+    const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+    const [isWeatherLoading, setIsWeatherLoading] = useState(true);
 
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: true })
@@ -68,6 +65,19 @@ export default function DashboardPage() {
         });
     }, []);
 
+    useEffect(() => {
+      if (location) {
+        setIsWeatherLoading(true);
+        getWeather(location.latitude, location.longitude)
+          .then(data => {
+            setWeatherData(data);
+          })
+          .catch(console.error)
+          .finally(() => setIsWeatherLoading(false));
+      } else {
+        setIsWeatherLoading(false);
+      }
+    }, [location]);
 
     const features = [
       {
@@ -148,31 +158,43 @@ export default function DashboardPage() {
                             <CardTitle className="font-headline text-base">
                                 {t('dashboard.weather.title')}
                             </CardTitle>
-                            <span className="text-sm font-medium">{weatherData.temp}°C</span>
+                            {weatherData && <span className="text-sm font-medium">{weatherData.current.temperature}°C</span>}
                         </div>
-                        <CardDescription className="flex items-center gap-1 text-xs"><MapPin className="size-3"/>{weatherData.location}</CardDescription>
+                        <CardDescription className="flex items-center gap-1 text-xs"><MapPin className="size-3"/>
+                          {isWeatherLoading ? 'Fetching location...' : locationError ? 'Location unavailable' : weatherData?.locationName || 'Unknown Location'}
+                        </CardDescription>
                     </CardHeader>
-                    <CardContent className="flex items-center justify-between gap-4 p-3 pt-0 text-center">
-                        <div className="flex flex-col items-center">
-                            {weatherData.icon}
-                            <p className="mt-1 text-xs text-muted-foreground">{t(weatherData.conditionKey)}</p>
-                        </div>
-                        <div className="flex gap-4 text-left">
-                            <div className="flex items-center gap-2">
-                                <Droplets className="size-4 text-blue-400"/>
-                                <div>
-                                    <p className="text-xs text-muted-foreground">Humidity</p>
-                                    <p className="text-sm font-bold">{weatherData.humidity}</p>
-                                </div>
-                            </div>
-                             <div className="flex items-center gap-2">
-                                <Wind className="size-4 text-gray-400"/>
-                                 <div>
-                                    <p className="text-xs text-muted-foreground">Wind</p>
-                                    <p className="text-sm font-bold">{weatherData.wind}</p>
-                                </div>
-                            </div>
-                        </div>
+                    <CardContent className="flex items-center justify-between gap-4 p-3 pt-0 text-center min-h-[64px]">
+                      {isWeatherLoading ? (
+                        <Loader2 className="mx-auto size-6 animate-spin text-primary"/>
+                      ) : weatherData ? (
+                        <>
+                          <div className="flex flex-col items-center">
+                              {getConditionIcon(weatherData.current.conditionCode, "h-6 w-6 text-yellow-400")}
+                              <p className="mt-1 text-xs text-muted-foreground">{t(getConditionKey(weatherData.current.conditionCode))}</p>
+                          </div>
+                          <div className="flex gap-4 text-left">
+                              <div className="flex items-center gap-2">
+                                  <Droplets className="size-4 text-blue-400"/>
+                                  <div>
+                                      <p className="text-xs text-muted-foreground">Humidity</p>
+                                      <p className="text-sm font-bold">{weatherData.current.humidity}%</p>
+                                  </div>
+                              </div>
+                               <div className="flex items-center gap-2">
+                                  <Wind className="size-4 text-gray-400"/>
+                                   <div>
+                                      <p className="text-xs text-muted-foreground">Wind</p>
+                                      <p className="text-sm font-bold">{weatherData.current.windSpeed} km/h</p>
+                                  </div>
+                              </div>
+                          </div>
+                        </>
+                      ) : (
+                        <p className="mx-auto text-xs text-muted-foreground">
+                          {locationError || "Could not load weather. Please enable location services."}
+                        </p>
+                      )}
                     </CardContent>
                 </Card>
 
@@ -181,7 +203,7 @@ export default function DashboardPage() {
                         <CardTitle className="font-headline text-base">AI Seasonal Suggestions</CardTitle>
                         <CardDescription className="text-xs">Based on your region's current conditions</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex min-h-[46px] items-center justify-center p-3 pt-0">
+                    <CardContent className="flex min-h-[64px] items-center justify-center p-3 pt-0">
                       {isPending && <Loader2 className="size-6 animate-spin text-primary" />}
                       {!isPending && seasonalCrops && (
                          <div className="w-full space-y-1">

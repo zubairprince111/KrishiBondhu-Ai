@@ -129,7 +129,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="mb-6 flex flex-col items-center text-center">
-            <div className="mb-4 flex items-center gap-2">
+            <div className="mb-4 flex items-center justify-center gap-2">
                 <Sprout className="size-10 text-primary" />
                 <h1 className="font-headline text-4xl font-semibold text-primary">KrishiBondhu</h1>
             </div>

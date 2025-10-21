@@ -13,9 +13,8 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { getGovernmentSchemes, getMarketPrices } from '@/lib/actions';
+import { findGovernmentSchemes, getMarketPrices } from '@/lib/actions';
 import { Loader2, ReceiptText, Search, Tag, Wand2 } from 'lucide-react';
-import type { GovernmentSchemeFinderOutput } from '@/ai/flows/government-scheme-finder';
 
 import {
   Select,
@@ -40,7 +39,7 @@ const MarketPriceSchema = z.object({
 export default function MarketInfoPage() {
     const [isPending, startTransition] = useTransition();
     const [isPricesPending, startPricesTransition] = useTransition();
-    const [result, setResult] = useState<GovernmentSchemeFinderOutput | null>(null);
+    const [result, setResult] = useState<any | null>(null);
     const [marketPrices, setMarketPrices] = useState<z.infer<typeof MarketPriceSchema>[]>([]);
     const { toast } = useToast();
     const { t } = useLanguage();
@@ -65,7 +64,7 @@ export default function MarketInfoPage() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         setResult(null);
         startTransition(async () => {
-            const { data, error } = await getGovernmentSchemes(values);
+            const { data, error } = await findGovernmentSchemes(values);
             if (error) {
                 toast({ variant: 'destructive', title: 'Error', description: error });
             } else {
@@ -154,7 +153,7 @@ export default function MarketInfoPage() {
                                 <div>
                                     <h3 className="font-headline text-lg font-semibold">Government Schemes</h3>
                                     <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
-                                        {result.schemes.map((scheme, i) => <li key={i}>{scheme}</li>)}
+                                        {result.schemes.map((scheme: string, i: number) => <li key={i}>{scheme}</li>)}
                                     </ul>
                                 </div>
                                 <div>

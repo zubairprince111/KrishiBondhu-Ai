@@ -5,8 +5,6 @@
  * @fileOverview A flow that provides step-by-step guidance for a selected crop.
  *
  * - getCropGuidance - A function that takes crop details and returns tailored guidance.
- * - CropGuidanceInput - The input type for the getCropGuidance function.
- * - CropGuidanceOutput - The return type for the getCropGuidance function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -17,7 +15,7 @@ const CropGuidanceInputSchema = z.object({
   region: z.string().describe('The region where the crop is being grown.'),
   currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering). This is calculated from sowing date.'),
 });
-export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
+type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 
 const GuidanceStepSchema = z.object({
     title: z.string().describe('The title of the guidance step.'),
@@ -29,7 +27,7 @@ const GuidanceStepSchema = z.object({
 const CropGuidanceOutputSchema = z.object({
   guidance: z.array(GuidanceStepSchema).describe('An array of step-by-step guidance for the crop lifecycle.'),
 });
-export type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
+type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
 
 export async function getCropGuidance(input: CropGuidanceInput): Promise<CropGuidanceOutput> {
   return cropGuidanceFlow(input);

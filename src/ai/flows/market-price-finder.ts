@@ -4,8 +4,6 @@
  * @fileOverview An AI agent for finding real-time market prices for crops in Bangladesh.
  *
  * - findMarketPrices - A function that returns current market prices.
- * - MarketPriceFinderInput - The input type for the findMarketPrices function.
- * - MarketPriceFinderOutput - The return type for the findMarketPrices function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -20,35 +18,12 @@ const MarketPriceSchema = z.object({
 const MarketPriceFinderInputSchema = z.object({
    region: z.string().describe('The region in Bangladesh to find market prices for. If empty, find for major markets.'),
 });
-export type MarketPriceFinderInput = z.infer<typeof MarketPriceFinderInputSchema>;
+type MarketPriceFinderInput = z.infer<typeof MarketPriceFinderInputSchema>;
 
 const MarketPriceFinderOutputSchema = z.object({
   prices: z.array(MarketPriceSchema).describe('A list of current market prices for various crops.'),
 });
-export type MarketPriceFinderOutput = z.infer<typeof MarketPriceFinderOutputSchema>;
-
-export async function findMarketPrices(input: MarketPriceFinderInput): Promise<MarketPriceFinderOutput> {
-  const llmResponse = await prompt(input);
-  const toolRequest = llmResponse.toolRequest();
-
-  if (!toolRequest) {
-      // This case is unlikely if the prompt is well-defined, but it's good practice to handle it.
-      // We can try to generate a response without the tool.
-      const fallbackResponse = await ai.generate({
-          prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
-          output: { schema: MarketPriceFinderOutputSchema },
-      });
-      return fallbackResponse.output!;
-  }
-  
-  // Call the tool. In a real scenario, this would be where you execute the tool's logic.
-  const toolResponse = await llmResponse.forward(toolRequest);
-
-  // Send the tool's response back to the model.
-  const finalResponse = await prompt(input, {toolResponse});
-
-  return finalResponse.output!;
-}
+type MarketPriceFinderOutput = z.infer<typeof MarketPriceFinderOutputSchema>;
 
 const getMarketPricesTool = ai.defineTool(
     {
@@ -76,25 +51,46 @@ const getMarketPricesTool = ai.defineTool(
     }
 );
 
-
-const prompt = ai.definePrompt({
+const marketPriceFinderPrompt = ai.definePrompt({
   name: 'marketPriceFinderPrompt',
-  input: {schema: MarketPriceFinderInputSchema},
-  output: {schema: MarketPriceFinderOutputSchema},
   tools: [getMarketPricesTool],
   prompt: `You are an AI assistant that provides real-time agricultural market prices in Bangladesh. Use the provided tool to get the current market prices for the specified region.
 
-  Region: {{{region}}}
-  `,
+Region: {{{region}}}
+`,
 });
 
-// Note: The flow is not exported because it's not an async function and would violate the 'use server' contract.
-// Instead, the exported `findMarketPrices` function directly implements the flow logic.
-ai.defineFlow(
+const marketPriceFinderFlow = ai.defineFlow(
   {
     name: 'marketPriceFinderFlow',
     inputSchema: MarketPriceFinderInputSchema,
     outputSchema: MarketPriceFinderOutputSchema,
   },
-  findMarketPrices
+  async (input) => {
+    const llmResponse = await marketPriceFinderPrompt(input);
+    const toolRequest = llmResponse.toolRequest();
+
+    if (!toolRequest) {
+      // This case is unlikely if the prompt is well-defined, but it's good practice to handle it.
+      // We can try to generate a response without the tool.
+      const fallbackResponse = await ai.generate({
+          prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
+          output: { schema: MarketPriceFinderOutputSchema },
+      });
+      return fallbackResponse.output!;
+    }
+    
+    // Call the tool. In a real scenario, this would be where you execute the tool's logic.
+    const toolResponse = await llmResponse.forward(toolRequest);
+
+    // Send the tool's response back to the model.
+    const finalResponse = await marketPriceFinderPrompt(input, {toolResponse});
+
+    return finalResponse.output!;
+  }
 );
+
+
+export async function findMarketPrices(input: MarketPriceFinderInput): Promise<MarketPriceFinderOutput> {
+  return marketPriceFinderFlow(input);
+}

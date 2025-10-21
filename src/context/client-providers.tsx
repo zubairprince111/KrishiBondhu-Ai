@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
@@ -6,6 +5,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { SlideshowProvider } from '@/context/slideshow-context';
 import { LanguageProvider } from '@/context/language-context';
+import { GeolocationProvider } from '@/context/geolocation-context';
 
 export function ClientProviders({ children }: { children: ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
@@ -22,12 +22,14 @@ export function ClientProviders({ children }: { children: ReactNode }) {
 
   return (
     <LanguageProvider>
-      <SlideshowProvider>
-        <SidebarProvider>
-          {children}
-          <Toaster />
-        </SidebarProvider>
-      </SlideshowProvider>
+      <GeolocationProvider>
+        <SlideshowProvider>
+          <SidebarProvider>
+            {children}
+            <Toaster />
+          </SidebarProvider>
+        </SlideshowProvider>
+      </GeolocationProvider>
     </LanguageProvider>
   );
 }

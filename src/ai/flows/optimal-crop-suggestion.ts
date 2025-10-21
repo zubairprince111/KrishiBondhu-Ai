@@ -4,8 +4,6 @@
  * @fileOverview A flow that suggests optimal crops for a given season and region based on soil type and climate data.
  *
  * - suggestOptimalCrops - A function that takes soil type and climate data as input and returns a list of suggested crops.
- * - OptimalCropSuggestionInput - The input type for the suggestOptimalCrops function.
- * - OptimalCropSuggestionOutput - The return type for the suggestOptimalCrops function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -17,13 +15,13 @@ const OptimalCropSuggestionInputSchema = z.object({
   currentSeason: z.string().describe('The current season.'),
   region: z.string().describe('The region for which to suggest crops.'),
 });
-export type OptimalCropSuggestionInput = z.infer<typeof OptimalCropSuggestionInputSchema>;
+type OptimalCropSuggestionInput = z.infer<typeof OptimalCropSuggestionInputSchema>;
 
 const OptimalCropSuggestionOutputSchema = z.object({
   suggestedCrops: z.array(z.string()).describe('A list of 3 suggested crops for the given region and season.'),
   reasoning: z.string().describe('A brief, single-sentence reasoning for why these crops are suitable for the current season and region.'),
 });
-export type OptimalCropSuggestionOutput = z.infer<typeof OptimalCropSuggestionOutputSchema>;
+type OptimalCropSuggestionOutput = z.infer<typeof OptimalCropSuggestionOutputSchema>;
 
 export async function suggestOptimalCrops(input: OptimalCropSuggestionInput): Promise<OptimalCropSuggestionOutput> {
   return suggestOptimalCropsFlow(input);
