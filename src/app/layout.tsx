@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -35,8 +36,8 @@ export default function RootLayout({
               </SidebarProvider>
             </SlideshowProvider>
           </LanguageProvider>
+          <Toaster />
         </FirebaseClientProvider>
-        <Toaster />
       </body>
     </html>
   );
