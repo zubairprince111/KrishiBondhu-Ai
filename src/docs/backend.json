@@ -221,13 +221,17 @@
       "type": "object",
       "description": "Represents a post in the community forum.",
       "properties": {
-        "id": {
+        "authorId": {
           "type": "string",
-          "description": "Unique identifier for the community post."
+          "description": "The UID of the user who created the post."
         },
-        "userProfileId": {
+        "authorName": {
           "type": "string",
-          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N CommunityPost)"
+          "description": "The display name of the user who created the post."
+        },
+        "authorAvatarUrl": {
+          "type": "string",
+          "description": "The URL of the author's avatar image."
         },
         "content": {
           "type": "string",
@@ -235,20 +239,38 @@
         },
         "imageURL": {
           "type": "string",
-          "description": "Optional URL of the image included in the post."
+          "description": "Optional URL of an image included in the post."
         },
         "timestamp": {
-          "type": "string",
-          "description": "Timestamp of when the post was created.",
-          "format": "date-time"
+          "type": "object",
+          "description": "Timestamp of when the post was created."
+        },
+        "likes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "An array of user IDs who have liked the post."
         }
       },
       "required": [
-        "id",
-        "userProfileId",
+        "authorId",
+        "authorName",
         "content",
         "timestamp"
       ]
+    },
+    "Comment": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Comment",
+        "type": "object",
+        "description": "Represents a comment on a community post.",
+        "properties": {
+            "authorId": { "type": "string" },
+            "authorName": { "type": "string" },
+            "authorAvatarUrl": { "type": "string" },
+            "content": { "type": "string" },
+            "timestamp": { "type": "object" }
+        },
+        "required": ["authorId", "authorName", "content", "timestamp"]
     },
     "MarketPrice": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -340,14 +362,20 @@
         }
       },
       {
-        "path": "/users/{userId}/community_posts/{communityPostId}",
+        "path": "/community_posts/{postId}",
         "definition": {
-          "entityName": "CommunityPost",
-          "schema": {
-            "$ref": "#/entities/CommunityPost"
-          },
-          "description": "Stores community posts created by users. Accessible only by the respective user."
+            "entityName": "CommunityPost",
+            "schema": { "$ref": "#/entities/CommunityPost" },
+            "description": "Stores all community posts, publicly readable."
         }
+      },
+      {
+          "path": "/community_posts/{postId}/comments/{commentId}",
+          "definition": {
+              "entityName": "Comment",
+              "schema": { "$ref": "#/entities/Comment" },
+              "description": "Stores comments for a specific community post."
+          }
       },
       {
         "path": "/weather_alerts/{weatherAlertId}",
@@ -370,6 +398,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore structure is updated to support multiple lands per user. A new top-level collection `lands` is added under each user's document (`/users/{userId}/lands/{landId}`). The `crops` collection is now a subcollection of a `land`, enabling a many-to-many relationship between users and crops via lands. This is a more scalable and organized way to manage multiple farming plots. Other collections remain unchanged."
+    "reasoning": "The Firestore structure is updated to support a public community feed. The `community_posts` collection is now at the root, making all posts publicly readable. A `comments` subcollection has been added to each post. The old private `community_posts` collection under users has been removed."
   }
 }
