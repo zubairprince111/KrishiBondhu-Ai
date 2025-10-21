@@ -4,6 +4,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { SlideshowProvider } from '@/context/slideshow-context';
+import { LanguageProvider } from '@/context/language-context';
 
 export const metadata: Metadata = {
   title: 'KrishiBondhu AI',
@@ -24,14 +25,16 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <SlideshowProvider>
-          <SidebarProvider>
-            <div className="flex">
-              <AppSidebar />
-              <div className="flex-1">{children}</div>
-            </div>
-          </SidebarProvider>
-        </SlideshowProvider>
+        <LanguageProvider>
+          <SlideshowProvider>
+            <SidebarProvider>
+              <div className="flex">
+                <AppSidebar />
+                <div className="flex-1">{children}</div>
+              </div>
+            </SidebarProvider>
+          </SlideshowProvider>
+        </LanguageProvider>
         <Toaster />
       </body>
     </html>

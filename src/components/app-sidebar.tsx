@@ -24,32 +24,41 @@ import {
   Shield,
   Sprout,
 } from 'lucide-react';
+import { useLanguage } from '@/context/language-context';
+import type { TranslationKey } from '@/lib/i18n';
 
-const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutGrid },
-  { href: '/crop-doctor', label: 'Crop Doctor', icon: Leaf },
-  { href: '/voice-assistant', label: 'Mati AI', icon: Mic },
-  { href: '/weather', label: 'Weather', icon: CloudSun },
-  { href: '/crop-planning', label: 'Crop Planning', icon: ClipboardList },
-  { href: '/community', label: 'Community', icon: MessageSquare },
-  { href: '/market-info', label: 'Market Info', icon: Landmark },
+type NavItem = {
+    href: string;
+    labelKey: TranslationKey;
+    icon: React.ElementType;
+}
+
+const navItems: NavItem[] = [
+  { href: '/', labelKey: 'sidebar.nav.dashboard', icon: LayoutGrid },
+  { href: '/crop-doctor', labelKey: 'sidebar.nav.cropDoctor', icon: Leaf },
+  { href: '/voice-assistant', labelKey: 'sidebar.nav.matiAI', icon: Mic },
+  { href: '/weather', labelKey: 'sidebar.nav.weather', icon: CloudSun },
+  { href: '/crop-planning', labelKey: 'sidebar.nav.cropPlanning', icon: ClipboardList },
+  { href: '/community', labelKey: 'sidebar.nav.community', icon: MessageSquare },
+  { href: '/market-info', labelKey: 'sidebar.nav.marketInfo', icon: Landmark },
 ];
 
-const secondaryNavItems = [
-    { href: '/about', label: 'About', icon: Info },
-    { href: '/admin', label: 'Admin', icon: Shield },
+const secondaryNavItems: NavItem[] = [
+    { href: '/about', labelKey: 'sidebar.nav.about', icon: Info },
+    { href: '/admin', labelKey: 'sidebar.nav.admin', icon: Shield },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
-    <Sidebar className="border-r md:flex">
+    <Sidebar className="hidden border-r md:flex">
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2">
           <Sprout className="size-8 text-primary" />
           <h2 className="font-headline text-2xl font-semibold text-primary">
-            KrishiBondhu
+            {t('sidebar.title')}
           </h2>
         </Link>
       </SidebarHeader>
@@ -60,11 +69,11 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.href}
-                tooltip={{ children: item.label }}
+                tooltip={{ children: t(item.labelKey) }}
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -78,11 +87,11 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.href}
-                tooltip={{ children: item.label }}
+                tooltip={{ children: t(item.labelKey) }}
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

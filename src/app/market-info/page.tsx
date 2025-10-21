@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useLanguage } from '@/context/language-context';
 
 const formSchema = z.object({
   crop: z.string().min(2, 'Crop name is required.'),
@@ -42,6 +43,7 @@ export default function MarketInfoPage() {
     const [result, setResult] = useState<GovernmentSchemeFinderOutput | null>(null);
     const [marketPrices, setMarketPrices] = useState<z.infer<typeof MarketPriceSchema>[]>([]);
     const { toast } = useToast();
+    const { t } = useLanguage();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -74,7 +76,7 @@ export default function MarketInfoPage() {
 
   return (
     <SidebarInset>
-      <AppHeader title="Market Information" />
+      <AppHeader titleKey="app.header.title.marketInfo" />
       <main className="flex-1 p-4 md:p-6">
         <Tabs defaultValue="schemes">
           <TabsList className="grid w-full grid-cols-2">

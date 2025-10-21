@@ -1,7 +1,9 @@
+'use client';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { Sun, Cloud, CloudRain, CloudSun, MapPin, Zap } from 'lucide-react';
+import { useLanguage } from '@/context/language-context';
 
 const weatherData = {
   current: {
@@ -25,9 +27,10 @@ const weatherData = {
 };
 
 export default function WeatherPage() {
+  const { t } = useLanguage();
   return (
     <SidebarInset>
-      <AppHeader title="Weather Alerts" />
+      <AppHeader titleKey="app.header.title.weather" />
       <main className="flex-1 p-4 md:p-6">
         <div className="space-y-6">
           <Card>

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { AppHeader } from '@/components/app-header';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,6 +13,7 @@ import { Mic, Send, Sprout, User } from 'lucide-react';
 import { getVoiceAssistance } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SpeakingAnimation } from '@/components/speaking-animation';
+import { useLanguage } from '@/context/language-context';
 
 type Message = {
   id: number;
@@ -21,17 +22,23 @@ type Message = {
 };
 
 export default function VoiceAssistantPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      role: 'assistant',
-      content: 'শুভ সকাল! আমি মাটি, আপনার কৃষি সহায়ক। আমি আপনাকে কিভাবে সাহায্য করতে পারি?',
-    },
-  ]);
+  const { t, language } = useLanguage();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    setMessages([
+        {
+          id: 1,
+          role: 'assistant',
+          content: t('voiceAssistant.greeting'),
+        },
+    ]);
+  }, [language, t]);
+
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -81,7 +88,7 @@ export default function VoiceAssistantPage() {
 
   return (
     <SidebarInset>
-      <AppHeader title="Voice Assistant (Mati AI)" />
+      <AppHeader titleKey="app.header.title.voiceAssistant" />
       <main className="flex flex-1 flex-col p-4 md:p-6">
         <div className="flex h-[calc(100vh-6rem)] flex-col">
           <ScrollArea className="flex-1" ref={scrollAreaRef}>
@@ -129,7 +136,7 @@ export default function VoiceAssistantPage() {
                     </Avatar>
                   <div className="rounded-lg p-3 bg-card flex items-center gap-2">
                     <SpeakingAnimation />
-                    <span className="text-sm text-muted-foreground">Mati is thinking...</span>
+                    <span className="text-sm text-muted-foreground">{t('voiceAssistant.thinking')}</span>
                   </div>
                 </div>
               )}
@@ -142,7 +149,7 @@ export default function VoiceAssistantPage() {
                   <Textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="আপনার প্রশ্ন বাংলায় টাইপ করুন..."
+                    placeholder={t('voiceAssistant.placeholder')}
                     className="max-h-24 flex-1 resize-none"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {

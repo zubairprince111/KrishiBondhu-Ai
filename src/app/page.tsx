@@ -31,50 +31,12 @@ import {
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useSlideshow } from '@/context/slideshow-context';
-
-const features = [
-  {
-    title: 'AI Crop Doctor',
-    description: 'Diagnose crop diseases from a picture.',
-    href: '/crop-doctor',
-    icon: <Leaf className="size-8 text-primary" />,
-  },
-  {
-    title: 'Voice Assistant (Mati AI)',
-    description: 'Ask questions in Bangla.',
-    href: '/voice-assistant',
-    icon: <Mic className="size-8 text-primary" />,
-  },
-  {
-    title: 'Weather Alerts',
-    description: 'Real-time forecasts and warnings.',
-    href: '/weather',
-    icon: <CloudSun className="size-8 text-primary" />,
-  },
-  {
-    title: 'Crop Planning Tool',
-    description: 'Get suggestions for your next harvest.',
-    href: '/crop-planning',
-    icon: <ClipboardList className="size-8 text-primary" />,
-  },
-  {
-    title: 'Community Chat',
-    description: 'Connect with other farmers.',
-    href: '/community',
-    icon: <MessageSquare className="size-8 text-primary" />,
-  },
-  {
-    title: 'Market Info',
-    description: 'Govt. schemes and market prices.',
-    href: '/market-info',
-    icon: <Landmark className="size-8 text-primary" />,
-  },
-];
+import { useLanguage } from '@/context/language-context';
 
 const weatherData = {
   location: 'Dhaka, Bangladesh',
   temp: 32,
-  condition: 'Partly Cloudy',
+  conditionKey: 'dashboard.weather.condition.partlyCloudy',
   icon: <CloudSun className="size-12 text-yellow-500" />,
 };
 
@@ -83,10 +45,50 @@ export default function DashboardPage() {
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: true })
     );
+    const { t } = useLanguage();
+
+    const features = [
+      {
+        titleKey: 'dashboard.feature.cropDoctor.title',
+        descriptionKey: 'dashboard.feature.cropDoctor.description',
+        href: '/crop-doctor',
+        icon: <Leaf className="size-8 text-primary" />,
+      },
+      {
+        titleKey: 'dashboard.feature.voiceAssistant.title',
+        descriptionKey: 'dashboard.feature.voiceAssistant.description',
+        href: '/voice-assistant',
+        icon: <Mic className="size-8 text-primary" />,
+      },
+      {
+        titleKey: 'dashboard.feature.weather.title',
+        descriptionKey: 'dashboard.feature.weather.description',
+        href: '/weather',
+        icon: <CloudSun className="size-8 text-primary" />,
+      },
+      {
+        titleKey: 'dashboard.feature.cropPlanning.title',
+        descriptionKey: 'dashboard.feature.cropPlanning.description',
+        href: '/crop-planning',
+        icon: <ClipboardList className="size-8 text-primary" />,
+      },
+      {
+        titleKey: 'dashboard.feature.community.title',
+        descriptionKey: 'dashboard.feature.community.description',
+        href: '/community',
+        icon: <MessageSquare className="size-8 text-primary" />,
+      },
+      {
+        titleKey: 'dashboard.feature.marketInfo.title',
+        descriptionKey: 'dashboard.feature.marketInfo.description',
+        href: '/market-info',
+        icon: <Landmark className="size-8 text-primary" />,
+      },
+    ] as const;
 
     return (
         <SidebarInset>
-        <AppHeader title="Welcome to KrishiBondhu" />
+        <AppHeader titleKey="app.header.title.welcome" />
         <main className="flex-1 p-4 md:p-6">
             <Card className="relative overflow-hidden">
               <Carousel 
@@ -117,14 +119,14 @@ export default function DashboardPage() {
                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
                     <Card className="max-w-md bg-white/20 backdrop-blur-sm text-white border-white/30">
                          <CardHeader>
-                            <CardTitle className="font-headline text-white">Daily Weather</CardTitle>
+                            <CardTitle className="font-headline text-white">{t('dashboard.weather.title')}</CardTitle>
                             <CardDescription className="flex items-center gap-1 text-white/90"><MapPin className="size-4"/>{weatherData.location}</CardDescription>
                         </CardHeader>
                         <CardContent className="flex items-center justify-around gap-4 text-center">
                             <div className='text-yellow-300'>{weatherData.icon}</div>
                             <div>
                                 <p className="font-headline text-5xl font-bold">{weatherData.temp}°C</p>
-                                <p className="text-white/90">{weatherData.condition}</p>
+                                <p className="text-white/90">{t(weatherData.conditionKey)}</p>
                             </div>
                         </CardContent>
                     </Card>
@@ -139,9 +141,9 @@ export default function DashboardPage() {
                     <div className="flex items-start justify-between">
                         <div className="space-y-1">
                         <CardTitle className="font-headline text-lg sm:text-xl">
-                            {feature.title}
+                            {t(feature.titleKey)}
                         </CardTitle>
-                        <CardDescription className="text-xs sm:text-sm">{feature.description}</CardDescription>
+                        <CardDescription className="text-xs sm:text-sm">{t(feature.descriptionKey)}</CardDescription>
                         </div>
                         {React.cloneElement(feature.icon, { className: 'size-6 sm:size-8 text-primary shrink-0 ml-2' })}
                     </div>
@@ -157,9 +159,9 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-4">
                     <WifiOff className="size-6 text-accent-foreground" />
                     <div>
-                    <CardTitle className="font-headline text-lg text-accent-foreground">Offline Access</CardTitle>
+                    <CardTitle className="font-headline text-lg text-accent-foreground">{t('dashboard.offline.title')}</CardTitle>
                     <CardDescription className="text-accent-foreground/80">
-                        Key features and your data are available even without an internet connection.
+                       {t('dashboard.offline.description')}
                     </CardDescription>
                     </div>
                 </div>

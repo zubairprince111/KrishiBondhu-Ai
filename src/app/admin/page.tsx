@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -22,12 +22,14 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { type ImagePlaceholder } from '@/lib/placeholder-images';
 import { useSlideshow } from '@/context/slideshow-context';
+import { useLanguage } from '@/context/language-context';
 
 export default function AdminPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { slideshowImages, addImage, removeImage } = useSlideshow();
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setIsClient(true);
@@ -73,7 +75,7 @@ export default function AdminPage() {
 
   return (
     <SidebarInset>
-      <AppHeader title="Admin Panel" />
+      <AppHeader titleKey="app.header.title.admin" />
       <main className="flex-1 p-4 md:p-6">
         <div className="grid gap-6">
             <Card>

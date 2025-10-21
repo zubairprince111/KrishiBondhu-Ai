@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,6 +8,7 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { ThumbsUp, MessageSquare, Send } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Textarea } from '@/components/ui/textarea';
+import { useLanguage } from '@/context/language-context';
 
 const posts = [
   {
@@ -32,10 +34,11 @@ const posts = [
 
 export default function CommunityPage() {
   const getImage = (id: string) => PlaceHolderImages.find(p => p.id === id);
+  const { t } = useLanguage();
 
   return (
     <SidebarInset>
-      <AppHeader title="Community Chat" />
+      <AppHeader titleKey="app.header.title.community" />
       <main className="flex-1 p-4 md:p-6">
         <div className="mx-auto max-w-2xl space-y-6">
           <Card>

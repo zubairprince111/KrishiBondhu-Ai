@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui/button';
@@ -5,13 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SidebarInset } from '@/components/ui/sidebar';
 import { Upload, Wand2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useLanguage } from '@/context/language-context';
 
 export default function CropDoctorPage() {
   const diseasedLeafImage = PlaceHolderImages.find(p => p.id === 'crop-disease');
+  const { t } = useLanguage();
 
   return (
     <SidebarInset>
-      <AppHeader title="AI Crop Doctor" />
+      <AppHeader titleKey="app.header.title.cropDoctor" />
       <main className="flex-1 p-4 md:p-6">
         <div className="grid gap-8 lg:grid-cols-2">
           <Card>

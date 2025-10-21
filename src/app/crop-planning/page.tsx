@@ -15,6 +15,7 @@ import { getOptimalCrops } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Sprout, Wand2 } from 'lucide-react';
 import type { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
+import { useLanguage } from '@/context/language-context';
 
 const formSchema = z.object({
   region: z.string().min(2, 'Region is required.'),
@@ -27,6 +28,7 @@ export default function CropPlanningPage() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<OptimalCropSuggestionOutput | null>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,7 +58,7 @@ export default function CropPlanningPage() {
 
   return (
     <SidebarInset>
-      <AppHeader title="Crop Planning Tool" />
+      <AppHeader titleKey="app.header.title.cropPlanning" />
       <main className="flex-1 p-4 md:p-6">
         <div className="grid gap-8 lg:grid-cols-2">
           <Card>
