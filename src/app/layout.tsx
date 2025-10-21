@@ -1,11 +1,8 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { Toaster } from '@/components/ui/toaster';
-import { SlideshowProvider } from '@/context/slideshow-context';
-import { LanguageProvider } from '@/context/language-context';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { ClientProviders } from '@/context/client-providers';
 
 export const metadata: Metadata = {
   title: 'KrishiBondhu AI',
@@ -27,16 +24,11 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
-          <LanguageProvider>
-            <SlideshowProvider>
-              <SidebarProvider>
-                <main className="min-h-svh w-full bg-background">
-                  {children}
-                </main>
-              </SidebarProvider>
-            </SlideshowProvider>
-          </LanguageProvider>
-          <Toaster />
+          <ClientProviders>
+            <main className="min-h-svh w-full bg-background">
+              {children}
+            </main>
+          </ClientProviders>
         </FirebaseClientProvider>
       </body>
     </html>
