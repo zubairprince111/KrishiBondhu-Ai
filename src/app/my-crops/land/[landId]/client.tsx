@@ -45,7 +45,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle, Tractor, ChevronRight, Sprout } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, serverTimestamp, doc, addDoc } from 'firebase/firestore';
+import { collection, serverTimestamp, doc } from 'firebase/firestore';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
