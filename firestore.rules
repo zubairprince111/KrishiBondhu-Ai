@@ -50,8 +50,8 @@ service cloud.firestore {
     match /users/{userId}/user_crops/{userCropId} {
       allow get: if isSignedIn() && isOwner(userId);
       allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && request.resource.data.userProfileId == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && resource.data.userProfileId == userId;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userProfileId == userId;
+      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.userProfileId == userId;
       allow delete: if isSignedIn() && isExistingOwner(userId) && resource.data.userProfileId == userId;
     }
 
@@ -68,7 +68,7 @@ service cloud.firestore {
     match /users/{userId}/crop_issues/{cropIssueId} {
       allow get: if isSignedIn() && isOwner(userId);
       allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && request.resource.data.userProfileId == userId;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userProfileId == userId;
       allow update: if isSignedIn() && isExistingOwner(userId) && resource.data.userProfileId == userId;
       allow delete: if isSignedIn() && isExistingOwner(userId) && resource.data.userProfileId == userId;
     }
@@ -86,7 +86,7 @@ service cloud.firestore {
     match /users/{userId}/community_posts/{communityPostId} {
       allow get: if isSignedIn() && isOwner(userId);
       allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && request.resource.data.userProfileId == userId;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userProfileId == userId;
       allow update: if isSignedIn() && isExistingOwner(userId) && resource.data.userProfileId == userId;
       allow delete: if isSignedIn() && isExistingOwner(userId) && resource.data.userProfileId == userId;
     }
