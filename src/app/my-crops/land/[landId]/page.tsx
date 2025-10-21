@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -86,6 +87,7 @@ const cropOptions = [
 
 
 export default function LandDetailsPage({ params }: LandDetailsPageProps) {
+  const { landId } = params;
   const [isPending, setIsPending] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -95,8 +97,8 @@ export default function LandDetailsPage({ params }: LandDetailsPageProps) {
 
   const landDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid, 'lands', params.landId);
-  }, [firestore, user, params.landId]);
+    return doc(firestore, 'users', user.uid, 'lands', landId);
+  }, [firestore, user, landId]);
   const { data: land, isLoading: isLandLoading } = useDoc(landDocRef);
 
   const landCropsQuery = useMemoFirebase(() => {
@@ -126,7 +128,7 @@ export default function LandDetailsPage({ params }: LandDetailsPageProps) {
         sowingDate: format(values.sowingDate, 'yyyy-MM-dd'),
         status: stage, // Automatically calculated stage
         userProfileId: user.uid,
-        landId: params.landId,
+        landId: landId,
         createdAt: serverTimestamp(),
     };
 
@@ -275,7 +277,7 @@ export default function LandDetailsPage({ params }: LandDetailsPageProps) {
             ) : crops && crops.length > 0 ? (
                 <div className="space-y-2">
                     {crops.map((crop: any) => (
-                        <Link href={`/my-crops/land/${params.landId}/crop/${crop.id}`} key={crop.id}>
+                        <Link href={`/my-crops/land/${landId}/crop/${crop.id}`} key={crop.id}>
                             <Card className="hover:bg-accent/50 transition-colors">
                                 <CardContent className="p-4 flex items-center justify-between">
                                     <div className="flex items-center gap-4">

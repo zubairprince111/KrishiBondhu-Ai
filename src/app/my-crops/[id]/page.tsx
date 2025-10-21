@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useTransition, useState, useEffect } from 'react';
@@ -39,6 +40,7 @@ type CropDetailsPageProps = {
 };
 
 export default function CropDetailsPage({ params }: CropDetailsPageProps) {
+  const { id: cropId, landId } = params;
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<CropGuidanceOutput | null>(null);
   const { toast } = useToast();
@@ -47,15 +49,15 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
   const firestore = useFirestore();
 
   const landDocRef = useMemoFirebase(() => {
-    if (!firestore || !user || !params.landId) return null;
-    return doc(firestore, 'users', user.uid, 'lands', params.landId);
-  }, [firestore, user, params.landId]);
+    if (!firestore || !user || !landId) return null;
+    return doc(firestore, 'users', user.uid, 'lands', landId);
+  }, [firestore, user, landId]);
   const { data: land, isLoading: isLandLoading } = useDoc(landDocRef);
 
   const cropDocRef = useMemoFirebase(() => {
-    if (!firestore || !user || !params.landId || !params.id) return null;
-    return doc(firestore, 'users', user.uid, 'lands', params.landId, 'crops', params.id);
-  }, [firestore, user, params.landId, params.id]);
+    if (!firestore || !user || !landId || !cropId) return null;
+    return doc(firestore, 'users', user.uid, 'lands', landId, 'crops', cropId);
+  }, [firestore, user, landId, cropId]);
 
   const { data: crop, isLoading: isCropLoading } = useDoc(cropDocRef);
 
@@ -98,7 +100,7 @@ export default function CropDetailsPage({ params }: CropDetailsPageProps) {
                      <BreadcrumbSeparator />
                     <BreadcrumbItem>
                         <BreadcrumbLink asChild>
-                            <Link href={`/my-crops/land/${params.landId}`}>{isLandLoading ? <Loader2 className="size-4 animate-spin"/> : land?.name}</Link>
+                            <Link href={`/my-crops/land/${landId}`}>{isLandLoading ? <Loader2 className="size-4 animate-spin"/> : land?.name}</Link>
                         </BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
