@@ -401,3 +401,5 @@
     "reasoning": "The Firestore structure is updated to support a public community feed. The `community_posts` collection is now at the root, making all posts publicly readable. A `comments` subcollection has been added to each post. The old private `community_posts` collection under users has been removed."
   }
 }
+
+    
