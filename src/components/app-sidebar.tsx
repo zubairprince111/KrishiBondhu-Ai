@@ -8,7 +8,6 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import {
-  Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarMenu,
@@ -48,7 +47,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
 
-
 type NavItem = {
     href: string;
     labelKey: TranslationKey;
@@ -75,15 +73,20 @@ function SidebarNavContent() {
     const { t } = useLanguage();
     const { user, isUserLoading } = useUser();
     const auth = useAuth();
+    const { setOpen } = useSidebar();
 
     const handleLogout = async () => {
         await signOut(auth);
+    };
+    
+    const handleLinkClick = () => {
+        setOpen(false);
     };
 
   return (
     <>
       <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" onClick={handleLinkClick}>
           <Sprout className="size-8 text-primary" />
           <h2 className="font-headline text-2xl font-semibold text-primary">
             {t('sidebar.title')}
@@ -98,6 +101,7 @@ function SidebarNavContent() {
                 asChild
                 isActive={pathname === item.href}
                 tooltip={t(item.labelKey)}
+                onClick={handleLinkClick}
               >
                 <Link href={item.href}>
                   <item.icon />
@@ -116,6 +120,7 @@ function SidebarNavContent() {
                 asChild
                 isActive={pathname === item.href}
                 tooltip={t(item.labelKey)}
+                onClick={handleLinkClick}
               >
                 <Link href={item.href}>
                   <item.icon />
@@ -144,7 +149,7 @@ function SidebarNavContent() {
             <DropdownMenuContent side="right" align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <Link href="/profile">
+              <Link href="/profile" onClick={handleLinkClick}>
                 <DropdownMenuItem>
                   <User className="mr-2" />
                   <span>Profile</span>
@@ -157,7 +162,7 @@ function SidebarNavContent() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <SidebarMenuButton asChild tooltip="Login">
+          <SidebarMenuButton asChild tooltip="Login" onClick={handleLinkClick}>
             <Link href="/login">
               <LogIn />
               <span>Login</span>
@@ -169,24 +174,15 @@ function SidebarNavContent() {
   );
 }
 
-
 export function AppSidebar() {
-  const { isMobile, openMobile, setOpenMobile } = useSidebar();
-  
-  if (isMobile) {
-    return (
-        <Sheet open={openMobile} onOpenChange={setOpenMobile}>
-            <SheetContent side="left" className="p-0 w-[var(--sidebar-width-mobile)]">
-                <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
-                <SidebarNavContent />
-            </SheetContent>
-        </Sheet>
-    )
-  }
+  const { open, setOpen } = useSidebar();
   
   return (
-    <Sidebar>
-      <SidebarNavContent />
-    </Sidebar>
-  );
+      <Sheet open={open} onOpenChange={setOpen}>
+          <SheetContent side="left" className="w-[var(--sidebar-width-mobile)] p-0">
+              <SheetTitle className="sr-only">Main Navigation Menu</SheetTitle>
+              <SidebarNavContent />
+          </SheetContent>
+      </Sheet>
+  )
 }

@@ -6,7 +6,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { SlideshowProvider } from '@/context/slideshow-context';
 import { LanguageProvider } from '@/context/language-context';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { SidebarInset } from '@/components/ui/sidebar';
 
 export const metadata: Metadata = {
   title: 'KrishiBondhu AI',
@@ -31,10 +30,10 @@ export default function RootLayout({
           <LanguageProvider>
             <SlideshowProvider>
               <SidebarProvider>
-                <div className="flex">
-                  <AppSidebar />
-                  <SidebarInset>{children}</SidebarInset>
-                </div>
+                <AppSidebar />
+                <main className="min-h-svh w-full bg-background">
+                  {children}
+                </main>
               </SidebarProvider>
             </SlideshowProvider>
           </LanguageProvider>

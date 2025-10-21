@@ -1,11 +1,5 @@
 'use client';
 
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -29,7 +23,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b border-primary/20 bg-primary px-4 text-primary-foreground md:px-6">
       <div className="flex items-center gap-2">
-         <Button size="icon" variant="ghost" onClick={toggleSidebar}>
+         <Button size="icon" variant="ghost" onClick={toggleSidebar} className="hover:bg-primary/50">
             <PanelLeft className="size-5" />
             <span className="sr-only">Toggle Menu</span>
         </Button>
