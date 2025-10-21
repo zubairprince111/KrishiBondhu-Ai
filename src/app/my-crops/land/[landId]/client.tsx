@@ -71,6 +71,7 @@ const cropFormSchema = z.object({
   sowingDate: z.date({
     required_error: "A sowing date is required.",
   }),
+  status: z.string().min(1, 'Crop stage is required.'),
 });
 
 const cropOptions = [
@@ -84,6 +85,15 @@ const cropOptions = [
     { value: 'Sugarcane', labelKey: 'myCrops.form.cropName.options.sugarcane' },
     { value: 'Onion', labelKey: 'myCrops.form.cropName.options.onion' },
     { value: 'Mustard', labelKey: 'myCrops.form.cropName.options.mustard' },
+] as const;
+
+const stageOptions = [
+    { value: 'Seed Sowing', labelKey: 'myCrops.form.stage.options.seedsowing' },
+    { value: 'Germination & Early Growth', labelKey: 'myCrops.form.stage.options.germinationandearlygrowth' },
+    { value: 'Vegetative Growth', labelKey: 'myCrops.form.stage.options.vegetativegrowth' },
+    { value: 'Flowering & Fruiting', labelKey: 'myCrops.form.stage.options.floweringandfruiting' },
+    { value: 'Harvesting', labelKey: 'myCrops.form.stage.options.harvesting' },
+    { value: 'Post-Harvest', labelKey: 'myCrops.form.stage.options.postharvest' },
 ] as const;
 
 
@@ -111,6 +121,7 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
     resolver: zodResolver(cropFormSchema),
     defaultValues: {
       cropName: '',
+      status: '',
     },
   });
 
@@ -121,12 +132,10 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
     }
     setIsPending(true);
 
-    const { stage } = getGrowthStage(values.sowingDate);
-
     const cropData = {
         ...values,
         sowingDate: format(values.sowingDate, 'yyyy-MM-dd'),
-        status: stage, // Automatically calculated stage
+        status: values.status, // Use the user-selected status
         userProfileId: user.uid,
         landId: landId,
         createdAt: serverTimestamp(),
@@ -258,6 +267,23 @@ export default function LandDetailsPageClient({ landId }: LandDetailsClientPageP
                                 </FormItem>
                             )}
                            />
+                             <FormField control={form.control} name="status" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t('myCrops.form.stage.label')}</FormLabel>
+                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                   <FormControl>
+                                    <SelectTrigger><SelectValue placeholder={t('myCrops.form.stage.placeholder')} /></SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {stageOptions.map(option => (
+                                        <SelectItem key={option.value} value={option.value}>{t(option.labelKey)}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                           <DialogFooter>
                             <DialogClose asChild>
                                 <Button type="button" variant="secondary">{t('myCrops.addCropDialog.cancelButton')}</Button>
