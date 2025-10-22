@@ -81,14 +81,14 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
           </Link>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
-          <div className="hidden md:flex">
-             <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
+        <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
+          <div className="hidden md:flex w-full max-w-sm">
+             <form onSubmit={handleSearchSubmit} className="w-full">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/>
                     <Input 
                         placeholder="Search crops, prices, suggestions..." 
-                        className="bg-primary-foreground/10 text-primary-foreground placeholder:text-muted-foreground/80 pl-10"
+                        className="h-9 border-x-0 border-t-0 border-b-2 border-primary-foreground/20 bg-transparent text-primary-foreground placeholder:text-muted-foreground/80 focus-visible:ring-0 focus-visible:border-b-accent pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
