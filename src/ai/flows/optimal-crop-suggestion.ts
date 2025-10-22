@@ -14,7 +14,7 @@ const OptimalCropSuggestionInputSchema = z.object({
   soilType: z.string().describe('The type of soil in the region.'),
   localClimateData: z.string().describe('The local climate data for the region.'),
   currentSeason: z.string().describe('The current season.'),
-  region: z.string().describe('The region for which to suggest crops.'),
+  region: z.string().describe('The region or lat/long coordinates for which to suggest crops.'),
 });
 type OptimalCropSuggestionInput = z.infer<typeof OptimalCropSuggestionInputSchema>;
 
@@ -38,15 +38,16 @@ const prompt = ai.definePrompt({
   name: 'optimalCropSuggestionPrompt',
   input: {schema: OptimalCropSuggestionInputSchema},
   output: {schema: OptimalCropSuggestionOutputSchema},
-  prompt: `You are an expert agricultural advisor for Bangladesh. Based on the user's location and the current season's weather, suggest the 3 most optimal crops to plant, ranked from best to worst.
+  prompt: `You are an expert agricultural advisor for Bangladesh. Based on the provided location and the current season's weather, suggest the 3 most optimal crops to plant, ranked from best to worst.
 
-For each crop, provide its name in English, a suitable high-yield variety, and a suitability score from 0-100.
+If a specific lat/long is provided, use it for fine-tuned suggestions. Otherwise, use the general region name.
 
-Location (Region): {{{region}}}
+Location (Region or Lat/Long): {{{region}}}
 Current Season: {{{currentSeason}}}
 Typical Climate for this Season: {{{localClimateData}}}
 Assumed Soil Type: {{{soilType}}}
 
+For each crop, provide its name in English, a suitable high-yield variety, and a suitability score from 0-100.
 Consider factors like water requirements, temperature tolerance, yield, profitability, market demand, and sustainability for the specified location and season.
 
 Output a ranked list of exactly 3 suggested crops and a single sentence of reasoning explaining why these crops are suitable overall.`,

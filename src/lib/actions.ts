@@ -25,14 +25,23 @@ function getCurrentSeason(): { name: string; climate: string } {
   }
 }
 
-export async function suggestSeasonalCrops(): Promise<{
+type SuggestionParams = {
+  location?: { latitude: number; longitude: number; } | null;
+};
+
+export async function suggestSeasonalCrops(params: SuggestionParams = {}): Promise<{
   data: any | null;
   error: string | null;
 }> {
   try {
     const seasonInfo = getCurrentSeason();
+    // Use location if provided, otherwise default to a general region.
+    const region = params.location 
+      ? `lat: ${params.location.latitude}, long: ${params.location.longitude}`
+      : 'Bangladesh';
+
     const input = {
-      region: 'Bangladesh', // Default region, can be enhanced with user's actual location
+      region: region,
       currentSeason: seasonInfo.name,
       soilType: 'Alluvial', // Using a common soil type for general suggestions
       localClimateData: seasonInfo.climate,

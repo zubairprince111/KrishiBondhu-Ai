@@ -39,7 +39,7 @@ import type { WeatherData } from '@/lib/weather';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, query, where, collectionGroup } from 'firebase/firestore';
 
 
 const RANK_STYLES = {
@@ -56,12 +56,15 @@ function SeasonalSuggestionCard() {
 
     useEffect(() => {
         startTransition(async () => {
-            const { data } = await suggestSeasonalCrops();
+            // Pass location if available, otherwise the action will use a default.
+            const { data } = await suggestSeasonalCrops({ location });
             setResult(data);
         });
-    }, []);
+    }, [location]); // Re-run if location becomes available.
 
     const season = getCurrentSeason();
+    const locationName = location ? `${location.latitude.toFixed(2)}, ${location.longitude.toFixed(2)}` : 'Bangladesh';
+
 
     if (isPending) {
         return (
@@ -84,7 +87,7 @@ function SeasonalSuggestionCard() {
             <CardContent className="space-y-4">
                 <div className="space-y-1 rounded-lg border bg-muted/50 p-3">
                     <p className="text-xs font-semibold text-muted-foreground">{t('seasonalSuggestions.locationLabel')}</p>
-                    <p className="font-medium flex items-center gap-1"><MapPin className="size-4" /> {location ? `${location.latitude.toFixed(2)}, ${location.longitude.toFixed(2)}` : 'Bangladesh'}</p>
+                    <p className="font-medium flex items-center gap-1"><MapPin className="size-4" /> {locationName}</p>
                 </div>
                 <div className="space-y-1 rounded-lg border bg-muted/50 p-3">
                     <p className="text-xs font-semibold text-muted-foreground">{t('seasonalSuggestions.seasonLabel')}</p>
@@ -119,8 +122,6 @@ function SeasonalSuggestionCard() {
 export default function DashboardPage() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const [seasonalCrops, setSeasonalCrops] =
-    useState<OptimalCropSuggestionOutput | null>(null);
   const [isPending, startTransition] = useTransition();
   const { location, error: locationError } = useGeolocation();
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -135,13 +136,6 @@ export default function DashboardPage() {
   }, [firestore, user]);
   const { data: lands } = useCollection(userLandsQuery);
 
-
-  useEffect(() => {
-    startTransition(async () => {
-      const { data } = await suggestSeasonalCrops();
-      setSeasonalCrops(data);
-    });
-  }, []);
 
   useEffect(() => {
     if (location) {
@@ -209,7 +203,7 @@ export default function DashboardPage() {
   };
 
   const fieldsMonitored = lands?.length ?? 0;
-  const upcomingTasks = lands?.length ?? 0; // Simplified for now
+  const upcomingTasks = lands?.length ?? 0; 
 
   return (
     <SidebarInset>
