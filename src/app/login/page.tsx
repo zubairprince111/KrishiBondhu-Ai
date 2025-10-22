@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Sprout, LogIn, UserPlus, VenetianMask, Loader2 } from 'lucide-react';
-import { AuthError, AuthErrorCodes } from 'firebase/auth';
+import { AuthError, AuthErrorCodes, UserCredential } from 'firebase/auth';
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address.'),
@@ -56,7 +56,7 @@ export default function LoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
-  const handleError = (error: AuthError) => {
+  const handleError = (error: any) => {
     setIsLoading(null);
     let description = 'An unexpected error occurred. Please try again.';
     
@@ -80,48 +80,41 @@ export default function LoginPage() {
     });
   };
   
-  const handleAuthRedirect = (user: any) => {
-      if (user) {
+  const handleAuthSuccess = (userCredential?: UserCredential) => {
+      if (userCredential?.user) {
         router.push('/');
-      } else {
-        // This is a workaround to catch errors from non-blocking sign-in calls.
-        const unsubscribe = auth.onAuthStateChanged(() => {});
-        setTimeout(() => {
-          const authError = (auth as any)._error;
-          if (authError) {
-            handleError(authError as AuthError)
-          } else {
-            // If there's no error after timeout, but also no user,
-            // it's likely a silent failure or popup close. Reset loading state.
-            setIsLoading(null);
-          }
-          unsubscribe();
-        }, 1500);
       }
+      setIsLoading(null);
   }
 
-  const onSignUp = (values: z.infer<typeof signUpSchema>) => {
+  const onSignUp = async (values: z.infer<typeof signUpSchema>) => {
     setIsLoading('signUp');
-    initiateEmailSignUp(auth, values.email, values.password);
-    auth.onAuthStateChanged(handleAuthRedirect);
+    try {
+        const userCredential = await initiateEmailSignUp(auth, values.email, values.password);
+        handleAuthSuccess(userCredential);
+    } catch (error) {
+        handleError(error);
+    }
   };
 
-  const onSignIn = (values: z.infer<typeof signInSchema>) => {
+  const onSignIn = async (values: z.infer<typeof signInSchema>) => {
     setIsLoading('signIn');
-    initiateEmailSignIn(auth, values.email, values.password);
-     auth.onAuthStateChanged(handleAuthRedirect);
+    try {
+        const userCredential = await initiateEmailSignIn(auth, values.email, values.password);
+        handleAuthSuccess(userCredential);
+    } catch (error) {
+        handleError(error);
+    }
   };
 
   const onAnonymousSignIn = () => {
     setIsLoading('anonymous');
-    initiateAnonymousSignIn(auth);
-    auth.onAuthStateChanged(handleAuthRedirect);
+    initiateAnonymousSignIn(auth).then(handleAuthSuccess).catch(handleError);
   };
 
   const onGoogleSignIn = () => {
     setIsLoading('google');
-    initiateGoogleSignIn(auth);
-    auth.onAuthStateChanged(handleAuthRedirect);
+    initiateGoogleSignIn(auth).then(handleAuthSuccess).catch(handleError);
   };
 
 
@@ -223,5 +216,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
