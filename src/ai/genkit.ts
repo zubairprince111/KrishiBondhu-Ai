@@ -1,9 +1,15 @@
-import {genkit} from 'genkit';
+'use server';
+import {genkit, configureGenkit} from 'genkit';
 import {googleAI} from '@genkit-ai/google-genai';
 
-// Initialize the googleAI plugin WITH the API key from environment variables.
-// This is the correct, secure, and Vercel-compatible way to configure Genkit.
-export const ai = genkit({
-  plugins: [googleAI({apiKey: process.env.GEMINI_API_KEY})],
-  model: 'googleai/gemini-2.5-flash',
+configureGenkit({
+  plugins: [
+    googleAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    }),
+  ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
 });
+
+export {genkit as ai};
