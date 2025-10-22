@@ -25,6 +25,7 @@ import {
   LogOut,
   User,
   Tractor,
+  ScanEye,
 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
@@ -44,7 +45,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { href: '/', labelKey: 'sidebar.nav.dashboard', icon: LayoutGrid },
   { href: '/my-crops', labelKey: 'sidebar.nav.myCrops', icon: Tractor },
-  { href: '/crop-doctor', labelKey: 'sidebar.nav.cropDoctor', icon: Leaf },
+  { href: '/crop-doctor', labelKey: 'sidebar.nav.cropDoctor', icon: ScanEye },
   { href: '/voice-assistant', labelKey: 'sidebar.nav.matiAI', icon: Mic },
   { href: '/weather', labelKey: 'sidebar.nav.weather', icon: CloudSun },
   { href: '/community', labelKey: 'sidebar.nav.community', icon: MessageSquare },
