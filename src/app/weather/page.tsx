@@ -16,13 +16,16 @@ export default function WeatherPage() {
   const { t } = useLanguage();
   const [isAdvicePending, startAdviceTransition] = useTransition();
   const [advice, setAdvice] = useState<WeatherAdvisorOutput | null>(null);
-  const { location, error: locationError } = useGeolocation();
+  const { location, error: locationError, isGeolocationLoading } = useGeolocation();
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
 
   useEffect(() => {
-    if (location) {
+    if (isGeolocationLoading) {
       setIsWeatherLoading(true);
+      return;
+    }
+    if (location) {
       getWeather(location.latitude, location.longitude)
         .then(data => {
           setWeatherData(data);
@@ -32,7 +35,7 @@ export default function WeatherPage() {
     } else {
         setIsWeatherLoading(false);
     }
-  }, [location]);
+  }, [location, isGeolocationLoading]);
 
   useEffect(() => {
     if (weatherData) {
@@ -158,5 +161,3 @@ export default function WeatherPage() {
     </SidebarInset>
   );
 }
-
-    

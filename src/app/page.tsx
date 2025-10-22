@@ -49,29 +49,23 @@ const RANK_STYLES = {
 
 function CriticalAlertCard() {
     const { t } = useLanguage();
-    const { location } = useGeolocation();
+    const { location, isGeolocationLoading } = useGeolocation();
     const [isPending, startTransition] = useTransition();
     const [alert, setAlert] = useState<CriticalWeatherAlertOutput | null>(null);
 
     useEffect(() => {
-        if (location) {
-            startTransition(async () => {
-                const { data } = await getCriticalWeatherAlert({ region: `lat: ${location.latitude}, long: ${location.longitude}`, country: 'Bangladesh' });
-                if (data && data.isCritical) {
-                    setAlert(data);
-                }
-            });
-        } else {
-             startTransition(async () => {
-                const { data } = await getCriticalWeatherAlert({ region: 'Bangladesh', country: 'Bangladesh' });
-                if (data && data.isCritical) {
-                    setAlert(data);
-                }
-            });
-        }
-    }, [location]);
+        if (isGeolocationLoading) return;
 
-    if (isPending) {
+        startTransition(async () => {
+            const region = location ? `lat: ${location.latitude}, long: ${location.longitude}` : 'Bangladesh';
+            const { data } = await getCriticalWeatherAlert({ region, country: 'Bangladesh' });
+            if (data && data.isCritical) {
+                setAlert(data);
+            }
+        });
+    }, [location, isGeolocationLoading]);
+
+    if (isPending || isGeolocationLoading) {
         return (
             <div className="flex items-center justify-start gap-4 rounded-xl border-l-4 border-muted-foreground/50 bg-muted/50 p-4 text-muted-foreground">
                 <Loader2 className="size-6 animate-spin" />
@@ -103,20 +97,21 @@ function SeasonalSuggestionCard() {
     const { t } = useLanguage();
     const [isPending, startTransition] = useTransition();
     const [result, setResult] = useState<OptimalCropSuggestionOutput | null>(null);
-    const { location } = useGeolocation();
+    const { location, isGeolocationLoading } = useGeolocation();
 
     useEffect(() => {
+        if (isGeolocationLoading) return;
         startTransition(async () => {
             const { data } = await suggestSeasonalCrops({ location });
             setResult(data);
         });
-    }, [location]);
+    }, [location, isGeolocationLoading]);
 
     const season = getCurrentSeason();
     const locationName = location ? `${location.latitude.toFixed(2)}, ${location.longitude.toFixed(2)}` : 'Bangladesh';
 
 
-    if (isPending) {
+    if (isPending || isGeolocationLoading) {
         return (
             <Card>
                 <CardHeader>
@@ -220,7 +215,7 @@ function FarmingNewsCard() {
 export default function DashboardPage() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const { location, error: locationError } = useGeolocation();
+  const { location, error: locationError, isGeolocationLoading } = useGeolocation();
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
   const { t } = useLanguage();
@@ -233,8 +228,11 @@ export default function DashboardPage() {
 
 
   useEffect(() => {
-    if (location) {
+    if (isGeolocationLoading) {
       setIsWeatherLoading(true);
+      return;
+    }
+    if (location) {
       getWeather(location.latitude, location.longitude)
         .then(setWeatherData)
         .catch(console.error)
@@ -242,7 +240,7 @@ export default function DashboardPage() {
     } else {
       setIsWeatherLoading(false);
     }
-  }, [location]);
+  }, [location, isGeolocationLoading]);
 
   const quickActions = [
     {
@@ -440,5 +438,3 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
-
-    
