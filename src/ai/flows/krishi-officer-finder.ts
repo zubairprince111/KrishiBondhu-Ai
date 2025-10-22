@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -6,14 +5,14 @@
  */
 
 import { ai } from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 
 const KrishiOfficerFinderInputSchema = z.object({
   zila: z.string().describe('The Zila (District) in Bangladesh.'),
   upazila: z.string().describe('The Upazila (Sub-district) in Bangladesh.'),
 });
-type KrishiOfficerFinderInput = z.infer<typeof KrishiOfficerFinderInputSchema>;
+export type KrishiOfficerFinderInput = z.infer<typeof KrishiOfficerFinderInputSchema>;
 
 const KrishiOfficerFinderOutputSchema = z.object({
   name: z.string().describe('The name of the Krishi Officer.'),
@@ -21,17 +20,21 @@ const KrishiOfficerFinderOutputSchema = z.object({
   contactNumber: z.string().describe('A realistic, sample contact phone number.'),
   officeAddress: z.string().describe('The address of the Upazila Agriculture Office.'),
 });
-type KrishiOfficerFinderOutput = z.infer<typeof KrishiOfficerFinderOutputSchema>;
+export type KrishiOfficerFinderOutput = z.infer<typeof KrishiOfficerFinderOutputSchema>;
 
-export async function findKrishiOfficer(input: KrishiOfficerFinderInput): Promise<KrishiOfficerFinderOutput> {
-  return krishiOfficerFinderFlow(input);
-}
 
-const prompt = ai.definePrompt({
-  name: 'krishiOfficerFinderPrompt',
-  input: {schema: KrishiOfficerFinderInputSchema},
-  output: {schema: KrishiOfficerFinderOutputSchema},
-  prompt: `You are a directory assistant for the Department of Agricultural Extension, Bangladesh.
+export const krishiOfficerFinderFlow = ai.defineFlow(
+  {
+    name: 'krishiOfficerFinderFlow',
+    inputSchema: KrishiOfficerFinderInputSchema,
+    outputSchema: KrishiOfficerFinderOutputSchema,
+  },
+  async input => {
+    const prompt = ai.definePrompt({
+      name: 'krishiOfficerFinderPrompt',
+      input: {schema: KrishiOfficerFinderInputSchema},
+      output: {schema: KrishiOfficerFinderOutputSchema},
+      prompt: `You are a directory assistant for the Department of Agricultural Extension, Bangladesh.
 Your task is to provide contact details for the designated agricultural officer for a given area.
 Generate a realistic but fictional name and contact details for the officer in the specified location.
 
@@ -51,15 +54,8 @@ Output: {
 }
 END_OF_EXAMPLE
 `,
-});
+    });
 
-const krishiOfficerFinderFlow = ai.defineFlow(
-  {
-    name: 'krishiOfficerFinderFlow',
-    inputSchema: KrishiOfficerFinderInputSchema,
-    outputSchema: KrishiOfficerFinderOutputSchema,
-  },
-  async input => {
     const {output} = await prompt(input);
     return output!;
   }

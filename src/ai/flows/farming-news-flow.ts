@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -21,25 +20,21 @@ const FarmingNewsOutputSchema = z.object({
 export type FarmingNewsOutput = z.infer<typeof FarmingNewsOutputSchema>;
 
 
-export async function getFarmingNews(): Promise<FarmingNewsOutput> {
-  return farmingNewsFlow();
-}
-
-const prompt = ai.definePrompt({
-  name: 'farmingNewsPrompt',
-  output: {schema: FarmingNewsOutputSchema},
-  prompt: `You are an expert agricultural news correspondent. 
-Your task is to provide the top 3-4 most important and relevant worldwide farming and agricultural news headlines for today, ${new Date().toDateString()}.
-The news should be relevant to a general farmer, covering topics like new technology, market trends, weather impacts on agriculture, or significant policy changes.
-For each article, provide a concise title and a short summary.`,
-});
-
-const farmingNewsFlow = ai.defineFlow(
+export const farmingNewsFlow = ai.defineFlow(
   {
     name: 'farmingNewsFlow',
     outputSchema: FarmingNewsOutputSchema,
   },
   async () => {
+    const prompt = ai.definePrompt({
+      name: 'farmingNewsPrompt',
+      output: {schema: FarmingNewsOutputSchema},
+      prompt: `You are an expert agricultural news correspondent. 
+Your task is to provide the top 3-4 most important and relevant worldwide farming and agricultural news headlines for today, ${new Date().toDateString()}.
+The news should be relevant to a general farmer, covering topics like new technology, market trends, weather impacts on agriculture, or significant policy changes.
+For each article, provide a concise title and a short summary.`,
+    });
+
     const {output} = await prompt();
     return output!;
   }

@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -6,7 +5,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 
 const CriticalWeatherAlertInputSchema = z.object({
@@ -22,17 +21,18 @@ const CriticalWeatherAlertOutputSchema = z.object({
 });
 export type CriticalWeatherAlertOutput = z.infer<typeof CriticalWeatherAlertOutputSchema>;
 
-
-export async function getCriticalWeatherAlert(input: CriticalWeatherAlertInput): Promise<CriticalWeatherAlertOutput> {
-  return criticalWeatherAlertFlow(input);
-}
-
-
-const prompt = ai.definePrompt({
-  name: 'criticalWeatherAlertPrompt',
-  input: {schema: CriticalWeatherAlertInputSchema},
-  output: {schema: CriticalWeatherAlertOutputSchema},
-  prompt: `You are a disaster management expert for {{country}}.
+export const criticalWeatherAlertFlow = ai.defineFlow(
+  {
+    name: 'criticalWeatherAlertFlow',
+    inputSchema: CriticalWeatherAlertInputSchema,
+    outputSchema: CriticalWeatherAlertOutputSchema,
+  },
+  async input => {
+    const prompt = ai.definePrompt({
+      name: 'criticalWeatherAlertPrompt',
+      input: {schema: CriticalWeatherAlertInputSchema},
+      output: {schema: CriticalWeatherAlertOutputSchema},
+      prompt: `You are a disaster management expert for {{country}}.
 Your task is to determine if there is a *critical* and *imminent* weather-related danger for the specified location.
 Consider events like cyclones, severe flooding, extreme heatwaves, or major storm systems. Do not report on normal rain or moderate weather.
 
@@ -44,15 +44,8 @@ If yes, provide a short, urgent title and a brief call to action.
 Example: isCritical: true, alertTitle: "CRITICAL: Cyclone Amphan Approaching", callToActionText: "View Affected Areas"
 If no, respond with isCritical: false and empty strings for the other fields.
 `,
-});
-
-const criticalWeatherAlertFlow = ai.defineFlow(
-  {
-    name: 'criticalWeatherAlertFlow',
-    inputSchema: CriticalWeatherAlertInputSchema,
-    outputSchema: CriticalWeatherAlertOutputSchema,
-  },
-  async input => {
+    });
+    
     const {output} = await prompt(input);
     return output!;
   }

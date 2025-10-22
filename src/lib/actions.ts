@@ -1,172 +1,159 @@
-
-// IMPORTANT: This file is meant to be used for server-side actions and should not be modified.
-// Any changes to this file could lead to unexpected behavior and break the application.
-// To use these actions, import them in your client-side components and call them as needed.
-
 'use server';
-import { z } from 'zod';
-import { aiCropDoctorAnalysis as aiCropDoctorAnalysisFlow } from '@/ai/flows/ai-crop-doctor-analysis';
-import { matiAIVoiceAssistance } from '@/ai/flows/mati-ai-voice-assistance';
-import { suggestOptimalCrops } from '@/ai/flows/optimal-crop-suggestion';
-import { findGovernmentSchemes as findGovernmentSchemesFlow } from '@/ai/flows/government-scheme-finder';
-import { findMarketPrices } from '@/ai/flows/market-price-finder';
-import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
-import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
-import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
-import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flows/critical-weather-alert-flow';
-import { getFarmingNews as getFarmingNewsFlow } from '@/ai/flows/farming-news-flow';
-import { findKrishiOfficer as findKrishiOfficerFlow } from '@/ai/flows/krishi-officer-finder';
-import { AiCropDoctorOutput } from '@/ai/schemas';
+
+import {
+  aiCropDoctorAnalysisFlow,
+  AiCropDoctorInput,
+  AiCropDoctorOutput,
+} from '@/ai/flows/ai-crop-doctor-analysis';
+import {
+  matiAIVoiceAssistanceFlow,
+  MatiAIVoiceAssistanceInput,
+  MatiAIVoiceAssistanceOutput,
+} from '@/ai/flows/mati-ai-voice-assistance';
+import {
+  suggestOptimalCropsFlow,
+  OptimalCropSuggestionInput,
+  OptimalCropSuggestionOutput,
+} from '@/ai/flows/optimal-crop-suggestion';
+import {
+  governmentSchemeFinderFlow,
+  GovernmentSchemeFinderInput,
+  GovernmentSchemeFinderOutput,
+} from '@/ai/flows/government-scheme-finder';
+import {
+  marketPriceFinderFlow,
+  MarketPriceFinderInput,
+  MarketPriceFinderOutput,
+} from '@/ai/flows/market-price-finder';
+import {
+  cropGuidanceFlow,
+  CropGuidanceInput,
+  CropGuidanceOutput,
+} from '@/ai/flows/crop-guidance-flow';
+import {
+  weatherAdvisorFlow,
+  WeatherAdvisorInput,
+  WeatherAdvisorOutput,
+} from '@/ai/flows/weather-advisor-flow';
+import {
+  universalSearchFlow,
+  UniversalSearchInput,
+  UniversalSearchOutput,
+} from '@/ai/flows/universal-search-flow';
+import {
+  criticalWeatherAlertFlow,
+  CriticalWeatherAlertInput,
+  CriticalWeatherAlertOutput,
+} from '@/ai/flows/critical-weather-alert-flow';
+import {
+  farmingNewsFlow,
+  FarmingNewsOutput,
+} from '@/ai/flows/farming-news-flow';
+import {
+  krishiOfficerFinderFlow,
+  KrishiOfficerFinderInput,
+  KrishiOfficerFinderOutput,
+} from '@/ai/flows/krishi-officer-finder';
 import { getCurrentSeason } from '@/lib/weather';
 
+async function runFlow<Input, Output>(
+  flow: (input: Input) => Promise<Output>,
+  input: Input,
+  errorMessage: string
+): Promise<{ data: Output | null; error: string | null }> {
+  try {
+    const result = await flow(input);
+    return { data: result, error: null };
+  } catch (e: any) {
+    console.error(e);
+    return { data: null, error: e.message || errorMessage };
+  }
+}
 
-type ActionParams = {
-  location?: { latitude: number; longitude: number; } | null;
-};
-
-export async function suggestSeasonalCrops(params: ActionParams = {}): Promise<{
-  data: any | null;
+export async function suggestSeasonalCrops(params: { location?: { latitude: number; longitude: number; } | null; } = {}): Promise<{
+  data: OptimalCropSuggestionOutput | null;
   error: string | null;
 }> {
-  try {
-    const seasonInfo = getCurrentSeason();
-    // Use location if provided, otherwise default to a general region.
-    const region = params.location 
-      ? `lat: ${params.location.latitude}, long: ${params.location.longitude}`
-      : 'Bangladesh';
+  const seasonInfo = getCurrentSeason();
+  const region = params.location 
+    ? `lat: ${params.location.latitude}, long: ${params.location.longitude}`
+    : 'Bangladesh';
 
-    const input = {
-      region: region,
-      currentSeason: seasonInfo.name,
-      soilType: 'Alluvial', // Using a common soil type for general suggestions
-      localClimateData: seasonInfo.climate,
-    };
-    const result = await suggestOptimalCrops(input);
-    return {data: result, error: null};
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      error: 'Failed to get seasonal crop suggestions. Please try again.',
-    };
-  }
+  const input: OptimalCropSuggestionInput = {
+    region: region,
+    currentSeason: seasonInfo.name,
+    soilType: 'Alluvial',
+    localClimateData: seasonInfo.climate,
+  };
+  return runFlow(suggestOptimalCropsFlow, input, 'Failed to get seasonal crop suggestions. Please try again.');
 }
 
-export async function getCriticalWeatherAlert(params: { region: string, country: string }): Promise<{
-  data: any | null;
+export async function getCriticalWeatherAlert(input: CriticalWeatherAlertInput): Promise<{
+  data: CriticalWeatherAlertOutput | null;
   error: string | null;
 }> {
-  try {
-    const result = await getCriticalWeatherAlertFlow(params);
-    return { data: result, error: null };
-  } catch (error) {
-    console.error(error);
-    return { data: null, error: 'Failed to get critical weather alerts.' };
-  }
+  return runFlow(criticalWeatherAlertFlow, input, 'Failed to get critical weather alerts.');
 }
 
-export async function getVoiceAssistance(input: any) {
-  try {
-    const result = await matiAIVoiceAssistance(input);
-    return {data: result, error: null};
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      error: 'Failed to get a response from Mati AI. Please try again.',
-    };
-  }
+export async function getVoiceAssistance(input: MatiAIVoiceAssistanceInput): Promise<{
+  data: MatiAIVoiceAssistanceOutput | null;
+  error: string | null;
+}> {
+  return runFlow(matiAIVoiceAssistanceFlow, input, 'Failed to get a response from Mati AI. Please try again.');
 }
 
-export async function fetchCropGuidance(input: any) {
+export async function fetchCropGuidance(input: CropGuidanceInput): Promise<{
+  data: CropGuidanceOutput | null;
+  error: string | null;
+}> {
+    return runFlow(cropGuidanceFlow, input, 'Failed to get crop guidance. Please try again.');
+}
+
+export async function findGovernmentSchemes(input: GovernmentSchemeFinderInput): Promise<{
+  data: GovernmentSchemeFinderOutput | null;
+  error: string | null;
+}> {
+  return runFlow(governmentSchemeFinderFlow, input, 'Failed to find government schemes. Please try again.');
+}
+
+export async function findKrishiOfficer(input: KrishiOfficerFinderInput): Promise<{
+  data: KrishiOfficerFinderOutput | null;
+  error: string | null;
+}> {
+    return runFlow(krishiOfficerFinderFlow, input, 'Failed to find officer details. Please try again.');
+}
+
+export async function getMarketPrices(input: MarketPriceFinderInput): Promise<{
+  data: MarketPriceFinderOutput | null;
+  error: string | null;
+}> {
+  return runFlow(marketPriceFinderFlow, input, 'Failed to find market prices. Please try again.');
+}
+
+export async function fetchWeatherAdvice(input: WeatherAdvisorInput): Promise<{
+  data: WeatherAdvisorOutput | null;
+  error: string | null;
+}> {
+  return runFlow(weatherAdvisorFlow, input, 'Failed to get weather advice. Please try again.');
+}
+
+export async function analyzeCropImage(input: AiCropDoctorInput): Promise<{ data: AiCropDoctorOutput | null; error: string | null; }> {
+  return runFlow(aiCropDoctorAnalysisFlow, input, 'Failed to analyze crop image. Please try again.');
+}
+
+export async function universalSearch(input: UniversalSearchInput): Promise<{
+  data: UniversalSearchOutput | null;
+  error: string | null;
+}> {
+  return runFlow(universalSearchFlow, input, 'Failed to get search results from AI. Please try again.');
+}
+
+export async function getFarmingNews(): Promise<{ data: FarmingNewsOutput | null; error: string | null; }> {
     try {
-        const result = await getCropGuidance(input);
+        const result = await farmingNewsFlow();
         return { data: result, error: null };
-    } catch (error) {
-        console.error(error);
-        return { data: null, error: 'Failed to get crop guidance. Please try again.' };
+    } catch (e: any) {
+        console.error(e);
+        return { data: null, error: e.message || 'Failed to get farming news. Please try again.' };
     }
 }
-
-
-export async function findGovernmentSchemes(input: any) {
-  try {
-    const result = await findGovernmentSchemesFlow(input);
-    return {data: result, error: null};
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      error: 'Failed to find government schemes. Please try again.',
-    };
-  }
-}
-
-export async function findKrishiOfficer(input: any) {
-    try {
-        const result = await findKrishiOfficerFlow(input);
-        return { data: result, error: null };
-    } catch (error) {
-        console.error(error);
-        return { data: null, error: 'Failed to find officer details. Please try again.' };
-    }
-}
-
-export async function getMarketPrices(input: any) {
-  try {
-    const result = await findMarketPrices(input);
-    return {data: result, error: null};
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      error: 'Failed to find market prices. Please try again.',
-    };
-  }
-}
-
-export async function fetchWeatherAdvice(input: any) {
-  try {
-    const result = await getWeatherAdvice(input);
-    return { data: result, error: null };
-  } catch (error) {
-    console.error(error);
-    return { data: null, error: 'Failed to get weather advice. Please try again.' };
-  }
-}
-
-export async function analyzeCropImage(input: any): Promise<{ data: AiCropDoctorOutput | null, error: string | null}> {
-  try {
-    const result = await aiCropDoctorAnalysisFlow(input);
-    return { data: result, error: null };
-  } catch (error) {
-    console.error(error);
-    return { data: null, error: 'Failed to analyze crop image. Please try again.' };
-  }
-}
-
-export async function universalSearch(input: any) {
-  try {
-    const result = await getUniversalSearchResult(input);
-    return { data: result, error: null };
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      error: 'Failed to get search results from AI. Please try again.',
-    };
-  }
-}
-
-export async function getFarmingNews() {
-    try {
-        const result = await getFarmingNewsFlow();
-        return { data: result, error: null };
-    } catch (error) {
-        console.error(error);
-        return { data: null, error: 'Failed to get farming news. Please try again.' };
-    }
-}
-    
-
-    

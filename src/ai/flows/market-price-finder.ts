@@ -1,14 +1,11 @@
-
 'use server';
 
 /**
  * @fileOverview An AI agent for finding real-time market prices for crops in Bangladesh.
- *
- * - findMarketPrices - A function that returns current market prices.
  */
 
 import { ai } from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 
 const MarketPriceSchema = z.object({
@@ -20,12 +17,12 @@ const MarketPriceSchema = z.object({
 const MarketPriceFinderInputSchema = z.object({
    region: z.string().describe('The region in Bangladesh to find market prices for. If empty, find for major markets.'),
 });
-type MarketPriceFinderInput = z.infer<typeof MarketPriceFinderInputSchema>;
+export type MarketPriceFinderInput = z.infer<typeof MarketPriceFinderInputSchema>;
 
 const MarketPriceFinderOutputSchema = z.object({
   prices: z.array(MarketPriceSchema).describe('A list of current market prices for various crops.'),
 });
-type MarketPriceFinderOutput = z.infer<typeof MarketPriceFinderOutputSchema>;
+export type MarketPriceFinderOutput = z.infer<typeof MarketPriceFinderOutputSchema>;
 
 const getMarketPricesTool = ai.defineTool(
     {
@@ -53,23 +50,23 @@ const getMarketPricesTool = ai.defineTool(
     }
 );
 
-const marketPriceFinderPrompt = ai.definePrompt({
-  name: 'marketPriceFinderPrompt',
-  tools: [getMarketPricesTool],
-  prompt: `You are an AI assistant that provides real-time agricultural market prices in Bangladesh. Use the provided tool to get the current market prices for the specified region.
-
-Region: {{{region}}}
-`,
-});
-
-const marketPriceFinderFlow = ai.defineFlow(
+export const marketPriceFinderFlow = ai.defineFlow(
   {
     name: 'marketPriceFinderFlow',
     inputSchema: MarketPriceFinderInputSchema,
     outputSchema: MarketPriceFinderOutputSchema,
   },
   async (input) => {
-    const llmResponse = await marketPriceFinderPrompt(input);
+    const prompt = ai.definePrompt({
+      name: 'marketPriceFinderPrompt',
+      tools: [getMarketPricesTool],
+      prompt: `You are an AI assistant that provides real-time agricultural market prices in Bangladesh. Use the provided tool to get the current market prices for the specified region.
+
+Region: {{{region}}}
+`,
+    });
+
+    const llmResponse = await prompt(input);
     const toolRequest = llmResponse.toolRequest();
 
     if (!toolRequest) {
@@ -86,13 +83,8 @@ const marketPriceFinderFlow = ai.defineFlow(
     const toolResponse = await llmResponse.forward(toolRequest);
 
     // Send the tool's response back to the model.
-    const finalResponse = await marketPriceFinderPrompt(input, {toolResponse});
+    const finalResponse = await prompt(input, {toolResponse});
 
     return finalResponse.output!;
   }
 );
-
-
-export async function findMarketPrices(input: MarketPriceFinderInput): Promise<MarketPriceFinderOutput> {
-  return marketPriceFinderFlow(input);
-}

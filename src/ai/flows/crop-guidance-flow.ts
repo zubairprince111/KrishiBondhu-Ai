@@ -1,14 +1,11 @@
-
 'use server';
 
 /**
  * @fileOverview A flow that provides step-by-step guidance for a selected crop.
- *
- * - getCropGuidance - A function that takes crop details and returns tailored guidance.
  */
 
 import { ai } from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 
 const CropGuidanceInputSchema = z.object({
@@ -16,7 +13,7 @@ const CropGuidanceInputSchema = z.object({
   region: z.string().describe('The region where the crop is being grown.'),
   currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering). This is calculated from sowing date.'),
 });
-type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
+export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 
 const GuidanceStepSchema = z.object({
     title: z.string().describe('The title of the guidance step.'),
@@ -28,17 +25,21 @@ const GuidanceStepSchema = z.object({
 const CropGuidanceOutputSchema = z.object({
   guidance: z.array(GuidanceStepSchema).describe('An array of step-by-step guidance for the crop lifecycle.'),
 });
-type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
+export type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
 
-export async function getCropGuidance(input: CropGuidanceInput): Promise<CropGuidanceOutput> {
-  return cropGuidanceFlow(input);
-}
 
-const prompt = ai.definePrompt({
-  name: 'cropGuidancePrompt',
-  input: {schema: CropGuidanceInputSchema},
-  output: {schema: CropGuidanceOutputSchema},
-  prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
+export const cropGuidanceFlow = ai.defineFlow(
+  {
+    name: 'cropGuidanceFlow',
+    inputSchema: CropGuidanceInputSchema,
+    outputSchema: CropGuidanceOutputSchema,
+  },
+  async input => {
+    const prompt = ai.definePrompt({
+      name: 'cropGuidancePrompt',
+      input: {schema: CropGuidanceInputSchema},
+      output: {schema: CropGuidanceOutputSchema},
+      prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
 
 The guide should cover the entire lifecycle from land preparation to post-harvest.
 The farmer's crop is currently at the '{{{currentStage}}}' stage. Mark all stages up to and including the current stage as completed.
@@ -59,15 +60,8 @@ Generate guidance with the following stages:
 
 For each stage, provide a title, detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care, and its typical duration in days. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
 `,
-});
-
-const cropGuidanceFlow = ai.defineFlow(
-  {
-    name: 'cropGuidanceFlow',
-    inputSchema: CropGuidanceInputSchema,
-    outputSchema: CropGuidanceOutputSchema,
-  },
-  async input => {
+    });
+    
     const {output} = await prompt(input);
     return output!;
   }

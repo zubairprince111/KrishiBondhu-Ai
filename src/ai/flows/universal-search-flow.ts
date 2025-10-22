@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -6,22 +5,21 @@
  */
 
 import { ai } from '@/ai/genkit';
-import {z} from 'genkit';
-import { findMarketPrices } from './market-price-finder';
+import {z} from 'zod';
+import { marketPriceFinderFlow } from './market-price-finder';
 
 
 const UniversalSearchInputSchema = z.object({
   query: z.string().describe('The user\'s search query.'),
 });
+export type UniversalSearchInput = z.infer<typeof UniversalSearchInputSchema>;
+
 
 const UniversalSearchOutputSchema = z.object({
   title: z.string().describe('A short, descriptive title for the search result.'),
   response: z.string().describe('A detailed and helpful response to the user\'s query, formatted as a string which may include markdown for lists or emphasis.'),
 });
-
-export type UniversalSearchInput = z.infer<typeof UniversalSearchInputSchema>;
 export type UniversalSearchOutput = z.infer<typeof UniversalSearchOutputSchema>;
-
 
 const searchTool = ai.defineTool(
     {
@@ -34,7 +32,7 @@ const searchTool = ai.defineTool(
         // This is a simplified logic. A real implementation might have multiple tools
         // or a more complex retrieval system.
         if (input.query.toLowerCase().includes('price')) {
-            const prices = await findMarketPrices({ region: 'Bangladesh' });
+            const prices = await marketPriceFinderFlow({ region: 'Bangladesh' });
             return `Here are the latest market prices: ${prices.prices.map(p => `${p.crop}: ${p.price}`).join(', ')}`;
         }
         // Add more conditions for other types of queries, e.g., crop suggestions, disease info.
@@ -43,7 +41,7 @@ const searchTool = ai.defineTool(
 );
 
 
-const universalSearchFlow = ai.defineFlow(
+export const universalSearchFlow = ai.defineFlow(
   {
     name: 'universalSearchFlow',
     inputSchema: UniversalSearchInputSchema,
@@ -75,8 +73,3 @@ const universalSearchFlow = ai.defineFlow(
     return output;
   }
 );
-
-
-export async function getUniversalSearchResult(input: UniversalSearchInput): Promise<UniversalSearchOutput> {
-  return universalSearchFlow(input);
-}
