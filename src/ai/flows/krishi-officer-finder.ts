@@ -49,7 +49,9 @@ const krishiOfficerFinderFlow = ai.defineFlow(
     outputSchema: KrishiOfficerFinderOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt(input, {
+      apiKey: process.env.GEMINI_API_KEY,
+    });
     return output!;
   }
 );

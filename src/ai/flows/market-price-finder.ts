@@ -67,7 +67,9 @@ const marketPriceFinderFlow = ai.defineFlow(
     outputSchema: MarketPriceFinderOutputSchema,
   },
   async (input) => {
-    const llmResponse = await marketPriceFinderPrompt(input);
+    const llmResponse = await marketPriceFinderPrompt(input, {
+      apiKey: process.env.GEMINI_API_KEY,
+    });
     const toolRequest = llmResponse.toolRequest();
 
     if (!toolRequest) {
@@ -76,6 +78,7 @@ const marketPriceFinderFlow = ai.defineFlow(
       const fallbackResponse = await ai.generate({
           prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
           output: { schema: MarketPriceFinderOutputSchema },
+          apiKey: process.env.GEMINI_API_KEY,
       });
       return fallbackResponse.output!;
     }

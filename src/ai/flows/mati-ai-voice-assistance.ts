@@ -45,7 +45,9 @@ const matiAIVoiceAssistanceFlow = ai.defineFlow(
     outputSchema: MatiAIVoiceAssistanceOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt(input, {
+      apiKey: process.env.GEMINI_API_KEY,
+    });
     return output!;
   }
 );

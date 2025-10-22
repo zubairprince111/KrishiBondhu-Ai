@@ -67,7 +67,9 @@ const cropGuidanceFlow = ai.defineFlow(
     outputSchema: CropGuidanceOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt(input, {
+      apiKey: process.env.GEMINI_API_KEY,
+    });
     return output!;
   }
 );

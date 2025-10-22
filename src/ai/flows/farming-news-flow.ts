@@ -39,7 +39,9 @@ const farmingNewsFlow = ai.defineFlow(
     outputSchema: FarmingNewsOutputSchema,
   },
   async () => {
-    const {output} = await prompt();
+    const {output} = await prompt(undefined, {
+      apiKey: process.env.GEMINI_API_KEY,
+    });
     return output!;
   }
 );

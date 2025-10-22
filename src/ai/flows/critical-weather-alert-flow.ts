@@ -52,9 +52,9 @@ const criticalWeatherAlertFlow = ai.defineFlow(
     outputSchema: CriticalWeatherAlertOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt(input, {
+      apiKey: process.env.GEMINI_API_KEY,
+    });
     return output!;
   }
 );
-
-    
