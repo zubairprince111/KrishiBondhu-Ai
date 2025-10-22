@@ -84,8 +84,8 @@ export const translations = {
   },
   // Dashboard Page - New
   'dashboard.welcome': {
-    en: 'Welcome, {{name}}!',
-    bn: 'স্বাগতম, {{name}}!',
+    en: 'Welcome {{name}}',
+    bn: 'স্বাগতম {{name}}',
   },
   'dashboard.farmer': {
     en: 'Farmer',
@@ -197,7 +197,7 @@ export const translations = {
   },
   'dashboard.communityAndResources.title': {
     en: 'Community & Resources',
-    bn: 'קהילה ומשאבים',
+    bn: 'সম্প্রদায় ও সম্পদ',
   },
   'dashboard.communityAndResources.description': {
     en: 'Learn from others and stay informed.',
@@ -205,7 +205,7 @@ export const translations = {
   },
   'dashboard.community.title': {
     en: 'Community Discussions',
-    bn: 'קהילת דיונים',
+    bn: 'সম্প্রদায় আলোচনা',
   },
   'dashboard.community.post1': {
     en: 'Best practices for flood prep?',
@@ -217,7 +217,7 @@ export const translations = {
   },
   'dashboard.community.openCommunity': {
     en: 'Open Community',
-    bn: 'קהילה פתוחה',
+    bn: 'সম্প্রদায় খুলুন',
   },
   'dashboard.resources.title': {
     en: 'KrishiBondhu Insights',
@@ -247,8 +247,6 @@ export const translations = {
     en: 'Price trends chart placeholder',
     bn: 'মূল্য প্রবণতা চার্ট স্থানধারক',
   },
-
-  // Dashboard Page - Old
   'dashboard.feature.cropDoctor.title': {
     en: 'Crop Doctor',
     bn: 'ফসল ডাক্তার',
@@ -313,7 +311,6 @@ export const translations = {
       en: 'Location Off',
       bn: 'অবস্থান বন্ধ'
   },
-  // Voice Assistant Page
   'voiceAssistant.greeting': {
     en: 'Good morning! I am Mati, your agricultural assistant. How can I help you?',
     bn: 'শুভ সকাল! আমি মাটি, আপনার কৃষি সহায়ক। আমি আপনাকে কিভাবে সাহায্য করতে পারি?',
@@ -326,14 +323,10 @@ export const translations = {
     en: 'Type your question in English or Bangla...',
     bn: 'আপনার প্রশ্ন বাংলায় টাইপ করুন...',
   },
-  
-  // Weather Page
   'weather.season.winter': { en: 'Winter', bn: 'শীতকাল' },
   'weather.season.summer': { en: 'Summer', bn: 'গ্রীষ্মকাল' },
   'weather.season.monsoon': { en: 'Monsoon', bn: 'বর্ষাকাল' },
   'weather.season.autumn': { en: 'Autumn', bn: ' শরৎকাল' },
-  
-  // Weather Conditions
   'weather.condition.clear': { en: 'Clear sky', bn: 'পরিষ্কার আকাশ' },
   'weather.condition.mainlyClear': { en: 'Mainly clear', bn: 'মূলত পরিষ্কার' },
   'weather.condition.partlyCloudy': { en: 'Partly cloudy', bn: 'আংশিক মেঘলা' },
@@ -349,56 +342,100 @@ export const translations = {
   'weather.condition.rainShowersSlight': { en: 'Slight rain showers', bn: 'হালকা ঝরনা' },
   'weather.condition.rainShowersModerate': { en: 'Moderate rain showers', bn: 'মাঝারি ঝরনা' },
   'weather.condition.rainShowersViolent': { en: 'Violent rain showers', bn: 'প্রচণ্ড ঝরনা' },
+  'weather.condition.snowFallSlight': { en: 'Slight snow fall', bn: 'হালকা তুষারপাত' },
+  'weather.condition.snowFallModerate': { en: 'Moderate snow fall', bn: 'মাঝারি তুষারপাত' },
+  'weather.condition.snowFallHeavy': { en: 'Heavy snow fall', bn: 'ভারী তুষারপাত' },
   'weather.condition.thunderstormSlight': { en: 'Slight thunderstorm', bn: 'হালকা বজ্রঝড়' },
-  'weather.condition.thunderstormHailSlight': { en: 'Thunderstorm with slight hail', bn: 'শিলাবৃষ্টি সহ বজ্রঝড়' },
+  'weather.condition.thunderstormHailSlight': { en: 'Thunderstorm with slight hail', bn: 'হালকা শিলাবৃষ্টি সহ বজ্রঝড়' },
   'weather.condition.thunderstormHailHeavy': { en: 'Thunderstorm with heavy hail', bn: 'ভারী শিলাবৃষ্টি সহ বজ্রঝড়' },
   'weather.condition.unknown': { en: 'Unknown condition', bn: 'অজানা অবস্থা' },
-
-  // Seasonal Suggestions
   'seasonalSuggestions.locationLabel': {
     en: 'Your Location',
     bn: 'আপনার অবস্থান',
   },
   'seasonalSuggestions.seasonLabel': {
     en: 'Season',
-    bn: 'ঋতু',
+    bn: 'মৌসুম',
   },
   'seasonalSuggestions.suitability': {
     en: 'Suitability',
     bn: 'উপযুক্ততা',
   },
-
-
-  // My Crops - Lands List
+  'cropDoctor.upload.title': {
+    en: 'Upload a Photo',
+    bn: 'একটি ছবি আপলোড করুন',
+  },
+  'cropDoctor.upload.description': {
+    en: 'Take or upload a clear picture of the affected crop area. For best results, focus on the leaves or stem.',
+    bn: 'আক্রান্ত ফসলের একটি পরিষ্কার ছবি তুলুন বা আপলোড করুন। সেরা ফলাফলের জন্য, পাতা বা কান্ডের উপর ফোকাস করুন।',
+  },
+  'cropDoctor.upload.preview': {
+    en: 'Example of a diseased leaf',
+    bn: 'রোগাক্রান্ত পাতার উদাহরণ',
+  },
+  'cropDoctor.upload.button': {
+    en: 'Upload from Device',
+    bn: 'ডিভাইস থেকে আপলোড করুন',
+  },
+  'cropDoctor.analysis.title': {
+    en: 'AI Analysis & Recommendations',
+    bn: 'এআই বিশ্লেষণ ও সুপারিশ',
+  },
+  'cropDoctor.analysis.description': {
+    en: 'Our AI gives you an instant diagnosis and actionable steps to save your crop.',
+    bn: 'আমাদের এআই আপনাকে তাত্ক্ষণিক রোগ নির্ণয় এবং আপনার ফসল বাঁচাতে কার্যকরী পদক্ষেপ প্রদান করে।',
+  },
+  'cropDoctor.analysis.diagnosisTitle': {
+    en: 'Diagnosis:',
+    bn: 'রোগ নির্ণয়:',
+  },
+  'cropDoctor.analysis.diagnosisResult': {
+    en: 'Early Blight',
+    bn: 'আর্লি ব্লাইট',
+  },
+  'cropDoctor.analysis.diagnosisText': {
+    en: 'This fungal disease is common in potatoes and tomatoes during humid weather. It appears as small, dark brown to black spots on lower leaves.',
+    bn: 'এই ছত্রাকজনিত রোগ আর্দ্র আবহাওয়ায় আলু এবং টমেটোতে সাধারণ। এটি নীচের পাতায় ছোট, গাঢ় বাদামী থেকে কালো দাগ হিসাবে দেখা যায়।',
+  },
+  'cropDoctor.analysis.recommendationTitle': {
+    en: 'Recommended Actions',
+    bn: 'সুপারিশকৃত পদক্ষেপ',
+  },
+  'cropDoctor.analysis.action1': {
+    en: 'Apply a copper-based fungicide immediately.',
+    bn: 'অবিলম্বে কপার-ভিত্তিক ছত্রাকনাশক প্রয়োগ করুন।',
+  },
+  'cropDoctor.analysis.action2': {
+    en: 'Ensure proper spacing between plants for better air circulation.',
+    bn: 'উন্নত বায়ু চলাচলের জন্য গাছের মধ্যে সঠিক দূরত্ব নিশ্চিত করুন।',
+  },
+  'cropDoctor.analysis.action3': {
+    en: 'Avoid overhead watering to keep foliage dry.',
+    bn: 'পাতা শুকনো রাখতে উপরের দিক থেকে জল দেওয়া এড়িয়ে চলুন।',
+  },
+  'cropDoctor.analysis.findProductsButton': {
+    en: 'Find Recommended Products',
+    bn: 'সুপারিশকৃত পণ্য খুঁজুন',
+  },
   'myCrops.lands.title': {
     en: 'My Lands',
     bn: 'আমার জমি',
   },
   'myCrops.lands.description': {
-    en: 'Manage your farm lands and the crops on them.',
-    bn: 'আপনার খামারের জমি এবং তার ফসল পরিচালনা করুন।',
+    en: 'Manage your different plots of land.',
+    bn: 'আপনার বিভিন্ন জমির প্লট পরিচালনা করুন।',
   },
   'myCrops.lands.addLandButton': {
-    en: 'Add New Land',
-    bn: 'নতুন জমি যোগ করুন',
+    en: 'Add Land',
+    bn: 'জমি যোগ করুন',
   },
   'myCrops.lands.empty': {
-    en: 'No lands added yet. Add your first piece of land to start tracking crops.',
-    bn: 'এখনও কোন জমি যোগ করা হয়নি। ফসল ট্র্যাকিং শুরু করতে আপনার প্রথম জমি যোগ করুন।',
+    en: 'You have not added any land yet. Add your first plot to start tracking crops.',
+    bn: 'আপনি এখনো কোনো জমি যোগ করেননি। ফসল ট্র্যাক করা শুরু করতে আপনার প্রথম প্লট যোগ করুন।',
   },
-  'myCrops.lands.totalCrops': {
-    en: '{{count}} crops',
-    bn: '{{count}}টি ফসল',
-  },
-
-  // My Crops - Add Land Dialog
   'myCrops.addLandDialog.title': {
-    en: 'Add a New Land',
+    en: 'Add a New Plot of Land',
     bn: 'একটি নতুন জমি যোগ করুন',
-  },
-  'myCrops.addLandDialog.description': {
-    en: 'Enter the details for a piece of land you farm.',
-    bn: 'আপনি চাষ করেন এমন একটি জমির বিবরণ দিন।',
   },
   'myCrops.addLandDialog.nameLabel': {
     en: 'Land Name',
@@ -406,19 +443,19 @@ export const translations = {
   },
   'myCrops.addLandDialog.namePlaceholder': {
     en: 'e.g., North Field',
-    bn: 'যেমন, উত্তর মাঠ',
+    bn: 'যেমন, উত্তর ক্ষেত',
   },
   'myCrops.addLandDialog.locationLabel': {
-    en: 'Location',
-    bn: 'অবস্থান',
+    en: 'Location (Optional)',
+    bn: 'অবস্থান (ঐচ্ছিক)',
   },
   'myCrops.addLandDialog.locationPlaceholder': {
-    en: 'e.g., Village Name, Upazila',
-    bn: 'যেমন, গ্রামের নাম, উপজেলা',
+    en: 'e.g., Comilla',
+    bn: 'যেমন, কুমিল্লা',
   },
   'myCrops.addLandDialog.areaLabel': {
     en: 'Area',
-    bn: 'আয়তন',
+    bn: 'এলাকা',
   },
   'myCrops.addLandDialog.areaUnitLabel': {
     en: 'Unit',
@@ -436,89 +473,79 @@ export const translations = {
     en: 'Katha',
     bn: 'কাঠা',
   },
+  'myCrops.addLandDialog.cancelButton': {
+    en: 'Cancel',
+    bn: 'বাতিল',
+  },
   'myCrops.addLandDialog.submitButton': {
     en: 'Add Land',
     bn: 'জমি যোগ করুন',
   },
-  'myCrops.addLandDialog.cancelButton': {
-    en: 'Cancel',
-    bn: 'বাতিল করুন',
-  },
   'myCrops.addLandDialog.toast.success.title': {
-    en: 'Land Added!',
-    bn: 'জমি যোগ করা হয়েছে!',
+    en: 'Land Added',
+    bn: 'জমি যোগ করা হয়েছে',
   },
   'myCrops.addLandDialog.toast.success.description': {
-    en: 'Successfully added {{landName}}.',
-    bn: 'সফলভাবে {{landName}} যোগ করা হয়েছে।',
+    en: '{{landName}} has been added to your lands.',
+    bn: '{{landName}} আপনার জমিতে যোগ করা হয়েছে।',
   },
   'myCrops.addLandDialog.toast.error.title': {
     en: 'Error',
     bn: 'ত্রুটি',
   },
   'myCrops.addLandDialog.toast.error.description': {
-    en: 'Could not add land. Please try again.',
+    en: 'Could not add the land. Please try again.',
     bn: 'জমি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
   },
-
-  // My Crops - Crops List (on Land Details page)
-  'myCrops.crops.title': {
+   'myCrops.crops.title': {
     en: 'Crops on this Land',
     bn: 'এই জমির ফসল',
   },
   'myCrops.crops.description': {
-    en: 'All crops currently being tracked on {{landName}}.',
-    bn: '{{landName}} এ বর্তমানে ট্র্যাক করা সমস্ত ফসল।',
+    en: 'All crops currently growing on {{landName}}.',
+    bn: '{{landName}} এ বর্তমানে জন্মায় এমন সব ফসল।',
   },
   'myCrops.crops.addCropButton': {
-    en: 'Add New Crop',
-    bn: 'নতুন ফসল যোগ করুন',
-  },
-  'myCrops.crops.empty': {
-    en: 'No crops added to this land yet. Add one to get started!',
-    bn: 'এই জমিতে এখনও কোন ফসল যোগ করা হয়নি। শুরু করতে একটি যোগ করুন!',
-  },
-  'myCrops.crops.sownOn': {
-    en: 'Sown: {{date}}',
-    bn: 'বপন: {{date}}',
-  },
-
-  // My Crops Page - Add Crop Dialog
-  'myCrops.addCropDialog.title': {
-    en: 'Add a New Crop to Track',
-    bn: 'ট্র্যাক করতে একটি নতুন ফসল যোগ করুন',
-  },
-  'myCrops.addCropDialog.description': {
-    en: 'Fill in the details below to start receiving personalized guidance.',
-    bn: 'ব্যক্তিগত নির্দেশিকা পেতে নিচের বিবরণগুলি পূরণ করুন।',
-  },
-  'myCrops.addCropDialog.submitButton': {
     en: 'Add Crop',
     bn: 'ফসল যোগ করুন',
   },
+  'myCrops.crops.empty': {
+    en: 'No crops are being tracked on this land. Add a crop to get AI guidance.',
+    bn: 'এই জমিতে কোনো ফসল ট্র্যাক করা হচ্ছে না। এআই নির্দেশিকা পেতে একটি ফসল যোগ করুন।',
+  },
+  'myCrops.addCropDialog.title': {
+    en: 'Add a New Crop to this Land',
+    bn: 'এই জমিতে একটি নতুন ফসল যোগ করুন',
+  },
+  'myCrops.addCropDialog.description': {
+    en: 'Start tracking a crop to get personalized AI guidance through its lifecycle.',
+    bn: 'এর জীবনচক্রের মাধ্যমে ব্যক্তিগতকৃত এআই নির্দেশিকা পেতে একটি ফসল ট্র্যাক করা শুরু করুন।',
+  },
   'myCrops.addCropDialog.cancelButton': {
     en: 'Cancel',
-    bn: 'বাতিল করুন',
+    bn: 'বাতিল',
+  },
+  'myCrops.addCropDialog.submitButton': {
+    en: 'Add and Guide Me',
+    bn: 'যোগ করুন এবং আমাকে পথ দেখান',
   },
   'myCrops.addCropDialog.toast.success.title': {
-    en: 'Crop Added!',
-    bn: 'ফসল যোগ করা হয়েছে!',
+    en: 'Crop Added',
+    bn: 'ফসল যোগ করা হয়েছে',
   },
   'myCrops.addCropDialog.toast.success.description': {
-    en: 'You are now tracking {{cropName}}.',
-    bn: 'আপনি এখন {{cropName}} ট্র্যাক করছেন।',
+    en: '{{cropName}} is now being tracked. AI guidance is being generated.',
+    bn: '{{cropName}} এখন ট্র্যাক করা হচ্ছে। এআই নির্দেশিকা তৈরি করা হচ্ছে।',
   },
   'myCrops.addCropDialog.toast.error.title': {
     en: 'Error',
     bn: 'ত্রুটি',
   },
   'myCrops.addCropDialog.toast.error.description': {
-    en: 'Could not add crop. Please try again.',
+    en: 'Could not add the crop. Please try again.',
     bn: 'ফসল যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
   },
-
-  // My Crops - Form Fields
-  'myCrops.form.cropName.label': {
+   'myCrops.form.cropName.label': {
     en: 'Crop Name',
     bn: 'ফসলের নাম',
   },
@@ -526,48 +553,19 @@ export const translations = {
     en: 'Select a crop',
     bn: 'একটি ফসল নির্বাচন করুন',
   },
-  'myCrops.form.cropName.options.rice': {
-    en: 'Rice',
-    bn: 'ধান',
-  },
-  'myCrops.form.cropName.options.jute': {
-    en: 'Jute',
-    bn: 'পাট',
-  },
-  'myCrops.form.cropName.options.wheat': {
-    en: 'Wheat',
-    bn: 'গম',
-  },
-  'myCrops.form.cropName.options.potato': {
-    en: 'Potato',
-    bn: 'আলু',
-  },
-  'myCrops.form.cropName.options.tomato': {
-    en: 'Tomato',
-    bn: 'টমেটো',
-  },
-  'myCrops.form.cropName.options.lentil': {
-    en: 'Lentil',
-    bn: 'মসুর ডাল',
-  },
-   'myCrops.form.cropName.options.maize': {
-    en: 'Maize',
-    bn: 'ভুট্টা',
-  },
-  'myCrops.form.cropName.options.sugarcane': {
-    en: 'Sugarcane',
-    bn: 'আখ',
-  },
-  'myCrops.form.cropName.options.onion': {
-    en: 'Onion',
-    bn: 'পেঁয়াজ',
-  },
-  'myCrops.form.cropName.options.mustard': {
-    en: 'Mustard',
-    bn: 'সরিষা',
-  },
+  'myCrops.form.cropName.options.rice': { en: 'Rice', bn: 'ধান' },
+  'myCrops.form.cropName.options.jute': { en: 'Jute', bn: 'পাট' },
+  'myCrops.form.cropName.options.wheat': { en: 'Wheat', bn: 'গম' },
+  'myCrops.form.cropName.options.potato': { en: 'Potato', bn: 'আলু' },
+  'myCrops.form.cropName.options.tomato': { en: 'Tomato', bn: 'টমেটো' },
+  'myCrops.form.cropName.options.lentil': { en: 'Lentil', bn: 'মসুর ডাল' },
+  'myCrops.form.cropName.options.maize': { en: 'Maize', bn: 'ভুট্টা' },
+  'myCrops.form.cropName.options.sugarcane': { en: 'Sugarcane', bn: 'আখ' },
+  'myCrops.form.cropName.options.onion': { en: 'Onion', bn: 'পেঁয়াজ' },
+  'myCrops.form.cropName.options.mustard': { en: 'Mustard', bn: 'সরিষা' },
+
   'myCrops.form.sowingDate.label': {
-    en: 'Date of Sowing',
+    en: 'Sowing Date',
     bn: 'বপনের তারিখ',
   },
   'myCrops.form.sowingDate.placeholder': {
@@ -575,120 +573,34 @@ export const translations = {
     bn: 'একটি তারিখ নির্বাচন করুন',
   },
   'myCrops.form.stage.label': {
-    en: 'Current Crop Stage',
-    bn: 'ফসলের বর্তমান পর্যায়',
+    en: 'Current Growth Stage',
+    bn: 'বর্তমান বৃদ্ধির পর্যায়',
   },
   'myCrops.form.stage.placeholder': {
-    en: 'Select current stage',
+    en: 'Select the current stage',
     bn: 'বর্তমান পর্যায় নির্বাচন করুন',
   },
-  'myCrops.form.stage.options.landpreparation': {
-    en: 'Land Preparation',
-    bn: 'জমি প্রস্তুতি',
-  },
-  'myCrops.form.stage.options.seedsowing': {
-    en: 'Seed Sowing',
-    bn: 'বীজ বপন',
-  },
-  'myCrops.form.stage.options.germinationandearlygrowth': {
-    en: 'Germination & Early Growth',
-    bn: 'অঙ্কুরোদ্গম ও প্রাথমিক বৃদ্ধি',
-  },
-  'myCrops.form.stage.options.vegetativegrowth': {
-    en: 'Vegetative Growth',
-    bn: 'শারীরবৃত্তীয় বৃদ্ধি',
-  },
-  'myCrops.form.stage.options.floweringandfruiting': {
-    en: 'Flowering & Fruiting',
-    bn: 'ফুল ও ফল ধারণ',
-  },
-  'myCrops.form.stage.options.harvesting': {
-    en: 'Harvesting',
-    bn: 'ফসল সংগ্রহ',
-  },
-  'myCrops.form.stage.options.postharvest': {
-    en: 'Post-Harvest',
-    bn: 'ফসল তোলার পরের কাজ',
-  },
-
-  // My Crops - Crop Details & Guide
+  'myCrops.form.stage.options.seedsowing': { en: 'Seed Sowing', bn: 'বীজ বপন' },
+  'myCrops.form.stage.options.germinationandearlygrowth': { en: 'Germination & Early Growth', bn: 'অঙ্কুরোদগম ও প্রাথমিক বৃদ্ধি' },
+  'myCrops.form.stage.options.vegetativegrowth': { en: 'Vegetative Growth', bn: 'উদ্ভিজ্জ বৃদ্ধি' },
+  'myCrops.form.stage.options.floweringandfruiting': { en: 'Flowering & Fruiting', bn: 'ফুল ও ফল ধারণ' },
+  'myCrops.form.stage.options.harvesting': { en: 'Harvesting', bn: 'ফসল সংগ্রহ' },
+  'myCrops.form.stage.options.postharvest': { en: 'Post-Harvest', bn: 'ফসল কাটার পরবর্তী পর্যায়' },
   'myCrops.guide.title': {
-    en: 'AI Farming Guide',
-    bn: 'এআই কৃষি নির্দেশিকা',
+    en: 'AI Guidance Plan',
+    bn: 'এআই নির্দেশিকা পরিকল্পনা',
   },
   'myCrops.guide.description': {
-    en: 'Your personalized step-by-step guide for growing',
-    bn: 'আপনার চাষের জন্য ব্যক্তিগতকৃত ধাপে ধাপে নির্দেশিকা',
+    en: 'A step-by-step plan for your',
+    bn: 'আপনার জন্য একটি ধাপে ধাপে পরিকল্পনা',
   },
   'myCrops.guide.defaultCrop': {
-    en: 'your crop',
-    bn: 'আপনার ফসল',
-  },
-  'myCrops.guide.placeholder': {
-    en: 'Your personalized crop guide will appear here.',
-    bn: 'আপনার ব্যক্তিগতকৃত ফসল নির্দেশিকা এখানে প্রদর্শিত হবে।',
+    en: 'crop',
+    bn: 'ফসল',
   },
   'myCrops.guide.loading': {
-    en: 'Generating your personalized guide...',
-    bn: 'আপনার ব্যক্তিগতকৃত নির্দেশিকা তৈরি করা হচ্ছে...',
-  },
-
-  // Crop Doctor Page
-  'cropDoctor.upload.title': {
-    en: 'Upload Crop Image',
-    bn: 'ফসলের ছবি আপলোড করুন',
-  },
-  'cropDoctor.upload.description': {
-    en: 'Take or upload a picture of the affected crop. Our AI will analyze it for you.',
-    bn: 'ক্ষতিগ্রস্ত ফসলের একটি ছবি তুলুন বা আপলোড করুন। আমাদের এআই আপনার জন্য এটি বিশ্লেষণ করবে।',
-  },
-  'cropDoctor.upload.preview': {
-    en: 'A preview of your uploaded image will appear here.',
-    bn: 'আপনার আপলোড করা ছবির একটি প্রিভিউ এখানে দেখা যাবে।',
-  },
-  'cropDoctor.upload.button': {
-    en: 'Upload Image',
-    bn: 'ছবি আপলোড করুন',
-  },
-  'cropDoctor.analysis.title': {
-    en: 'AI Analysis & Solution',
-    bn: 'এআই বিশ্লেষণ ও সমাধান',
-  },
-  'cropDoctor.analysis.description': {
-    en: 'Based on the image, here is our diagnosis and suggested actions.',
-    bn: 'ছবির উপর ভিত্তি করে, এখানে আমাদের রোগ নির্ণয় এবং প্রস্তাবিত পদক্ষেপ রয়েছে।',
-  },
-  'cropDoctor.analysis.diagnosisTitle': {
-    en: 'Diagnosis:',
-    bn: 'রোগ নির্ণয়:',
-  },
-  'cropDoctor.analysis.diagnosisResult': {
-    en: 'Leaf Blight',
-    bn: 'পাতার ব্লাইট',
-  },
-  'cropDoctor.analysis.diagnosisText': {
-    en: 'The symptoms visible on the leaf, such as the brown spots with yellow halos, are characteristic of Leaf Blight, a common fungal disease.',
-    bn: 'পাতায় দৃশ্যমান লক্ষণ, যেমন হলুদ আভা সহ বাদামী দাগ, পাতার ব্লাইট রোগের বৈশিষ্ট্য, যা একটি সাধারণ ছত্রাকজনিত রোগ।',
-  },
-  'cropDoctor.analysis.recommendationTitle': {
-    en: 'Recommended Actions:',
-    bn: 'প্রস্তাবিত পদক্ষেপ:',
-  },
-  'cropDoctor.analysis.action1': {
-    en: 'Remove affected leaves and apply a copper-based fungicide.',
-    bn: 'আক্রান্ত পাতাগুলি সরিয়ে ফেলুন এবং একটি কপার-ভিত্তিক ছত্রাকনাশک প্রয়োগ করুন।',
-  },
-  'cropDoctor.analysis.action2': {
-    en: 'Water at the base of the plant in the morning and avoid wetting the leaves.',
-    bn: 'সকালে গাছের গোড়ায় জল দিন এবং পাতা ভেজানো থেকে বিরত থাকুন।',
-  },
-  'cropDoctor.analysis.action3': {
-    en: 'Consider planting disease-resistant varieties and practice crop rotation.',
-    bn: 'রোগ-প্রতিরোধী জাত লাগানোর কথা বিবেচনা করুন এবং ফসলের আবর্তন অনুশীলন করুন।',
-  },
-  'cropDoctor.analysis.findProductsButton': {
-    en: 'Find Recommended Products',
-    bn: 'প্রস্তাবিত পণ্য খুঁজুন',
+    en: 'Generating your personalized AI guidance plan...',
+    bn: 'আপনার ব্যক্তিগতকৃত এআই নির্দেশিকা পরিকল্পনা তৈরি করা হচ্ছে...',
   },
 };
 
