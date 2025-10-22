@@ -328,7 +328,7 @@ export default function DashboardPage() {
                     <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
                 </div>
             </div>
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
+            <Button asChild className="bg-accent text-white hover:bg-accent/90 shrink-0">
                 <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
             </Button>
         </div>
