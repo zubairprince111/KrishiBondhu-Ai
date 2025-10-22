@@ -34,9 +34,6 @@ const nextConfig: NextConfig = {
         hostname: 'drive.google.com',
         port: '',
         pathname: '/**',
-      },
-      {
-        protocol: 'https'
       }
     ],
   },
