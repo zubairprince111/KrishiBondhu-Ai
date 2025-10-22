@@ -17,13 +17,10 @@ import {
   MapPin,
   Mic,
   BarChart,
-  Plus,
   BookOpen,
   Newspaper,
   ListChecks,
   RefreshCw,
-  Droplets,
-  Sprout,
   Tractor,
   LogIn,
   CalendarDays,
@@ -38,7 +35,7 @@ import { getWeather, getConditionIcon, getCurrentSeason } from '@/lib/weather';
 import type { WeatherData } from '@/lib/weather';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, collectionGroup } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
 import type { CriticalWeatherAlertOutput } from '@/ai/flows/critical-weather-alert-flow';
 import type { FarmingNewsOutput } from '@/ai/flows/farming-news-flow';
 import { cn } from '@/lib/utils';
@@ -219,7 +216,6 @@ function FarmingNewsCard() {
 export default function DashboardPage() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const [isPending, startTransition] = useTransition();
   const { location, error: locationError } = useGeolocation();
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
@@ -245,11 +241,6 @@ export default function DashboardPage() {
   }, [location]);
 
   const quickActions = [
-    {
-      title: t('dashboard.action.addCrop'),
-      icon: Plus,
-      href: '/my-crops',
-    },
     {
       title: t('dashboard.action.diagnose'),
       icon: ScanEye,
@@ -385,7 +376,7 @@ export default function DashboardPage() {
                 <div className="md:col-span-2">
                     <SeasonalSuggestionCard />
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                     {quickActions.map(action => (
                          <Link href={action.href} key={action.title}>
                             <Card className="flex flex-col items-center justify-center gap-2 p-4 h-full text-center hover:bg-accent/20 transition-colors">
