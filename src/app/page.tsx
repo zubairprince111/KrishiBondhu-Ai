@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -24,6 +23,7 @@ import {
   Tractor,
   LogIn,
   CalendarDays,
+  User,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
@@ -252,6 +252,11 @@ export default function DashboardPage() {
       icon: BarChart,
       href: '/market-info',
     },
+    {
+      title: t('dashboard.action.findOfficer'),
+      icon: User,
+      href: '/find-officer',
+    },
   ];
 
   const resources = [
@@ -372,11 +377,11 @@ export default function DashboardPage() {
         <section>
              <h3 className="font-headline text-xl font-semibold">{t('dashboard.actionableInsights.title')}</h3>
              <p className="text-muted-foreground text-sm">{t('dashboard.actionableInsights.description')}</p>
-            <div className="mt-4 grid gap-6 md:grid-cols-3">
-                <div className="md:col-span-2">
+            <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="lg:col-span-2">
                     <SeasonalSuggestionCard />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-4">
                     {quickActions.map(action => (
                          <Link href={action.href} key={action.title}>
                             <Card className="flex flex-col items-center justify-center gap-2 p-4 h-full text-center hover:bg-accent/20 transition-colors">
@@ -431,3 +436,5 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
+
+    

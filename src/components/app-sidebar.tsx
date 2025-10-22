@@ -50,6 +50,7 @@ const navItems: NavItem[] = [
   { href: '/weather', labelKey: 'sidebar.nav.weather', icon: CloudSun },
   { href: '/community', labelKey: 'sidebar.nav.community', icon: MessageSquare },
   { href: '/market-info', labelKey: 'sidebar.nav.marketInfo', icon: Landmark },
+  { href: '/find-officer', labelKey: 'sidebar.nav.findOfficer', icon: User },
 ];
 
 const secondaryNavItems: NavItem[] = [
@@ -169,3 +170,5 @@ export function AppSidebar() {
     </>
   );
 }
+
+    

@@ -1,4 +1,3 @@
-
 export const translations = {
   // App Header
   'app.header.title.welcome': {
@@ -28,6 +27,10 @@ export const translations = {
   'app.header.title.marketInfo': {
     en: 'Market Information',
     bn: 'বাজার তথ্য',
+  },
+   'app.header.title.findOfficer': {
+    en: 'Find Officer',
+    bn: 'অফিসার খুঁজুন',
   },
   'app.header.title.about': {
     en: 'About KrishiBondhu',
@@ -73,6 +76,10 @@ export const translations = {
   'sidebar.nav.marketInfo': {
     en: 'Market Info',
     bn: 'বাজার তথ্য',
+  },
+  'sidebar.nav.findOfficer': {
+    en: 'Find Officer',
+    bn: 'অফিসার খুঁজুন',
   },
   'sidebar.nav.about': {
     en: 'About',
@@ -171,10 +178,6 @@ export const translations = {
     en: 'Low soil moisture in Plot B',
     bn: 'প্লট বি-তে মাটির আর্দ্রতা কম',
   },
-  'dashboard.action.addCrop': {
-    en: 'Add New Crop',
-    bn: 'নতুন ফসল যোগ',
-  },
   'dashboard.action.diagnose': {
     en: 'Crop Doctor',
     bn: 'ফসল ডাক্তার',
@@ -186,6 +189,10 @@ export const translations = {
   'dashboard.action.marketPrices': {
     en: 'Market Prices',
     bn: 'বাজার দর',
+  },
+   'dashboard.action.findOfficer': {
+    en: 'Find Officer',
+    bn: 'অফিসার খুঁজুন',
   },
   'dashboard.myCrops.description': {
     en: 'Manage fields & view health status at a glance.',
@@ -605,3 +612,5 @@ export const translations = {
 };
 
 export type TranslationKey = keyof typeof translations;
+
+    
