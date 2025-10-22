@@ -132,8 +132,8 @@ export const translations = {
     bn: 'আপনার ফসল এবং আবহাওয়ার উপর ভিত্তি করে এআই-চালিত পরামর্শ।',
   },
   'dashboard.insights.title': {
-    en: 'AI Seasonal Suggestions',
-    bn: 'এআই মৌসুমী পরামর্শ',
+    en: 'AI Seasonal Crop Suggestions',
+    bn: 'এআই মৌসুমী ফসল পরামর্শ',
   },
   'dashboard.insights.refresh': {
     en: 'Refresh',

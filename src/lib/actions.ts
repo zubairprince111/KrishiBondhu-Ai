@@ -14,14 +14,14 @@ import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
 import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
 
 
-function getCurrentSeason(): string {
+function getCurrentSeason(): { name: string; climate: string } {
   const month = new Date().getMonth(); // 0-11
   if (month >= 2 && month <= 5) {
-    return 'Kharif-1 (Summer)';
+    return { name: 'Kharif-1 (Summer)', climate: 'Hot and humid' };
   } else if (month >= 6 && month <= 9) {
-    return 'Kharif-2 (Monsoon)';
+    return { name: 'Kharif-2 (Monsoon)', climate: 'High rainfall and humidity' };
   } else {
-    return 'Rabi (Winter)';
+    return { name: 'Rabi (Winter)', climate: 'Cool and dry' };
   }
 }
 
@@ -30,11 +30,12 @@ export async function suggestSeasonalCrops(): Promise<{
   error: string | null;
 }> {
   try {
+    const seasonInfo = getCurrentSeason();
     const input = {
-      region: 'Bangladesh',
-      currentSeason: getCurrentSeason(),
+      region: 'Bangladesh', // Default region, can be enhanced with user's actual location
+      currentSeason: seasonInfo.name,
       soilType: 'Alluvial', // Using a common soil type for general suggestions
-      localClimateData: 'Tropical monsoon climate',
+      localClimateData: seasonInfo.climate,
     };
     const result = await suggestOptimalCrops(input);
     return {data: result, error: null};

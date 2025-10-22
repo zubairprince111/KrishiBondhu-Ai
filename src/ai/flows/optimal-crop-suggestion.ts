@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -31,16 +32,16 @@ const prompt = ai.definePrompt({
   name: 'optimalCropSuggestionPrompt',
   input: {schema: OptimalCropSuggestionInputSchema},
   output: {schema: OptimalCropSuggestionOutputSchema},
-  prompt: `You are an expert agricultural advisor for Bangladesh. Based on the provided soil type, local climate data, current season, and region, suggest the 3 most optimal crops to plant.
+  prompt: `You are an expert agricultural advisor for Bangladesh. Based on the user's location and the current season's weather, suggest the 3 most optimal crops to plant.
 
-Soil Type: {{{soilType}}}
-Local Climate Data: {{{localClimateData}}}
+Location (Region): {{{region}}}
 Current Season: {{{currentSeason}}}
-Region: {{{region}}}
+Typical Climate for this Season: {{{localClimateData}}}
+Assumed Soil Type: {{{soilType}}}
 
-Consider factors such as yield, market demand, and sustainability.
+Consider factors like water requirements, temperature tolerance, yield, market demand, and sustainability for the specified location and season.
 
-Output a list of exactly 3 suggested crops and a single sentence of reasoning explaining why these crops are suitable for the season and climate. Respond in the local language if appropriate, but the crop names in the array should be in English for consistency.`,
+Output a list of exactly 3 suggested crops and a single sentence of reasoning explaining why these crops are suitable. Respond in the local language if appropriate, but the crop names in the array should be in English for consistency.`,
 });
 
 const suggestOptimalCropsFlow = ai.defineFlow(
