@@ -354,6 +354,20 @@ export const translations = {
   'weather.condition.thunderstormHailHeavy': { en: 'Thunderstorm with heavy hail', bn: 'ভারী শিলাবৃষ্টি সহ বজ্রঝড়' },
   'weather.condition.unknown': { en: 'Unknown condition', bn: 'অজানা অবস্থা' },
 
+  // Seasonal Suggestions
+  'seasonalSuggestions.locationLabel': {
+    en: 'Your Location',
+    bn: 'আপনার অবস্থান',
+  },
+  'seasonalSuggestions.seasonLabel': {
+    en: 'Planning For',
+    bn: 'জন্য পরিকল্পনা',
+  },
+  'seasonalSuggestions.suitability': {
+    en: 'Suitability',
+    bn: 'উপযুক্ততা',
+  },
+
 
   // My Crops - Lands List
   'myCrops.lands.title': {
@@ -612,7 +626,7 @@ export const translations = {
   },
   'myCrops.guide.placeholder': {
     en: 'Your personalized crop guide will appear here.',
-    bn: 'আপনার ব্যক্তিগতকৃত ফসল নির্দেশিকা 여기 প্রদর্শিত হবে।',
+    bn: 'আপনার ব্যক্তিগতকৃত ফসল নির্দেশিকা এখানে প্রদর্শিত হবে।',
   },
   'myCrops.guide.loading': {
     en: 'Generating your personalized guide...',

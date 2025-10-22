@@ -23,6 +23,18 @@ const WEATHER_CONDITIONS: { [code: number]: { key: TranslationKey, icon: React.E
   99: { key: 'weather.condition.thunderstormHailHeavy', icon: CloudHail },
 };
 
+export function getCurrentSeason(): { name: string; climate: string } {
+  const month = new Date().getMonth(); // 0-11
+  if (month >= 2 && month <= 5) {
+    return { name: 'Kharif-1 (Summer)', climate: 'Hot and humid' };
+  } else if (month >= 6 && month <= 9) {
+    return { name: 'Kharif-2 (Monsoon)', climate: 'High rainfall and humidity' };
+  } else {
+    return { name: 'Rabi (Winter)', climate: 'Cool and dry' };
+  }
+}
+
+
 const SEASONS: { [month: number]: TranslationKey } = {
     0: 'weather.season.winter', 1: 'weather.season.winter', 
     2: 'weather.season.summer', 3: 'weather.season.summer', 4: 'weather.season.summer', 5: 'weather.season.summer',
