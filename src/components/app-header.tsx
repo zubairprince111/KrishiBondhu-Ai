@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -80,8 +81,9 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
           </Link>
         </div>
 
-        <div className="flex-1 justify-center px-4 hidden md:flex">
-            <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="hidden md:flex">
+             <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/>
                     <Input 
@@ -92,9 +94,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                     />
                 </div>
             </form>
-        </div>
-
-        <div className="flex items-center gap-2 md:gap-4">
+          </div>
           <Button size="icon" variant="ghost" className="md:hidden hover:bg-primary/50" onClick={() => setIsSearchOpen(true)}>
             <Search />
           </Button>
