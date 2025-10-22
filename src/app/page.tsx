@@ -268,14 +268,14 @@ export default function DashboardPage() {
   ];
 
   const renderWeather = () => {
-    if (isWeatherLoading)
+    if (isWeatherLoading || isGeolocationLoading)
       return (
         <div className="flex items-center gap-2">
           <Loader2 className="size-4 animate-spin" />{' '}
           <span>{t('dashboard.weather.loading')}</span>
         </div>
       );
-    if (locationError || !weatherData)
+    if (locationError || !weatherData || !weatherData.locationName)
       return (
         <div className="flex items-center gap-2">
           <MapPin className="size-4" /> <span>{t('dashboard.weather.locationOff')}</span>
@@ -438,3 +438,5 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
+
+    

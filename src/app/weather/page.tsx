@@ -51,7 +51,7 @@ export default function WeatherPage() {
   }, [weatherData, t]);
 
   const renderContent = () => {
-    if (isWeatherLoading) {
+    if (isWeatherLoading || isGeolocationLoading) {
       return (
         <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border-2 border-dashed p-8 text-center min-h-[50vh]">
           <Loader2 className="size-12 animate-spin text-primary" />
@@ -60,7 +60,7 @@ export default function WeatherPage() {
       );
     }
 
-    if (locationError || !weatherData) {
+    if (locationError || !weatherData || !weatherData.locationName) {
        return (
         <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border-2 border-dashed p-8 text-center min-h-[50vh]">
           <MapPin className="size-12 text-muted-foreground" />
@@ -161,3 +161,5 @@ export default function WeatherPage() {
     </SidebarInset>
   );
 }
+
+    
