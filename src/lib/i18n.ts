@@ -176,8 +176,8 @@ export const translations = {
     bn: 'নতুন ফসল যোগ',
   },
   'dashboard.action.diagnose': {
-    en: 'Diagnose Crop',
-    bn: 'ফসল নির্ণয়',
+    en: 'Crop Doctor',
+    bn: 'ফসল ডাক্তার',
   },
   'dashboard.action.askAI': {
     en: 'Ask Mati AI',
