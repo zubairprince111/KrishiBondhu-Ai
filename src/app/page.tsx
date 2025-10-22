@@ -7,12 +7,10 @@ import React, { useState, useEffect, useTransition } from 'react';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import {
-  MessageSquare,
   AlertTriangle,
   ScanEye,
   Loader2,
@@ -26,7 +24,6 @@ import {
   RefreshCw,
   Droplets,
   Sprout,
-  Wind,
   Tractor,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
@@ -39,10 +36,13 @@ import { getWeather, getConditionIcon } from '@/lib/weather';
 import type { WeatherData } from '@/lib/weather';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, collectionGroup, query, where } from 'firebase/firestore';
+
 
 export default function DashboardPage() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const [seasonalCrops, setSeasonalCrops] =
     useState<OptimalCropSuggestionOutput | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -52,6 +52,19 @@ export default function DashboardPage() {
   const { t } = useLanguage();
 
   const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
+
+  const userLandsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return collection(firestore, 'users', user.uid, 'lands');
+  }, [firestore, user]);
+  const { data: lands } = useCollection(userLandsQuery);
+
+  const allUserCropsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(collectionGroup(firestore, 'crops'), where('userProfileId', '==', user.uid));
+  }, [firestore, user]);
+  const { data: allCrops } = useCollection(allUserCropsQuery);
+
 
   useEffect(() => {
     startTransition(async () => {
@@ -148,6 +161,9 @@ export default function DashboardPage() {
     );
   };
 
+  const fieldsMonitored = lands?.length ?? 0;
+  const upcomingTasks = allCrops?.length ?? 0;
+
   return (
     <SidebarInset>
       <AppHeader />
@@ -184,11 +200,11 @@ export default function DashboardPage() {
                  </div>
                  <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
                     <p className="text-sm text-white/80">{t('dashboard.metrics.fields')}</p>
-                    <p className="font-bold text-lg">5</p>
+                    <p className="font-bold text-lg">{fieldsMonitored}</p>
                  </div>
                  <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
                     <p className="text-sm text-white/80">{t('dashboard.metrics.tasks')}</p>
-                    <p className="font-bold text-lg">2</p>
+                    <p className="font-bold text-lg">{upcomingTasks}</p>
                  </div>
             </div>
           </div>
