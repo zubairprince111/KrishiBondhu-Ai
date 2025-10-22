@@ -39,6 +39,16 @@ Upazila: {{{upazila}}}
 
 Provide the officer's name, their designation (e.g., Upazila Agriculture Officer), a sample phone number, and the office address.
 Respond in English.
+
+CONCRETE_EXAMPLE:
+Input: { "zila": "Cumilla", "upazila": "Daudkandi" }
+Output: {
+  "name": "Mr. Abdullah Al Masud",
+  "designation": "Upazila Agriculture Officer",
+  "contactNumber": "017-XXXX-XXXX",
+  "officeAddress": "Upazila Agriculture Office, Daudkandi, Cumilla"
+}
+END_OF_EXAMPLE
 `,
 });
 
