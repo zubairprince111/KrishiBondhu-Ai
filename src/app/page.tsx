@@ -393,7 +393,7 @@ export default function DashboardPage() {
                         <div className="aspect-video overflow-hidden rounded-lg">
                            <iframe 
                                 className="w-full h-full"
-                                src="https://www.youtube.com/embed/1763R2mQo3A" 
+                                src="https://www.youtube.com/embed/pLwWJCa7Q1Q" 
                                 title="YouTube video player" 
                                 frameBorder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -409,5 +409,3 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
-
-    
