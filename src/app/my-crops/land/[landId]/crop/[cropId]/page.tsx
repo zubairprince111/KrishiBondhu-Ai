@@ -2,6 +2,7 @@
 'use client';
 
 import { useTransition, useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { AppHeader } from '@/components/app-header';
 import {
   Card,
@@ -37,15 +38,10 @@ import { differenceInDays } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 
-type CropDetailsPageProps = {
-  params: {
-    landId: string;
-    cropId: string;
-  };
-};
-
-export default function CropDetailsPage({ params }: CropDetailsPageProps) {
-  const { landId, cropId } = params;
+export default function CropDetailsPage() {
+  const params = useParams();
+  const landId = params.landId as string;
+  const cropId = params.cropId as string;
   const [isGuidanceLoading, startGuidanceLoading] = useTransition();
   const { toast } = useToast();
   const { t } = useLanguage();

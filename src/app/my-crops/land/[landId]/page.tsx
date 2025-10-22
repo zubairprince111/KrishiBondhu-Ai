@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -63,10 +64,6 @@ import {
 } from '@/components/ui/breadcrumb';
 import { getGrowthStage } from '@/lib/crop-stages';
 
-type LandDetailsPageProps = {
-  params: { landId: string };
-};
-
 const cropFormSchema = z.object({
   cropName: z.string().min(1, 'Crop name is required.'),
   sowingDate: z.date({
@@ -98,8 +95,9 @@ const stageOptions = [
 ] as const;
 
 
-export default function LandDetailsPage({ params }: LandDetailsPageProps) {
-  const { landId } = params;
+export default function LandDetailsPage() {
+  const params = useParams();
+  const landId = params.landId as string;
   const [isPending, setIsPending] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
