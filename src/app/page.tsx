@@ -40,9 +40,6 @@ import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, collectionGroup } from 'firebase/firestore';
 import type { CriticalWeatherAlertOutput } from '@/ai/flows/critical-weather-alert-flow';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
-import { useSlideshow } from '@/context/slideshow-context';
 
 const RANK_STYLES = {
     0: { icon: '🥇', color: 'bg-yellow-400/10 border-yellow-500/50', textColor: 'text-yellow-600' },
@@ -180,11 +177,6 @@ export default function DashboardPage() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
   const { t } = useLanguage();
-  const { slideshowImages } = useSlideshow();
-
-  const autoplay = useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: false })
-  );
 
   const userLandsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -266,28 +258,15 @@ export default function DashboardPage() {
       <AppHeader />
       <main className="flex-1 space-y-6 bg-muted/40 p-4 md:p-6">
         {/* Hero Section */}
-        <Carousel
-          className="relative min-h-[300px] w-full overflow-hidden rounded-2xl"
-          plugins={[autoplay.current]}
-          onMouseEnter={autoplay.current.stop}
-          onMouseLeave={autoplay.current.reset}
-        >
-          <CarouselContent>
-            {slideshowImages.map((image, index) => (
-              <CarouselItem key={index}>
-                <div className="h-full w-full">
-                  <Image
-                    src={image.imageUrl}
-                    alt={image.description}
-                    data-ai-hint={image.imageHint}
-                    fill
-                    className="object-cover"
-                    priority={index === 0}
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
+        <div className="relative min-h-[300px] w-full overflow-hidden rounded-2xl">
+          <video
+            src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          />
            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
            <div className="absolute inset-0 flex flex-col justify-between p-6 text-white md:p-8">
                 <div className="ml-auto rounded-full bg-black/30 p-2 px-4 backdrop-blur-sm">
@@ -323,14 +302,14 @@ export default function DashboardPage() {
                   ) : (
                       <>
                           <p className="mt-1 max-w-lg">Your AI farming companion. Sign in to personalize your experience.</p>
-                           <Button asChild size="lg" className="mt-4 bg-accent text-accent-foreground hover:bg-accent/80">
+                           <Button asChild size="lg" className="mt-4 bg-accent text-white hover:bg-accent/80">
                               <Link href="/login"><LogIn className="mr-2"/> Login / Get Started</Link>
                           </Button>
                       </>
                   )}
                 </div>
             </div>
-        </Carousel>
+        </div>
 
 
         {/* Alert Bar */}
@@ -345,7 +324,7 @@ export default function DashboardPage() {
                     <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
                 </div>
             </div>
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
+            <Button asChild className="bg-accent text-white hover:bg-accent/90 shrink-0">
                 <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
             </Button>
         </div>
@@ -408,11 +387,19 @@ export default function DashboardPage() {
                  </Card>
                  <Card>
                     <CardHeader>
-                        <CardTitle>{t('dashboard.market.title')}</CardTitle>
+                        <CardTitle>Video Guide</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-                        <BarChart className="size-8 mb-2"/>
-                        <p>{t('dashboard.market.placeholder')}</p>
+                    <CardContent>
+                        <div className="aspect-video overflow-hidden rounded-lg">
+                           <iframe 
+                                className="w-full h-full"
+                                src="https://www.youtube.com/embed/example" 
+                                title="YouTube video player" 
+                                frameBorder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowFullScreen>
+                            </iframe>
+                        </div>
                     </CardContent>
                  </Card>
              </div>

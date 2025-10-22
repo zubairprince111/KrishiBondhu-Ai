@@ -29,24 +29,6 @@
       "description": "Avatar for a community member.",
       "imageUrl": "https://images.unsplash.com/photo-1582563556319-381ad4504ed9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMGZhcm1lcnxlbnwwfHx8fDE3NjA5ODQ4NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "woman farmer"
-    },
-    {
-      "id": "slideshow-1",
-      "description": "A lush green rice paddy field at sunset, with golden light.",
-      "imageUrl": "https://drive.google.com/uc?export=view&id=1abr6yHtBiozoWjGIVmQR8xf_qiiDOrdk",
-      "imageHint": "farm sunset"
-    },
-    {
-      "id": "slideshow-2",
-      "description": "A farmer working in a green field.",
-      "imageUrl": "https://drive.google.com/uc?export=view&id=11ixRooG87cbKqXCxlygyxvGbIlvEwNIW",
-      "imageHint": "farmer working"
-    },
-    {
-      "id": "slideshow-3",
-      "description": "Close up of a hand holding grains.",
-      "imageUrl": "https://drive.google.com/uc?export=view&id=1GqdKjAhHUx4ZVV-jYEs5DF32cQWMnUYg",
-      "imageHint": "hand grains"
     }
   ]
 }
