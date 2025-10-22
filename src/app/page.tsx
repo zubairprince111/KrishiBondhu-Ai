@@ -260,7 +260,7 @@ export default function DashboardPage() {
         {/* Hero Section */}
         <div className="relative min-h-[300px] w-full overflow-hidden rounded-2xl">
           <video
-            src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+            src="https://drive.google.com/uc?export=view&id=1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB"
             autoPlay
             loop
             muted
@@ -302,7 +302,7 @@ export default function DashboardPage() {
                   ) : (
                       <>
                           <p className="mt-1 max-w-lg">Your AI farming companion. Sign in to personalize your experience.</p>
-                           <Button asChild size="lg" className="mt-4 bg-accent text-white hover:bg-accent/80">
+                           <Button asChild size="lg" className="mt-4 bg-accent text-accent-foreground hover:bg-accent/80">
                               <Link href="/login"><LogIn className="mr-2"/> Login / Get Started</Link>
                           </Button>
                       </>
@@ -324,7 +324,7 @@ export default function DashboardPage() {
                     <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
                 </div>
             </div>
-            <Button asChild className="bg-accent text-white hover:bg-accent/90 shrink-0">
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
                 <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
             </Button>
         </div>
@@ -409,5 +409,7 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
+
+    
 
     
