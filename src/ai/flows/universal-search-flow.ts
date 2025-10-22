@@ -62,7 +62,6 @@ const universalSearchFlow = ai.defineFlow(
           schema: UniversalSearchOutputSchema,
       },
       tools: [searchTool],
-      apiKey: process.env.GEMINI_API_KEY,
     });
 
     const output = llmResponse.output();
