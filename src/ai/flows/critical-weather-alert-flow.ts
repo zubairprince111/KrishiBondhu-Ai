@@ -27,26 +27,24 @@ export const criticalWeatherAlertFlow = ai.defineFlow(
     inputSchema: CriticalWeatherAlertInputSchema,
     outputSchema: CriticalWeatherAlertOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'criticalWeatherAlertPrompt',
-      input: {schema: CriticalWeatherAlertInputSchema},
-      output: {schema: CriticalWeatherAlertOutputSchema},
-      prompt: `You are a disaster management expert for {{country}}.
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
+      prompt: `You are a disaster management expert for ${input.country}.
 Your task is to determine if there is a *critical* and *imminent* weather-related danger for the specified location.
 Consider events like cyclones, severe flooding, extreme heatwaves, or major storm systems. Do not report on normal rain or moderate weather.
 
 Today's Date: ${new Date().toDateString()}
-Location: {{{region}}}
+Location: ${input.region}
 
 Based on this, is there a CRITICAL alert?
 If yes, provide a short, urgent title and a brief call to action.
 Example: isCritical: true, alertTitle: "CRITICAL: Cyclone Amphan Approaching", callToActionText: "View Affected Areas"
 If no, respond with isCritical: false and empty strings for the other fields.
 `,
+      output: { schema: CriticalWeatherAlertOutputSchema },
     });
     
-    const {output} = await prompt(input);
     return output!;
   }
 );

@@ -27,22 +27,20 @@ export const governmentSchemeFinderFlow = ai.defineFlow(
     inputSchema: GovernmentSchemeFinderInputSchema,
     outputSchema: GovernmentSchemeFinderOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'governmentSchemeFinderPrompt',
-      input: {schema: GovernmentSchemeFinderInputSchema},
-      output: {schema: GovernmentSchemeFinderOutputSchema},
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are an AI assistant helping farmers find relevant government schemes, subsidies, and market details for their crops.
 
   Provide a list of schemes relevant to the specified crop and region.
   Also, provide details about the local market prices and opportunities for the specified crop in the specified region.
 
-  Crop: {{{crop}}}
-  Region: {{{region}}}
+  Crop: ${input.crop}
+  Region: ${input.region}
   `,
+      output: { schema: GovernmentSchemeFinderOutputSchema },
     });
 
-    const {output} = await prompt(input);
     return output!;
   }
 );

@@ -29,17 +29,15 @@ export const krishiOfficerFinderFlow = ai.defineFlow(
     inputSchema: KrishiOfficerFinderInputSchema,
     outputSchema: KrishiOfficerFinderOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'krishiOfficerFinderPrompt',
-      input: {schema: KrishiOfficerFinderInputSchema},
-      output: {schema: KrishiOfficerFinderOutputSchema},
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are a directory assistant for the Department of Agricultural Extension, Bangladesh.
 Your task is to provide contact details for the designated agricultural officer for a given area.
 Generate a realistic but fictional name and contact details for the officer in the specified location.
 
-Zila: {{{zila}}}
-Upazila: {{{upazila}}}
+Zila: ${input.zila}
+Upazila: ${input.upazila}
 
 Provide the officer's name, their designation (e.g., Upazila Agriculture Officer), a sample phone number, and the office address.
 Respond in English.
@@ -54,9 +52,9 @@ Output: {
 }
 END_OF_EXAMPLE
 `,
+      output: { schema: KrishiOfficerFinderOutputSchema },
     });
 
-    const {output} = await prompt(input);
     return output!;
   }
 );

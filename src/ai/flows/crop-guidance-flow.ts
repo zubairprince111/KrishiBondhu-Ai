@@ -34,20 +34,18 @@ export const cropGuidanceFlow = ai.defineFlow(
     inputSchema: CropGuidanceInputSchema,
     outputSchema: CropGuidanceOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'cropGuidancePrompt',
-      input: {schema: CropGuidanceInputSchema},
-      output: {schema: CropGuidanceOutputSchema},
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
 
 The guide should cover the entire lifecycle from land preparation to post-harvest.
-The farmer's crop is currently at the '{{{currentStage}}}' stage. Mark all stages up to and including the current stage as completed.
+The farmer's crop is currently at the '${input.currentStage}' stage. Mark all stages up to and including the current stage as completed.
 
 For each stage, provide a title, detailed actionable advice, and a typical duration in days.
 
-Crop: {{{cropName}}}
-Region: {{{region}}}
+Crop: ${input.cropName}
+Region: ${input.region}
 
 Generate guidance with the following stages:
 1. Land Preparation
@@ -60,9 +58,9 @@ Generate guidance with the following stages:
 
 For each stage, provide a title, detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care, and its typical duration in days. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
 `,
+      output: { schema: CropGuidanceOutputSchema },
     });
     
-    const {output} = await prompt(input);
     return output!;
   }
 );

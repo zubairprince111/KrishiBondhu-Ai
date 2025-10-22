@@ -33,21 +33,18 @@ export const aiCropDoctorAnalysisFlow = ai.defineFlow(
     outputSchema: AiCropDoctorOutputSchema,
   },
   async input => {
-    const prompt = ai.definePrompt({
-      name: 'aiCropDoctorPrompt',
-      input: {schema: AiCropDoctorInputSchema},
-      output: {schema: AiCropDoctorOutputSchema},
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are an expert agricultural advisor specializing in diagnosing crop diseases and providing solutions in Bangla.
 
 You will analyze the provided image of the diseased crop and provide a diagnosis and a list of at least 3 potential solutions in Bangla.
 
-Crop Image: {{media url=photoDataUri}}
+Crop Image: {{media url=${input.photoDataUri}}}
 
 Respond entirely in the Bangla language.
 `,
+      output: { schema: AiCropDoctorOutputSchema },
     });
-
-    const {output} = await prompt(input);
     return output!;
   }
 );

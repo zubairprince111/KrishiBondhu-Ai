@@ -57,22 +57,24 @@ export const marketPriceFinderFlow = ai.defineFlow(
     outputSchema: MarketPriceFinderOutputSchema,
   },
   async (input) => {
-    const prompt = ai.definePrompt({
-      name: 'marketPriceFinderPrompt',
+    const prompt = `You are an AI assistant that provides real-time agricultural market prices in Bangladesh. Use the provided tool to get the current market prices for the specified region.
+
+Region: ${input.region}
+`;
+
+    const llmResponse = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
+      prompt: prompt,
       tools: [getMarketPricesTool],
-      prompt: `You are an AI assistant that provides real-time agricultural market prices in Bangladesh. Use the provided tool to get the current market prices for the specified region.
-
-Region: {{{region}}}
-`,
     });
-
-    const llmResponse = await prompt(input);
+    
     const toolRequest = llmResponse.toolRequest();
 
     if (!toolRequest) {
       // This case is unlikely if the prompt is well-defined, but it's good practice to handle it.
       // We can try to generate a response without the tool.
       const fallbackResponse = await ai.generate({
+          model: 'googleai/gemini-2.5-flash',
           prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
           output: { schema: MarketPriceFinderOutputSchema },
       });
@@ -83,7 +85,13 @@ Region: {{{region}}}
     const toolResponse = await llmResponse.forward(toolRequest);
 
     // Send the tool's response back to the model.
-    const finalResponse = await prompt(input, {toolResponse});
+    const finalResponse = await ai.generate({
+        model: 'googleai/gemini-2.5-flash',
+        prompt: prompt,
+        tools: [getMarketPricesTool],
+        toolResponse: toolResponse,
+        output: { schema: MarketPriceFinderOutputSchema },
+    });
 
     return finalResponse.output!;
   }

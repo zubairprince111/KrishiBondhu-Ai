@@ -26,16 +26,15 @@ export const farmingNewsFlow = ai.defineFlow(
     outputSchema: FarmingNewsOutputSchema,
   },
   async () => {
-    const prompt = ai.definePrompt({
-      name: 'farmingNewsPrompt',
-      output: {schema: FarmingNewsOutputSchema},
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are an expert agricultural news correspondent. 
 Your task is to provide the top 3-4 most important and relevant worldwide farming and agricultural news headlines for today, ${new Date().toDateString()}.
 The news should be relevant to a general farmer, covering topics like new technology, market trends, weather impacts on agriculture, or significant policy changes.
 For each article, provide a concise title and a short summary.`,
+      output: { schema: FarmingNewsOutputSchema },
     });
 
-    const {output} = await prompt();
     return output!;
   }
 );

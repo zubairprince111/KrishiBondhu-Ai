@@ -35,27 +35,25 @@ export const suggestOptimalCropsFlow = ai.defineFlow(
     inputSchema: OptimalCropSuggestionInputSchema,
     outputSchema: OptimalCropSuggestionOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'optimalCropSuggestionPrompt',
-      input: {schema: OptimalCropSuggestionInputSchema},
-      output: {schema: OptimalCropSuggestionOutputSchema},
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are an expert agricultural advisor for Bangladesh. Based on the provided location and the current season's weather, suggest the 3 most optimal crops to plant, ranked from best to worst.
 
 If a specific lat/long is provided, use it for fine-tuned suggestions. Otherwise, use the general region name.
 
-Location (Region or Lat/Long): {{{region}}}
-Current Season: {{{currentSeason}}}
-Typical Climate for this Season: {{{localClimateData}}}
-Assumed Soil Type: {{{soilType}}}
+Location (Region or Lat/Long): ${input.region}
+Current Season: ${input.currentSeason}
+Typical Climate for this Season: ${input.localClimateData}
+Assumed Soil Type: ${input.soilType}
 
 For each crop, provide its name in English, a suitable high-yield variety, and a suitability score from 0-100.
 Consider factors like water requirements, temperature tolerance, yield, profitability, market demand, and sustainability for the specified location and season.
 
 Output a ranked list of exactly 3 suggested crops and a single sentence of reasoning explaining why these crops are suitable overall.`,
+      output: { schema: OptimalCropSuggestionOutputSchema },
     });
 
-    const {output} = await prompt(input);
     return output!;
   }
 );

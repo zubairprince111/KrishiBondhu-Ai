@@ -28,17 +28,15 @@ export const matiAIVoiceAssistanceFlow = ai.defineFlow(
     inputSchema: MatiAIVoiceAssistanceInputSchema,
     outputSchema: MatiAIVoiceAssistanceOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'matiAIVoiceAssistancePrompt',
-      input: {schema: MatiAIVoiceAssistanceInputSchema},
-      output: {schema: MatiAIVoiceAssistanceOutputSchema},
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are Mati AI, a helpful voice assistant for farmers in Bangladesh. You respond to questions in Bangla.
 
-Farmer's Query: {{{query}}}`,
+Farmer's Query: ${input.query}`,
+      output: { schema: MatiAIVoiceAssistanceOutputSchema },
     });
 
-    const {output} = await prompt(input);
     return output!;
   }
 );

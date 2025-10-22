@@ -27,22 +27,20 @@ export const weatherAdvisorFlow = ai.defineFlow(
     inputSchema: WeatherAdvisorInputSchema,
     outputSchema: WeatherAdvisorOutputSchema,
   },
-  async input => {
-    const prompt = ai.definePrompt({
-      name: 'weatherAdvisorPrompt',
-      input: {schema: WeatherAdvisorInputSchema},
-      output: {schema: WeatherAdvisorOutputSchema},
+  async (input) => {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       prompt: `You are an agricultural advisor for farmers in Bangladesh.
 Based on the following weather information, provide a single, short, actionable piece of advice.
 Keep the advice practical and easy to understand. Respond in English.
 
-Weather Condition: {{{condition}}}
-Temperature: {{{temperature}}}°C
-Wind: {{{wind}}}
+Weather Condition: ${input.condition}
+Temperature: ${input.temperature}°C
+Wind: ${input.wind}
 `,
+      output: { schema: WeatherAdvisorOutputSchema },
     });
     
-    const {output} = await prompt(input);
     return output!;
   }
 );
