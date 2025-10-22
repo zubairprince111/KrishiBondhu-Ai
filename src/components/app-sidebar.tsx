@@ -13,7 +13,6 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import {
-  ClipboardList,
   CloudSun,
   Info,
   Landmark,
@@ -21,7 +20,6 @@ import {
   Leaf,
   MessageSquare,
   Mic,
-  Shield,
   Sprout,
   LogIn,
   LogOut,

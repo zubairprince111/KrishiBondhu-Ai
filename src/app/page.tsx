@@ -22,7 +22,7 @@ import {
   Leaf,
   Mic,
   CloudSun,
-  ClipboardList,
+  Tractor,
   MessageSquare,
   Landmark,
   WifiOff,
@@ -31,7 +31,6 @@ import {
   Wind,
   Droplets,
   Loader2,
-  Tractor,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
