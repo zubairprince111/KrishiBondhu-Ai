@@ -82,59 +82,173 @@ export const translations = {
     en: 'Profile',
     bn: 'প্রোফাইল',
   },
-  // Dashboard Page
-  'dashboard.weather.title': {
-    en: 'Daily Weather',
-    bn: 'দৈনিক আবহাওয়া',
+  // Dashboard Page - New
+  'dashboard.welcome': {
+    en: 'Welcome back, {{name}}!',
+    bn: 'আবারও স্বাগতম, {{name}}!',
   },
-  'dashboard.seasonalCrops.jute.name': {
-    en: 'Jute',
-    bn: 'পাট',
+  'dashboard.farmer': {
+    en: 'Farmer',
+    bn: 'কৃষক',
   },
-  'dashboard.seasonalCrops.jute.reason': {
-    en: 'Ideal for humid conditions',
-    bn: 'আর্দ্র আবহাওয়ার জন্য আদর্শ',
+  'dashboard.farmStatus': {
+    en: "Here's a snapshot of your farm's health and upcoming tasks.",
+    bn: 'এখানে আপনার খামারের স্বাস্থ্য এবং আসন্ন কাজগুলির একটি চিত্র।',
   },
-  'dashboard.seasonalCrops.ausRice.name': {
-    en: 'Aus Rice',
-    bn: 'আউশ ধান',
+  'dashboard.metrics.health': {
+    en: 'Overall Health',
+    bn: 'সামগ্রিক স্বাস্থ্য',
   },
-  'dashboard.seasonalCrops.ausRice.reason': {
-    en: 'Monsoon season staple',
-    bn: 'বর্ষা মৌসুমের প্রধান ফসল',
+  'dashboard.metrics.healthValue': {
+    en: 'Good',
+    bn: 'ভাল',
   },
-  'dashboard.seasonalCrops.okra.name': {
-    en: 'Okra',
-    bn: 'ভেন্ডি',
+  'dashboard.metrics.fields': {
+    en: 'Fields Monitored',
+    bn: 'পর্যবেক্ষণ করা জমি',
   },
-  'dashboard.seasonalCrops.okra.reason': {
-    en: 'Thrives in summer heat',
-    bn: 'গ্রীষ্মের তাপে ভাল জন্মে',
+  'dashboard.metrics.tasks': {
+    en: 'Upcoming Tasks',
+    bn: 'আসন্ন কাজ',
   },
-  'dashboard.seasonalCrops.brinjal.name': {
-    en: 'Brinjal',
-    bn: 'বেগুন',
+  'dashboard.alert.critical': {
+    en: 'CRITICAL:',
+    bn: 'গুরুতর:',
   },
-  'dashboard.seasonalCrops.brinjal.reason': {
-    en: 'Good for this climate',
-    bn: 'এই আবহাওয়ার জন্য ভাল',
+  'dashboard.alert.floodWarning': {
+    en: 'Flood Warning Issued for Dhaka. View impacted fields.',
+    bn: 'ঢাকার জন্য বন্যা সতর্কতা জারি করা হয়েছে। প্রভাবিত জমি দেখুন।',
   },
-  'dashboard.seasonalCrops.paddy.name': {
-    en: 'Paddy',
-    bn: 'ধান',
+  'dashboard.alert.openAlerts': {
+    en: 'Open Alerts',
+    bn: 'সতর্কতা দেখুন',
   },
-  'dashboard.seasonalCrops.paddy.reason': {
-    en: 'High demand crop',
-    bn: 'উচ্চ চাহিদার ফসল',
+  'dashboard.actionableInsights.title': {
+    en: 'Actionable Insights',
+    bn: 'কার্যকরী অন্তর্দৃষ্টি',
   },
-  'dashboard.seasonalCrops.potato.name': {
-    en: 'Potato',
-    bn: 'আলু',
+  'dashboard.actionableInsights.description': {
+    en: 'AI-powered suggestions based on your crops and weather.',
+    bn: 'আপনার ফসল এবং আবহাওয়ার উপর ভিত্তি করে এআই-চালিত পরামর্শ।',
   },
-  'dashboard.seasonalCrops.potato.reason': {
-    en: 'Winter season favorite',
-    bn: 'শীত মৌসুমের প্রিয়',
+  'dashboard.insights.title': {
+    en: 'AI Seasonal Suggestions',
+    bn: 'এআই মৌসুমী পরামর্শ',
   },
+  'dashboard.insights.refresh': {
+    en: 'Refresh',
+    bn: 'রিফ্রেশ',
+  },
+  'dashboard.insights.fertilize': {
+    en: 'Fertilize in 2 days',
+    bn: '২ দিনের মধ্যে সার দিন',
+  },
+  'dashboard.insights.fertilizeDesc': {
+    en: 'Optimal window for Wheat Field 2',
+    bn: 'গম ক্ষেত ২ এর জন্য সেরা সময়',
+  },
+  'dashboard.insights.monitorBlight': {
+    en: 'Monitor Early Blight',
+    bn: 'আর্লি ব্লাইট পর্যবেক্ষণ করুন',
+  },
+  'dashboard.insights.monitorBlightDesc': {
+    en: 'Potato Field 1 risk rising',
+    bn: 'আলু ক্ষেত ১-এ ঝুঁকি বাড়ছে',
+  },
+  'dashboard.insights.nextSeason': {
+    en: 'Next Season Planting',
+    bn: 'পরবর্তী মৌসুমের রোপণ',
+  },
+  'dashboard.insights.nextSeasonDesc': {
+    en: 'Recommended: Maize after Rice',
+    bn: 'সুপারিশ: ধানের পর ভুট্টা',
+  },
+  'dashboard.insights.irrigation': {
+    en: 'Irrigation Check',
+    bn: 'সেচ পরীক্ষা করুন',
+  },
+  'dashboard.insights.irrigationDesc': {
+    en: 'Low soil moisture in Plot B',
+    bn: 'প্লট বি-তে মাটির আর্দ্রতা কম',
+  },
+  'dashboard.action.addCrop': {
+    en: 'Add New Crop',
+    bn: 'নতুন ফসল যোগ',
+  },
+  'dashboard.action.diagnose': {
+    en: 'Diagnose Crop',
+    bn: 'ফসল নির্ণয়',
+  },
+  'dashboard.action.askAI': {
+    en: 'Ask Mati AI',
+    bn: 'মাটি এআই-কে জিজ্ঞাসা',
+  },
+  'dashboard.action.marketPrices': {
+    en: 'Market Prices',
+    bn: 'বাজার দর',
+  },
+  'dashboard.myCrops.description': {
+    en: 'Manage fields & view health status at a glance.',
+    bn: 'জমি পরিচালনা করুন এবং এক নজরে স্বাস্থ্যের অবস্থা দেখুন।',
+  },
+  'dashboard.myCrops.viewDashboard': {
+    en: 'View My Fields Dashboard',
+    bn: 'আমার জমির ড্যাশবোর্ড দেখুন',
+  },
+  'dashboard.communityAndResources.title': {
+    en: 'Community & Resources',
+    bn: 'קהילה ומשאבים',
+  },
+  'dashboard.communityAndResources.description': {
+    en: 'Learn from others and stay informed.',
+    bn: ' অন্যদের কাছ থেকে শিখুন এবং অবগত থাকুন।',
+  },
+  'dashboard.community.title': {
+    en: 'Community Discussions',
+    bn: 'קהילת דיונים',
+  },
+  'dashboard.community.post1': {
+    en: 'Best practices for flood prep?',
+    bn: 'বন্যার প্রস্তুতির সেরা অনুশীলন?',
+  },
+  'dashboard.community.post2': {
+    en: '#PestControl: Tomato hornworm',
+    bn: '# কীটপতঙ্গ নিয়ন্ত্রণ: টমেটো হর্নওয়ার্ম',
+  },
+  'dashboard.community.openCommunity': {
+    en: 'Open Community',
+    bn: 'קהילה פתוחה',
+  },
+  'dashboard.resources.title': {
+    en: 'KrishiBondhu Insights',
+    bn: 'কৃষিবন্ধু অন্তর্দৃষ্টি',
+  },
+  'dashboard.resources.fertilizerGuide': {
+    en: 'Monsoon fertilizer guide',
+    bn: 'বর্ষা মৌসুমের সার নির্দেশিকা',
+  },
+  'dashboard.resources.leafSpotsVideo': {
+    en: 'Video: Identify leaf spots fast',
+    bn: 'ভিডিও: দ্রুত পাতার দাগ শনাক্ত করুন',
+  },
+  'dashboard.resources.planningChecklist': {
+    en: 'Next-season planning checklist',
+    bn: 'পরবর্তী মৌসুমের পরিকল্পনা চেকলিস্ট',
+  },
+  'dashboard.resources.viewAll': {
+    en: 'View All',
+    bn: 'সব দেখুন',
+  },
+  'dashboard.market.title': {
+    en: 'Latest Market Trends',
+    bn: 'সর্বশেষ বাজার প্রবণতা',
+  },
+  'dashboard.market.placeholder': {
+    en: 'Price trends chart placeholder',
+    bn: 'মূল্য প্রবণতা চার্ট স্থানধারক',
+  },
+
+  // Dashboard Page - Old
   'dashboard.feature.cropDoctor.title': {
     en: 'Crop Doctor',
     bn: 'ফসল ডাক্তার',
@@ -190,6 +304,14 @@ export const translations = {
   'dashboard.offline.description': {
     en: 'Key features and your data are available even without an internet connection.',
     bn: 'ইন্টারনেট সংযোগ ছাড়াই মূল বৈশিষ্ট্য এবং আপনার ডেটা উপলব্ধ।',
+  },
+  'dashboard.weather.loading': {
+      en: 'Loading...',
+      bn: 'লোড হচ্ছে...'
+  },
+  'dashboard.weather.locationOff': {
+      en: 'Location Off',
+      bn: 'অবস্থান বন্ধ'
   },
   // Voice Assistant Page
   'voiceAssistant.greeting': {
@@ -490,7 +612,7 @@ export const translations = {
   },
   'myCrops.guide.placeholder': {
     en: 'Your personalized crop guide will appear here.',
-    bn: 'আপনার ব্যক্তিগতকৃত ফসল নির্দেশিকা এখানে প্রদর্শিত হবে।',
+    bn: 'আপনার ব্যক্তিগতকৃত ফসল নির্দেশিকা 여기 প্রদর্শিত হবে।',
   },
   'myCrops.guide.loading': {
     en: 'Generating your personalized guide...',
@@ -540,7 +662,7 @@ export const translations = {
   },
   'cropDoctor.analysis.action1': {
     en: 'Remove affected leaves and apply a copper-based fungicide.',
-    bn: 'আক্রান্ত পাতাগুলি সরিয়ে ফেলুন এবং একটি কপার-ভিত্তিক ছত্রাকনাশক প্রয়োগ করুন।',
+    bn: 'আক্রান্ত পাতাগুলি সরিয়ে ফেলুন এবং একটি কপার-ভিত্তিক ছত্রাকনাশک প্রয়োগ করুন।',
   },
   'cropDoctor.analysis.action2': {
     en: 'Water at the base of the plant in the morning and avoid wetting the leaves.',

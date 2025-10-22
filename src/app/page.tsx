@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useRef, useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import {
   Card,
   CardContent,
@@ -12,210 +12,298 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  Leaf,
-  Mic,
-  Tractor,
   MessageSquare,
-  Landmark,
-  WifiOff,
+  AlertTriangle,
+  ScanEye,
+  Loader2,
   MapPin,
+  Mic,
+  BarChart,
+  Plus,
+  BookOpen,
+  Video,
+  ListChecks,
+  RefreshCw,
+  Droplets,
   Sprout,
   Wind,
-  Droplets,
-  Loader2,
-  CloudSun,
-  AlertTriangle,
-  ScanEye
+  Tractor,
 } from 'lucide-react';
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useLanguage } from '@/context/language-context';
-import type { TranslationKey } from '@/lib/i18n';
 import { suggestSeasonalCrops } from '@/lib/actions';
 import type { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
-import { cn } from '@/lib/utils';
 import { useGeolocation } from '@/hooks/use-geolocation';
-import { getWeather, getConditionIcon, getConditionKey } from '@/lib/weather';
+import { getWeather, getConditionIcon } from '@/lib/weather';
 import type { WeatherData } from '@/lib/weather';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser } from '@/firebase';
 
 export default function DashboardPage() {
-    const { user } = useUser();
-    const [seasonalCrops, setSeasonalCrops] = useState<OptimalCropSuggestionOutput | null>(null);
-    const [isPending, startTransition] = useTransition();
-    const { location, error: locationError } = useGeolocation();
-    const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-    const [isWeatherLoading, setIsWeatherLoading] = useState(true);
-    const { t } = useLanguage();
-    
-    const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
+  const { user } = useUser();
+  const [seasonalCrops, setSeasonalCrops] =
+    useState<OptimalCropSuggestionOutput | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const { location, error: locationError } = useGeolocation();
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [isWeatherLoading, setIsWeatherLoading] = useState(true);
+  const { t } = useLanguage();
 
-    useEffect(() => {
-        startTransition(async () => {
-            const { data } = await suggestSeasonalCrops();
-            setSeasonalCrops(data);
-        });
-    }, []);
+  const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
 
-    useEffect(() => {
-      if (location) {
-        setIsWeatherLoading(true);
-        getWeather(location.latitude, location.longitude)
-          .then(setWeatherData)
-          .catch(console.error)
-          .finally(() => setIsWeatherLoading(false));
-      } else {
-        setIsWeatherLoading(false);
-      }
-    }, [location]);
+  useEffect(() => {
+    startTransition(async () => {
+      const { data } = await suggestSeasonalCrops();
+      setSeasonalCrops(data);
+    });
+  }, []);
 
-    const features = [
-      {
-        gridClass: 'col-span-2 md:col-span-4 bg-primary text-primary-foreground p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4',
-        titleKey: 'dashboard.feature.myCrops.title',
-        descriptionKey: 'dashboard.feature.myCrops.description',
-        href: '/my-crops',
-        icon: <Tractor className="size-8" />,
-        buttonText: 'Go to Dashboard',
-        buttonVariant: 'accent',
-        buttonClass: 'bg-accent text-accent-foreground hover:bg-accent/90',
-        contentAlignment: 'start',
-      },
-      {
-        gridClass: 'col-span-2 md:col-span-2',
-        titleKey: 'dashboard.feature.cropDoctor.title',
-        descriptionKey: 'dashboard.feature.cropDoctor.description',
-        href: '/crop-doctor',
-        icon: <ScanEye className="size-6 text-muted-foreground" />,
-        buttonText: 'Open',
-        buttonVariant: 'secondary',
-        contentAlignment: 'start',
-      },
-      {
-        gridClass: 'col-span-2 md:col-span-2 bg-primary/5',
-        titleKey: 'dashboard.feature.voiceAssistant.title',
-        descriptionKey: 'dashboard.feature.voiceAssistant.description',
-        href: '/voice-assistant',
-        icon: <Mic className="size-6 text-muted-foreground" />,
-        buttonText: 'Ask Now',
-        buttonVariant: 'secondary',
-        contentAlignment: 'start',
-      },
-       {
-        gridClass: 'col-span-2 md:col-span-2 bg-warning/20 border-warning/50',
-        titleKey: 'dashboard.feature.weather.title',
-        descriptionKey: 'dashboard.feature.weather.description',
-        href: '/weather',
-        icon: <AlertTriangle className="size-6 text-warning-foreground" />,
-        buttonText: 'View Details',
-        buttonVariant: 'secondary',
-        buttonClass: 'bg-warning/80 text-warning-foreground hover:bg-warning',
-        contentAlignment: 'start',
-      },
-       {
-        gridClass: 'col-span-2 md:col-span-2',
-        titleKey: 'dashboard.feature.community.title',
-        descriptionKey: 'dashboard.feature.community.description',
-        href: '/community',
-        icon: <MessageSquare className="size-6 text-muted-foreground" />,
-        buttonText: 'Join',
-        buttonVariant: 'secondary',
-        contentAlignment: 'start',
-      },
-       {
-        gridClass: 'col-span-2 md:col-span-2',
-        titleKey: 'dashboard.feature.marketInfo.title',
-        descriptionKey: 'dashboard.feature.marketInfo.description',
-        href: '/market-info',
-        icon: <Landmark className="size-6 text-muted-foreground" />,
-        buttonText: 'Explore',
-        buttonVariant: 'secondary',
-        contentAlignment: 'start',
-      },
-    ] as const;
-
-    const renderWeather = () => {
-         if (isWeatherLoading) return <div className="flex items-center gap-2"><Loader2 className="animate-spin size-4" /> <span>Loading...</span></div>;
-         if (locationError || !weatherData) return <div className="flex items-center gap-2"><MapPin className="size-4" /> <span>Location Off</span></div>;
-
-         return (
-            <>
-                {getConditionIcon(weatherData.current.conditionCode, "size-6")}
-                <span className="font-bold text-2xl">{weatherData.current.temperature}°C</span>
-                <div className="text-xs">
-                    <p className="font-semibold">{weatherData.locationName.split(',')[0]}</p>
-                    <p>{weatherData.locationName.split(',').slice(1).join(', ')}</p>
-                </div>
-            </>
-         )
+  useEffect(() => {
+    if (location) {
+      setIsWeatherLoading(true);
+      getWeather(location.latitude, location.longitude)
+        .then(setWeatherData)
+        .catch(console.error)
+        .finally(() => setIsWeatherLoading(false));
+    } else {
+      setIsWeatherLoading(false);
     }
+  }, [location]);
+
+  const quickActions = [
+    {
+      title: t('dashboard.action.addCrop'),
+      icon: Plus,
+      href: '/my-crops',
+    },
+    {
+      title: t('dashboard.action.diagnose'),
+      icon: ScanEye,
+      href: '/crop-doctor',
+    },
+    { title: t('dashboard.action.askAI'), icon: Mic, href: '/voice-assistant' },
+    {
+      title: t('dashboard.action.marketPrices'),
+      icon: BarChart,
+      href: '/market-info',
+    },
+  ];
+
+  const insights = [
+    {
+      title: t('dashboard.insights.fertilize'),
+      description: t('dashboard.insights.fertilizeDesc'),
+      icon: Sprout,
+    },
+    {
+      title: t('dashboard.insights.monitorBlight'),
+      description: t('dashboard.insights.monitorBlightDesc'),
+      icon: AlertTriangle,
+    },
+    {
+      title: t('dashboard.insights.nextSeason'),
+      description: t('dashboard.insights.nextSeasonDesc'),
+      icon: Tractor,
+    },
+    {
+      title: t('dashboard.insights.irrigation'),
+      description: t('dashboard.insights.irrigationDesc'),
+      icon: Droplets,
+    },
+  ];
+
+  const resources = [
+      { title: t('dashboard.resources.fertilizerGuide'), icon: BookOpen },
+      { title: t('dashboard.resources.leafSpotsVideo'), icon: Video },
+      { title: t('dashboard.resources.planningChecklist'), icon: ListChecks },
+  ];
+
+  const renderWeather = () => {
+    if (isWeatherLoading)
+      return (
+        <div className="flex items-center gap-2">
+          <Loader2 className="size-4 animate-spin" />{' '}
+          <span>{t('dashboard.weather.loading')}</span>
+        </div>
+      );
+    if (locationError || !weatherData)
+      return (
+        <div className="flex items-center gap-2">
+          <MapPin className="size-4" /> <span>{t('dashboard.weather.locationOff')}</span>
+        </div>
+      );
 
     return (
-        <SidebarInset>
-            <AppHeader />
-            <main className="flex-1 space-y-6 p-4 md:p-6 bg-muted/40">
-                 <div className="relative h-[350px] w-full rounded-2xl overflow-hidden text-white flex flex-col justify-between p-6 md:p-8">
-                     {heroImage && (
-                        <Image
-                            src={heroImage.imageUrl}
-                            alt={heroImage.description}
-                            data-ai-hint={heroImage.imageHint}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                     )}
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                     
-                     <div className="relative flex items-center gap-2 rounded-full bg-black/30 p-2 pr-4 backdrop-blur-sm max-w-fit">
-                         {renderWeather()}
-                     </div>
-
-                     <div className="relative">
-                         <h2 className="font-headline text-3xl md:text-4xl font-bold max-w-md">
-                            {isPending ? "Finding suggestions..." : seasonalCrops ? "Seasonal suggestions for you:" : "Seasonal suggestions are based on your crops."}
-                         </h2>
-                         <p className="text-sm max-w-md mt-2">
-                             {isPending && <Loader2 className="animate-spin" />}
-                             {!isPending && seasonalCrops ? seasonalCrops.reasoning : "Add your first crop to get started!"}
-                         </p>
-
-                         {seasonalCrops && !isPending && (
-                            <div className="flex gap-2 mt-4">
-                                {seasonalCrops.suggestedCrops.map(crop => (
-                                    <div key={crop} className="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-semibold">
-                                        {crop}
-                                    </div>
-                                ))}
-                            </div>
-                         )}
-                     </div>
-                 </div>
-
-                 <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
-                    {features.map((feature, index) => (
-                        <Card key={index} className={cn("rounded-2xl shadow-sm hover:shadow-md transition-shadow", feature.gridClass)}>
-                            <div className="flex flex-col h-full">
-                                <div className={cn("flex-grow flex items-start gap-4", feature.contentAlignment === 'start' ? 'flex-col' : 'items-center')}>
-                                    {feature.icon}
-                                    <div>
-                                        <h3 className="font-headline font-semibold">{t(feature.titleKey)}</h3>
-                                        <p className="text-sm text-muted-foreground">{t(feature.descriptionKey)}</p>
-                                    </div>
-                                </div>
-                                <div className="mt-4">
-                                     <Button asChild variant={feature.buttonVariant} size="sm" className={feature.buttonClass}>
-                                        <Link href={feature.href}>{feature.buttonText}</Link>
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
-                    ))}
-                 </div>
-
-            </main>
-        </SidebarInset>
+      <div className="flex items-center gap-3">
+        {getConditionIcon(weatherData.current.conditionCode, 'size-8')}
+        <div>
+          <p className="font-headline text-2xl font-bold">
+            {weatherData.current.temperature}°C
+          </p>
+          <p className="text-xs">{weatherData.locationName.split(',')[0]}</p>
+        </div>
+      </div>
     );
+  };
+
+  return (
+    <SidebarInset>
+      <AppHeader />
+      <main className="flex-1 space-y-6 bg-muted/40 p-4 md:p-6">
+        {/* Hero Section */}
+        <div className="relative min-h-[300px] w-full overflow-hidden rounded-2xl p-6 text-white md:p-8 flex flex-col justify-between">
+          {heroImage && (
+            <Image
+              src={heroImage.imageUrl}
+              alt={heroImage.description}
+              data-ai-hint={heroImage.imageHint}
+              fill
+              className="object-cover"
+              priority
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+
+          <div className="relative ml-auto rounded-full bg-black/30 p-2 px-4 backdrop-blur-sm">
+            {renderWeather()}
+          </div>
+
+          <div className="relative">
+            <h2 className="font-headline text-3xl font-bold md:text-4xl">
+              {t('dashboard.welcome', { name: user?.displayName?.split(' ')[0] || t('dashboard.farmer') })}
+            </h2>
+            <p className="mt-1 max-w-lg">
+              {t('dashboard.farmStatus')}
+            </p>
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                 <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                    <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
+                    <p className="font-bold text-lg">{t('dashboard.metrics.healthValue')}</p>
+                 </div>
+                 <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                    <p className="text-sm text-white/80">{t('dashboard.metrics.fields')}</p>
+                    <p className="font-bold text-lg">5</p>
+                 </div>
+                 <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                    <p className="text-sm text-white/80">{t('dashboard.metrics.tasks')}</p>
+                    <p className="font-bold text-lg">2</p>
+                 </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Alert Bar */}
+        <div className="flex items-center justify-between gap-4 rounded-xl border-l-4 border-orange-500 bg-orange-100 p-4 text-orange-800">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="size-6" />
+            <p className="font-semibold">
+             {t('dashboard.alert.critical')} {t('dashboard.alert.floodWarning')}
+            </p>
+          </div>
+          <Button variant="outline" size="sm" className="border-orange-300 bg-transparent hover:bg-orange-200/50">
+            {t('dashboard.alert.openAlerts')}
+          </Button>
+        </div>
+
+        {/* Actionable Insights */}
+        <section>
+             <h3 className="font-headline text-xl font-semibold">{t('dashboard.actionableInsights.title')}</h3>
+             <p className="text-muted-foreground text-sm">{t('dashboard.actionableInsights.description')}</p>
+            <div className="mt-4 grid gap-6 md:grid-cols-3">
+                <Card className="md:col-span-2">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                         <CardTitle className="font-headline">{t('dashboard.insights.title')}</CardTitle>
+                         <Button variant="ghost" size="sm"><RefreshCw className="mr-2"/>{t('dashboard.insights.refresh')}</Button>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {insights.map((item, index) => (
+                            <div key={index} className="flex items-start gap-3 rounded-lg p-3 hover:bg-muted/50">
+                                <item.icon className="mt-1 size-5 text-primary" />
+                                <div>
+                                    <p className="font-semibold">{item.title}</p>
+                                    <p className="text-xs text-muted-foreground">{item.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                    {quickActions.map(action => (
+                         <Link href={action.href} key={action.title}>
+                            <Card className="flex flex-col items-center justify-center gap-2 p-4 h-full text-center hover:bg-accent/20 transition-colors">
+                                <action.icon className="size-6 text-primary"/>
+                                <p className="text-sm font-semibold">{action.title}</p>
+                            </Card>
+                         </Link>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        {/* My Crops Banner */}
+        <div className="rounded-xl bg-primary p-6 text-primary-foreground flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+                <Tractor className="size-10"/>
+                <div>
+                    <h3 className="font-headline text-xl font-bold">{t('sidebar.nav.myCrops')}</h3>
+                    <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
+                </div>
+            </div>
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
+                <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
+            </Button>
+        </div>
+
+
+        {/* Community & Resources */}
+        <section>
+             <h3 className="font-headline text-xl font-semibold">{t('dashboard.communityAndResources.title')}</h3>
+             <p className="text-muted-foreground text-sm">{t('dashboard.communityAndResources.description')}</p>
+             <div className="mt-4 grid gap-6 md:grid-cols-3">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>{t('dashboard.community.title')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                         <div className="group">
+                             <p className="font-semibold group-hover:underline">{t('dashboard.community.post1')}</p>
+                             <p className="text-xs text-muted-foreground">27 replies • Local group</p>
+                         </div>
+                         <div className="group">
+                             <p className="font-semibold group-hover:underline">{t('dashboard.community.post2')}</p>
+                             <p className="text-xs text-muted-foreground">Active now</p>
+                         </div>
+                         <Button variant="secondary" className="w-full" asChild><Link href="/community">{t('dashboard.community.openCommunity')}</Link></Button>
+                    </CardContent>
+                 </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>{t('dashboard.resources.title')}</CardTitle>
+                    </CardHeader>
+                     <CardContent className="space-y-2">
+                        {resources.map((res, i) => (
+                             <Button key={i} variant="ghost" className="w-full justify-start gap-3">
+                                <res.icon className="text-muted-foreground"/>{res.title}
+                             </Button>
+                        ))}
+                         <Button variant="secondary" className="w-full mt-2 !ml-0">{t('dashboard.resources.viewAll')}</Button>
+                    </CardContent>
+                 </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>{t('dashboard.market.title')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                        <BarChart className="size-8 mb-2"/>
+                        <p>{t('dashboard.market.placeholder')}</p>
+                    </CardContent>
+                 </Card>
+             </div>
+        </section>
+
+      </main>
+    </SidebarInset>
+  );
 }
