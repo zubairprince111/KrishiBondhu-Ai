@@ -21,7 +21,7 @@ body {
     --muted: 220 15% 95%;
     --muted-foreground: 220 5% 45%;
     --accent: 30 100% 45%; /* #e47200 */
-    --accent-foreground: 220 10% 20%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     --warning: 38 92% 50%;
@@ -49,7 +49,7 @@ body {
     --muted: 220 10% 12%;
     --muted-foreground: 220 5% 55%;
     --accent: 30 100% 45%; /* #e47200 */
-    --accent-foreground: 220 10% 20%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
     --warning: 38 92% 50%;
