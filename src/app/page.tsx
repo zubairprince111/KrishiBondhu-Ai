@@ -19,7 +19,7 @@ import {
   BarChart,
   Plus,
   BookOpen,
-  Video,
+  Newspaper,
   ListChecks,
   RefreshCw,
   Droplets,
@@ -31,7 +31,7 @@ import {
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useLanguage } from '@/context/language-context';
-import { suggestSeasonalCrops, getCriticalWeatherAlert } from '@/lib/actions';
+import { suggestSeasonalCrops, getCriticalWeatherAlert, getFarmingNews } from '@/lib/actions';
 import type { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { getWeather, getConditionIcon, getCurrentSeason } from '@/lib/weather';
@@ -40,6 +40,7 @@ import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, collectionGroup } from 'firebase/firestore';
 import type { CriticalWeatherAlertOutput } from '@/ai/flows/critical-weather-alert-flow';
+import type { FarmingNewsOutput } from '@/ai/flows/farming-news-flow';
 
 const RANK_STYLES = {
     0: { icon: '🥇', color: 'bg-yellow-400/10 border-yellow-500/50', textColor: 'text-yellow-600' },
@@ -168,6 +169,51 @@ function SeasonalSuggestionCard() {
     );
 }
 
+function FarmingNewsCard() {
+    const [news, setNews] = useState<FarmingNewsOutput | null>(null);
+    const [isPending, startTransition] = useTransition();
+
+    const fetchNews = () => {
+        startTransition(async () => {
+            const { data } = await getFarmingNews();
+            setNews(data);
+        });
+    };
+
+    useEffect(() => {
+        fetchNews();
+    }, []);
+
+    return (
+        <Card>
+            <CardHeader>
+                <div className="flex items-center justify-between">
+                    <CardTitle>Daily Farming News</CardTitle>
+                    <Button variant="ghost" size="icon" onClick={fetchNews} disabled={isPending}>
+                        <RefreshCw className={cn("size-4", isPending && "animate-spin")} />
+                    </Button>
+                </div>
+            </CardHeader>
+            <CardContent className="min-h-[200px] space-y-4">
+                {isPending ? (
+                    <div className="flex items-center justify-center h-full">
+                        <Loader2 className="animate-spin text-primary" />
+                    </div>
+                ) : news?.articles ? (
+                    news.articles.map((article) => (
+                        <div key={article.title} className="border-b pb-2 last:border-b-0 last:pb-0">
+                             <h4 className="font-semibold text-sm">{article.title}</h4>
+                             <p className="text-xs text-muted-foreground">{article.summary}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-sm text-muted-foreground text-center">Could not load news.</p>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -218,7 +264,7 @@ export default function DashboardPage() {
 
   const resources = [
       { title: t('dashboard.resources.fertilizerGuide'), icon: BookOpen },
-      { title: t('dashboard.resources.leafSpotsVideo'), icon: Video },
+      { title: t('dashboard.resources.leafSpotsVideo'), icon: Newspaper },
       { title: t('dashboard.resources.planningChecklist'), icon: ListChecks },
   ];
 
@@ -385,23 +431,7 @@ export default function DashboardPage() {
                          <Button variant="secondary" className="w-full mt-2 !ml-0">{t('dashboard.resources.viewAll')}</Button>
                     </CardContent>
                  </Card>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Video Guide</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="aspect-video overflow-hidden rounded-lg">
-                           <iframe 
-                                className="w-full h-full"
-                                src="https://www.youtube.com/embed/videoseries?list=UUXlddtyaY2yAl-fz6-tJm-Q" 
-                                title="YouTube video player" 
-                                frameBorder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowFullScreen>
-                            </iframe>
-                        </div>
-                    </CardContent>
-                 </Card>
+                 <FarmingNewsCard />
              </div>
         </section>
 

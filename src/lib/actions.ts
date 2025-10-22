@@ -14,6 +14,7 @@ import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
 import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
 import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
 import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flows/critical-weather-alert-flow';
+import { getFarmingNews as getFarmingNewsFlow } from '@/ai/flows/farming-news-flow';
 import { AiCropDoctorOutput } from '@/ai/schemas';
 
 
@@ -156,4 +157,13 @@ export async function universalSearch(input: any) {
   }
 }
 
+export async function getFarmingNews() {
+    try {
+        const result = await getFarmingNewsFlow();
+        return { data: result, error: null };
+    } catch (error) {
+        console.error(error);
+        return { data: null, error: 'Failed to get farming news. Please try again.' };
+    }
+}
     
