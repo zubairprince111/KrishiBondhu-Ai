@@ -252,7 +252,7 @@ export default function DashboardPage() {
 
   const fieldsMonitored = lands?.length ?? 0;
   const upcomingTasks = lands?.length ?? 0; 
-  const videoSrc = "https://drive.google.com/file/d/1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB/preview";
+  const videoSrc = "https://drive.google.com/file/d/1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB/preview?autoplay=1&mute=1&loop=1&playlist=1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB";
 
   return (
     <SidebarInset>
