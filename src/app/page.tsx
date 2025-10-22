@@ -252,7 +252,7 @@ export default function DashboardPage() {
 
   const fieldsMonitored = lands?.length ?? 0;
   const upcomingTasks = lands?.length ?? 0; 
-  const videoSrc = "/hero-video.mp4";
+  const heroImageSrc = "https://drive.google.com/uc?export=view&id=1abr6yHtBiozoWjGIVmQR8xf_qiiDOrdk";
 
   return (
     <SidebarInset>
@@ -260,14 +260,12 @@ export default function DashboardPage() {
       <main className="flex-1 space-y-6 bg-muted/40 p-4 md:p-6">
         {/* Hero Section */}
         <div className="relative min-h-[300px] w-full overflow-hidden rounded-2xl">
-          <video
-            key={videoSrc}
-            src={videoSrc}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover border-0"
+           <Image
+            src={heroImageSrc}
+            alt="Lush green field"
+            fill
+            className="object-cover"
+            priority
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
            <div className="absolute inset-0 flex flex-col justify-between p-6 text-white md:p-8">
@@ -411,5 +409,3 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
-
-    
