@@ -15,6 +15,7 @@ import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
 import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
 import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flows/critical-weather-alert-flow';
 import { getFarmingNews as getFarmingNewsFlow } from '@/ai/flows/farming-news-flow';
+import { findKrishiOfficer as findKrishiOfficerFlow } from '@/ai/flows/krishi-officer-finder';
 import { AiCropDoctorOutput } from '@/ai/schemas';
 
 
@@ -109,6 +110,16 @@ export async function findGovernmentSchemes(input: any) {
       error: 'Failed to find government schemes. Please try again.',
     };
   }
+}
+
+export async function findKrishiOfficer(input: any) {
+    try {
+        const result = await findKrishiOfficerFlow(input);
+        return { data: result, error: null };
+    } catch (error) {
+        console.error(error);
+        return { data: null, error: 'Failed to find officer details. Please try again.' };
+    }
 }
 
 export async function getMarketPrices(input: any) {

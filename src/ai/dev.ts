@@ -12,8 +12,10 @@ import '@/ai/flows/ai-crop-doctor-analysis.ts';
 import '@/ai/flows/universal-search-flow.ts';
 import '@/ai/flows/critical-weather-alert-flow.ts';
 import '@/ai/flows/farming-news-flow.ts';
+import '@/ai/flows/krishi-officer-finder.ts';
 
 
 
     
+
 
