@@ -20,7 +20,7 @@ const AiCropDoctorInputSchema = z.object({
 
 const AiCropDoctorOutputSchema = z.object({
   diagnosis: z.string().describe('The diagnosis of the crop disease in Bangla.'),
-  solutions: z.array(z.string()).describe('A list of potential solutions to the crop disease in Bangla.'),
+  solutions: z.array(z.string()).describe('A list of at least 3 potential solutions to the crop disease in Bangla.'),
 });
 
 export async function aiCropDoctorAnalysis(input: z.infer<typeof AiCropDoctorInputSchema>): Promise<z.infer<typeof AiCropDoctorOutputSchema>> {

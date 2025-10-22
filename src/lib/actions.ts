@@ -4,8 +4,8 @@
 // To use these actions, import them in your client-side components and call them as needed.
 
 'use server';
-
-import { aiCropDoctorAnalysis } from '@/ai/flows/ai-crop-doctor-analysis';
+import { z } from 'zod';
+import { aiCropDoctorAnalysis as aiCropDoctorAnalysisFlow } from '@/ai/flows/ai-crop-doctor-analysis';
 import { matiAIVoiceAssistance } from '@/ai/flows/mati-ai-voice-assistance';
 import { suggestOptimalCrops } from '@/ai/flows/optimal-crop-suggestion';
 import { findGovernmentSchemes as findGovernmentSchemesFlow } from '@/ai/flows/government-scheme-finder';
@@ -14,6 +14,12 @@ import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
 import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
 import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
 import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flows/critical-weather-alert-flow';
+
+export const AiCropDoctorOutputSchema = z.object({
+  diagnosis: z.string().describe('The diagnosis of the crop disease in Bangla.'),
+  solutions: z.array(z.string()).describe('A list of at least 3 potential solutions to the crop disease in Bangla.'),
+});
+export type AiCropDoctorOutputSchema = z.infer<typeof AiCropDoctorOutputSchema>;
 
 
 function getCurrentSeason(): { name: string; climate: string } {
@@ -59,20 +65,12 @@ export async function suggestSeasonalCrops(params: ActionParams = {}): Promise<{
   }
 }
 
-export async function getCriticalWeatherAlert(params: ActionParams = {}): Promise<{
+export async function getCriticalWeatherAlert(params: { region: string, country: string }): Promise<{
   data: any | null;
   error: string | null;
 }> {
   try {
-    const region = params.location
-      ? `lat: ${params.location.latitude}, long: ${params.location.longitude}`
-      : 'Bangladesh';
-    
-    const input = {
-        region: region,
-        country: 'Bangladesh',
-    };
-    const result = await getCriticalWeatherAlertFlow(input);
+    const result = await getCriticalWeatherAlertFlow(params);
     return { data: result, error: null };
   } catch (error) {
     console.error(error);
@@ -140,9 +138,9 @@ export async function fetchWeatherAdvice(input: any) {
   }
 }
 
-export async function analyzeCropImage(input: any) {
+export async function analyzeCropImage(input: any): Promise<{ data: AiCropDoctorOutputSchema | null, error: string | null}> {
   try {
-    const result = await aiCropDoctorAnalysis(input);
+    const result = await aiCropDoctorAnalysisFlow(input);
     return { data: result, error: null };
   } catch (error) {
     console.error(error);

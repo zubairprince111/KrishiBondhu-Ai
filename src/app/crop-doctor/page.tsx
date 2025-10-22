@@ -5,13 +5,63 @@ import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
-import { Upload, Wand2 } from 'lucide-react';
+import { Upload, Wand2, Loader2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
+import { useState, useTransition, useRef } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { analyzeCropImage, type AiCropDoctorOutputSchema } from '@/lib/actions';
+import type { z } from 'zod';
 
 export default function CropDoctorPage() {
-  const diseasedLeafImage = PlaceHolderImages.find(p => p.id === 'crop-disease');
+  const defaultImage = PlaceHolderImages.find(p => p.id === 'crop-disease');
   const { t } = useLanguage();
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  
+  const [imagePreview, setImagePreview] = useState<string | null>(defaultImage?.imageUrl || null);
+  const [imageData, setImageData] = useState<string | null>(null);
+  const [result, setResult] = useState<AiCropDoctorOutputSchema | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setImagePreview(dataUri);
+        setImageData(dataUri);
+        setResult(null); // Clear previous results
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAnalyze = () => {
+    if (!imageData) {
+      toast({
+        variant: 'destructive',
+        title: 'No Image Selected',
+        description: 'Please upload an image of your crop to analyze.',
+      });
+      return;
+    }
+    
+    startTransition(async () => {
+      const { data, error } = await analyzeCropImage({ photoDataUri: imageData });
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Analysis Failed',
+          description: error,
+        });
+      } else {
+        setResult(data);
+      }
+    });
+  };
 
   return (
     <SidebarInset>
@@ -27,19 +77,24 @@ export default function CropDoctorPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border-2 border-dashed border-muted p-8 text-center">
-                {diseasedLeafImage && (
+                {imagePreview && (
                   <div className="relative h-48 w-full max-w-sm">
                     <Image
-                      src={diseasedLeafImage.imageUrl}
-                      alt={diseasedLeafImage.description}
-                      data-ai-hint={diseasedLeafImage.imageHint}
+                      src={imagePreview}
+                      alt="Crop to be analyzed"
                       fill
                       className="rounded-md object-cover"
                     />
                   </div>
                 )}
-                <p className="text-muted-foreground">{t('cropDoctor.upload.preview')}</p>
-                <Button>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
+                />
+                <Button onClick={() => fileInputRef.current?.click()}>
                   <Upload className="mr-2" />
                   {t('cropDoctor.upload.button')}
                 </Button>
@@ -58,29 +113,43 @@ export default function CropDoctorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="space-y-2">
-                    <h3 className="font-headline text-lg font-semibold">{t('cropDoctor.analysis.diagnosisTitle')} <span className="text-destructive font-medium">{t('cropDoctor.analysis.diagnosisResult')}</span></h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                        {t('cropDoctor.analysis.diagnosisText')}
-                    </p>
+              <Button onClick={handleAnalyze} disabled={isPending || !imageData} className="w-full">
+                {isPending ? (
+                  <><Loader2 className="mr-2 animate-spin"/> Analyzing...</>
+                ) : (
+                  <>Analyze Image</>
+                )}
+              </Button>
+
+              {isPending && (
+                <div className="flex flex-col items-center justify-center min-h-[200px] text-primary">
+                    <Loader2 className="size-10 animate-spin"/>
+                    <p className="mt-4">AI is analyzing your crop...</p>
                 </div>
-                <div className="space-y-2">
-                    <h3 className="font-headline text-lg font-semibold">{t('cropDoctor.analysis.recommendationTitle')}</h3>
-                    <ul className="list-disc space-y-2 pl-5 text-sm">
-                        <li>
-                           {t('cropDoctor.analysis.action1')}
-                        </li>
-                        <li>
-                           {t('cropDoctor.analysis.action2')}
-                        </li>
-                        <li>
-                           {t('cropDoctor.analysis.action3')}
-                        </li>
-                    </ul>
+              )}
+
+              {result ? (
+                <>
+                  <div className="space-y-2">
+                      <h3 className="font-headline text-lg font-semibold">{t('cropDoctor.analysis.diagnosisTitle')} <span className="text-destructive font-medium">{result.diagnosis}</span></h3>
+                  </div>
+                  <div className="space-y-2">
+                      <h3 className="font-headline text-lg font-semibold">{t('cropDoctor.analysis.recommendationTitle')}</h3>
+                      <ul className="list-disc space-y-2 pl-5 text-sm">
+                          {result.solutions.map((solution, index) => (
+                              <li key={index}>{solution}</li>
+                          ))}
+                      </ul>
+                  </div>
+                  <Button variant="secondary" className="w-full">
+                      {t('cropDoctor.analysis.findProductsButton')}
+                  </Button>
+                </>
+              ) : !isPending && (
+                <div className="flex flex-col items-center justify-center min-h-[200px] text-muted-foreground">
+                    <p>Analysis results will appear here.</p>
                 </div>
-                 <Button variant="secondary" className="w-full">
-                    {t('cropDoctor.analysis.findProductsButton')}
-                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
