@@ -13,6 +13,7 @@ import { findMarketPrices } from '@/ai/flows/market-price-finder';
 import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
 import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
 import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
+import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flows/critical-weather-alert-flow';
 
 
 function getCurrentSeason(): { name: string; climate: string } {
@@ -26,11 +27,11 @@ function getCurrentSeason(): { name: string; climate: string } {
   }
 }
 
-type SuggestionParams = {
+type ActionParams = {
   location?: { latitude: number; longitude: number; } | null;
 };
 
-export async function suggestSeasonalCrops(params: SuggestionParams = {}): Promise<{
+export async function suggestSeasonalCrops(params: ActionParams = {}): Promise<{
   data: any | null;
   error: string | null;
 }> {
@@ -55,6 +56,27 @@ export async function suggestSeasonalCrops(params: SuggestionParams = {}): Promi
       data: null,
       error: 'Failed to get seasonal crop suggestions. Please try again.',
     };
+  }
+}
+
+export async function getCriticalWeatherAlert(params: ActionParams = {}): Promise<{
+  data: any | null;
+  error: string | null;
+}> {
+  try {
+    const region = params.location
+      ? `lat: ${params.location.latitude}, long: ${params.location.longitude}`
+      : 'Bangladesh';
+    
+    const input = {
+        region: region,
+        country: 'Bangladesh',
+    };
+    const result = await getCriticalWeatherAlertFlow(input);
+    return { data: result, error: null };
+  } catch (error) {
+    console.error(error);
+    return { data: null, error: 'Failed to get critical weather alerts.' };
   }
 }
 
@@ -140,3 +162,5 @@ export async function universalSearch(input: any) {
     };
   }
 }
+
+    

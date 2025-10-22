@@ -31,7 +31,7 @@ import {
 import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useLanguage } from '@/context/language-context';
-import { suggestSeasonalCrops } from '@/lib/actions';
+import { suggestSeasonalCrops, getCriticalWeatherAlert } from '@/lib/actions';
 import type { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { getWeather, getConditionIcon, getCurrentSeason } from '@/lib/weather';
@@ -40,6 +40,7 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, collectionGroup } from 'firebase/firestore';
+import type { CriticalWeatherAlertOutput } from '@/ai/flows/critical-weather-alert-flow';
 
 
 const RANK_STYLES = {
@@ -47,6 +48,51 @@ const RANK_STYLES = {
     1: { icon: '🥈', color: 'bg-slate-300/20 border-slate-400/50', textColor: 'text-slate-600' },
     2: { icon: '🥉', color: 'bg-orange-400/10 border-orange-500/50', textColor: 'text-orange-600' },
 };
+
+function CriticalAlertCard() {
+    const { t } = useLanguage();
+    const { location } = useGeolocation();
+    const [isPending, startTransition] = useTransition();
+    const [alert, setAlert] = useState<CriticalWeatherAlertOutput | null>(null);
+
+    useEffect(() => {
+        if (location) {
+            startTransition(async () => {
+                const { data } = await getCriticalWeatherAlert({ location });
+                if (data && data.isCritical) {
+                    setAlert(data);
+                }
+            });
+        }
+    }, [location]);
+
+    if (isPending) {
+        return (
+            <div className="flex items-center justify-start gap-4 rounded-xl border-l-4 border-muted-foreground/50 bg-muted/50 p-4 text-muted-foreground">
+                <Loader2 className="size-6 animate-spin" />
+                <p className="font-semibold">Checking for critical alerts...</p>
+            </div>
+        );
+    }
+    
+    if (!alert) {
+        return null; // Don't render anything if there's no critical alert
+    }
+
+    return (
+        <div className="flex items-center justify-between gap-4 rounded-xl border-l-4 border-orange-500 bg-orange-100 p-4 text-orange-800">
+            <div className="flex items-center gap-3">
+                <AlertTriangle className="size-6" />
+                <p className="font-semibold">
+                    {alert.alertTitle}
+                </p>
+            </div>
+            <Button variant="outline" size="sm" className="border-orange-300 bg-transparent hover:bg-orange-200/50">
+                {alert.callToActionText}
+            </Button>
+        </div>
+    );
+}
 
 function SeasonalSuggestionCard() {
     const { t } = useLanguage();
@@ -56,11 +102,10 @@ function SeasonalSuggestionCard() {
 
     useEffect(() => {
         startTransition(async () => {
-            // Pass location if available, otherwise the action will use a default.
             const { data } = await suggestSeasonalCrops({ location });
             setResult(data);
         });
-    }, [location]); // Re-run if location becomes available.
+    }, [location]);
 
     const season = getCurrentSeason();
     const locationName = location ? `${location.latitude.toFixed(2)}, ${location.longitude.toFixed(2)}` : 'Bangladesh';
@@ -229,7 +274,7 @@ export default function DashboardPage() {
 
           <div className="relative">
             <h2 className="font-headline text-3xl font-bold md:text-4xl">
-              {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
+              {user ? `Welcome ${user.displayName || t('dashboard.farmer')}` : 'Welcome to KrishiBondhu!'}
             </h2>
             {user ? (
                  <>
@@ -265,17 +310,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Alert Bar */}
-        <div className="flex items-center justify-between gap-4 rounded-xl border-l-4 border-orange-500 bg-orange-100 p-4 text-orange-800">
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="size-6" />
-            <p className="font-semibold">
-             {t('dashboard.alert.critical')} {t('dashboard.alert.floodWarning')}
-            </p>
-          </div>
-          <Button variant="outline" size="sm" className="border-orange-300 bg-transparent hover:bg-orange-200/50">
-            {t('dashboard.alert.openAlerts')}
-          </Button>
-        </div>
+        <CriticalAlertCard />
 
         {/* Actionable Insights */}
         <section>
@@ -363,3 +398,5 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
+
+    
