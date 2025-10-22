@@ -84,8 +84,8 @@ export const translations = {
   },
   // Dashboard Page - New
   'dashboard.welcome': {
-    en: 'Welcome back, {{name}}!',
-    bn: 'আবারও স্বাগতম, {{name}}!',
+    en: 'Welcome, {{name}}!',
+    bn: 'স্বাগতম, {{name}}!',
   },
   'dashboard.farmer': {
     en: 'Farmer',
