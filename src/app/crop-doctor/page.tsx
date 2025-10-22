@@ -10,8 +10,8 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 import { useState, useTransition, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { analyzeCropImage, type AiCropDoctorOutputSchema } from '@/lib/actions';
-import type { z } from 'zod';
+import { analyzeCropImage } from '@/lib/actions';
+import type { AiCropDoctorOutput } from '@/ai/schemas';
 
 export default function CropDoctorPage() {
   const defaultImage = PlaceHolderImages.find(p => p.id === 'crop-disease');
@@ -21,7 +21,7 @@ export default function CropDoctorPage() {
   
   const [imagePreview, setImagePreview] = useState<string | null>(defaultImage?.imageUrl || null);
   const [imageData, setImageData] = useState<string | null>(null);
-  const [result, setResult] = useState<AiCropDoctorOutputSchema | null>(null);
+  const [result, setResult] = useState<AiCropDoctorOutput | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 

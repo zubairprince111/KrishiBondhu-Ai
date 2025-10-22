@@ -14,12 +14,7 @@ import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
 import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
 import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
 import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flows/critical-weather-alert-flow';
-
-export const AiCropDoctorOutputSchema = z.object({
-  diagnosis: z.string().describe('The diagnosis of the crop disease in Bangla.'),
-  solutions: z.array(z.string()).describe('A list of at least 3 potential solutions to the crop disease in Bangla.'),
-});
-export type AiCropDoctorOutputSchema = z.infer<typeof AiCropDoctorOutputSchema>;
+import { AiCropDoctorOutput } from '@/ai/schemas';
 
 
 function getCurrentSeason(): { name: string; climate: string } {
@@ -138,7 +133,7 @@ export async function fetchWeatherAdvice(input: any) {
   }
 }
 
-export async function analyzeCropImage(input: any): Promise<{ data: AiCropDoctorOutputSchema | null, error: string | null}> {
+export async function analyzeCropImage(input: any): Promise<{ data: AiCropDoctorOutput | null, error: string | null}> {
   try {
     const result = await aiCropDoctorAnalysisFlow(input);
     return { data: result, error: null };
