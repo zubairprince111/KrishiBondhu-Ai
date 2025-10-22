@@ -5,10 +5,9 @@
  * @fileOverview An AI flow that generates the latest worldwide farming news.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'zod';
 
-const ai = getAi();
 
 const NewsArticleSchema = z.object({
   title: z.string().describe('The headline of the news article.'),

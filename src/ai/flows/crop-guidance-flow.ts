@@ -7,10 +7,9 @@
  * - getCropGuidance - A function that takes crop details and returns tailored guidance.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ai = getAi();
 
 const CropGuidanceInputSchema = z.object({
   cropName: z.string().describe('The name of the crop.'),

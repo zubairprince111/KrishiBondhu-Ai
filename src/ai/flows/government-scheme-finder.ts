@@ -7,10 +7,9 @@
  * - findGovernmentSchemes - A function that handles the process of finding government schemes and market details.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ai = getAi();
 
 const GovernmentSchemeFinderInputSchema = z.object({
   crop: z.string().describe('The crop for which to find government schemes and market details.'),

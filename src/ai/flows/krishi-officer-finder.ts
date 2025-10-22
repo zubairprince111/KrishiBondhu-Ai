@@ -5,10 +5,9 @@
  * @fileOverview An AI agent for finding Krishi (Agricultural) Officer details for a specific Zila and Upazila in Bangladesh.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ai = getAi();
 
 const KrishiOfficerFinderInputSchema = z.object({
   zila: z.string().describe('The Zila (District) in Bangladesh.'),

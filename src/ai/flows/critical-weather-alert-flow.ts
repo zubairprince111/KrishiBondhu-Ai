@@ -5,10 +5,9 @@
  * @fileOverview An AI flow that checks for critical weather alerts for a given location.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ai = getAi();
 
 const CriticalWeatherAlertInputSchema = z.object({
   region: z.string().describe('The region or lat/long coordinates to check for alerts.'),

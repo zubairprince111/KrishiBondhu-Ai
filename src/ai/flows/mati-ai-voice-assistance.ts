@@ -7,10 +7,9 @@
  * - matiAIVoiceAssistance - A function that handles the voice assistance process.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ai = getAi();
 
 const MatiAIVoiceAssistanceInputSchema = z.object({
   query: z.string().describe('The query from the farmer in Bangla.'),

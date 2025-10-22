@@ -7,10 +7,9 @@
  * - getWeatherAdvice - A function that returns a helpful tip based on the weather.
  */
 
-import { getAi } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ai = getAi();
 
 const WeatherAdvisorInputSchema = z.object({
   condition: z.string().describe('The weather condition, e.g., "Sunny", "Partly Cloudy", "Rainy".'),
