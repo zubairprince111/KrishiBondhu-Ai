@@ -12,9 +12,9 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, User as UserIcon, LogOut } from 'lucide-react';
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ProfilePage() {
@@ -37,33 +37,37 @@ export default function ProfilePage() {
   }, [user, isUserLoading, router]);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    if (auth) {
+      await signOut(auth);
+    }
     router.push('/login');
   };
 
   const handleSaveChanges = async () => {
-    if (!user || user.isAnonymous) return;
+    if (!user || user.isAnonymous || !firestore) return;
     setIsSaving(true);
+    
     try {
-      // Update Firebase Auth profile
-      await updateProfile(user, { displayName: displayName });
+      // First, update the Firebase Auth display name. This usually doesn't fail with permissions.
+      await updateProfile(user, { displayName });
 
-      // Update Firestore user document
+      // Then, initiate the non-blocking Firestore update.
       const userDocRef = doc(firestore, 'users', user.uid);
-      await setDoc(userDocRef, { name: displayName }, { merge: true });
+      setDocumentNonBlocking(userDocRef, { name: displayName }, { merge: true });
 
       toast({
-        title: 'Profile Updated',
-        description: 'Your name has been saved successfully.',
+        title: 'Profile Update In Progress',
+        description: 'Your name is being saved.',
       });
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
+       console.error('Error updating auth profile:', error);
+       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to update your profile. Please try again.',
+        description: 'Failed to update your authentication profile. Please try again.',
       });
     } finally {
+      // We set saving to false immediately because the Firestore write is non-blocking.
       setIsSaving(false);
     }
   };
@@ -85,12 +89,12 @@ export default function ProfilePage() {
              <div className="mx-auto flex justify-center">
                 <Avatar className="size-24">
                   <AvatarFallback className="text-4xl">
-                    {user.isAnonymous ? <UserIcon /> : (user.displayName || user.email)?.charAt(0).toUpperCase()}
+                    {user.isAnonymous ? <UserIcon /> : (displayName || user.email)?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
             </div>
             <CardTitle className="mt-4 font-headline text-2xl">
-              {user.isAnonymous ? 'Guest User' : user.displayName || user.email}
+              {user.isAnonymous ? 'Guest User' : displayName || user.email}
             </CardTitle>
             <CardDescription>
               {user.isAnonymous ? "Sign up to personalize your profile." : "Manage your profile information below."}
