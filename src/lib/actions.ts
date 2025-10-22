@@ -17,18 +17,8 @@ import { getCriticalWeatherAlert as getCriticalWeatherAlertFlow } from '@/ai/flo
 import { getFarmingNews as getFarmingNewsFlow } from '@/ai/flows/farming-news-flow';
 import { findKrishiOfficer as findKrishiOfficerFlow } from '@/ai/flows/krishi-officer-finder';
 import { AiCropDoctorOutput } from '@/ai/schemas';
+import { getCurrentSeason } from '@/lib/weather';
 
-
-function getCurrentSeason(): { name: string; climate: string } {
-  const month = new Date().getMonth(); // 0-11
-  if (month >= 2 && month <= 5) {
-    return { name: 'Kharif-1 (Summer)', climate: 'Hot and humid' };
-  } else if (month >= 6 && month <= 9) {
-    return { name: 'Kharif-2 (Monsoon)', climate: 'High rainfall and humidity' };
-  } else {
-    return { name: 'Rabi (Winter)', climate: 'Cool and dry' };
-  }
-}
 
 type ActionParams = {
   location?: { latitude: number; longitude: number; } | null;
