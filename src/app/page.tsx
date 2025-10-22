@@ -252,6 +252,7 @@ export default function DashboardPage() {
 
   const fieldsMonitored = lands?.length ?? 0;
   const upcomingTasks = lands?.length ?? 0; 
+  const videoSrc = "https://drive.google.com/uc?export=view&id=1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB";
 
   return (
     <SidebarInset>
@@ -260,7 +261,8 @@ export default function DashboardPage() {
         {/* Hero Section */}
         <div className="relative min-h-[300px] w-full overflow-hidden rounded-2xl">
           <video
-            src="https://drive.google.com/uc?export=view&id=1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB"
+            key={videoSrc}
+            src={videoSrc}
             autoPlay
             loop
             muted
@@ -409,7 +411,3 @@ export default function DashboardPage() {
     </SidebarInset>
   );
 }
-
-    
-
-    
