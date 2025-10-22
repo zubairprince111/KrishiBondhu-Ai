@@ -38,7 +38,7 @@ import type { WeatherData } from '@/lib/weather';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, collectionGroup, query, where } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
 
 
 export default function DashboardPage() {
@@ -59,12 +59,6 @@ export default function DashboardPage() {
     return collection(firestore, 'users', user.uid, 'lands');
   }, [firestore, user]);
   const { data: lands } = useCollection(userLandsQuery);
-
-  const allUserCropsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collectionGroup(firestore, 'crops'), where('userProfileId', '==', user.uid));
-  }, [firestore, user]);
-  const { data: allCrops } = useCollection(allUserCropsQuery);
 
 
   useEffect(() => {
@@ -163,7 +157,7 @@ export default function DashboardPage() {
   };
 
   const fieldsMonitored = lands?.length ?? 0;
-  const upcomingTasks = allCrops?.length ?? 0;
+  const upcomingTasks = lands?.length ?? 0; // Simplified for now
 
   return (
     <SidebarInset>
