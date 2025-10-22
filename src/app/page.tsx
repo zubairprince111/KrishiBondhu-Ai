@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -30,7 +31,7 @@ import { AppHeader } from '@/components/app-header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { useLanguage } from '@/context/language-context';
 import type { TranslationKey } from '@/lib/i18n';
-import { suggestOptimalCrops } from '@/lib/actions';
+import { suggestSeasonalCrops } from '@/lib/actions';
 import type { OptimalCropSuggestionOutput } from '@/ai/flows/optimal-crop-suggestion';
 import { cn } from '@/lib/utils';
 import { useGeolocation } from '@/hooks/use-geolocation';
