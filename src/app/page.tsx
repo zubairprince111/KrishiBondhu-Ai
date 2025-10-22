@@ -229,14 +229,14 @@ export default function DashboardPage() {
 
           <div className="relative">
             <h2 className="font-headline text-3xl font-bold md:text-4xl">
-              {user ? t('dashboard.welcome', { name: user.displayName?.split(' ')[0] || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
+              {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
             </h2>
             {user ? (
                  <>
                     <p className="mt-1 max-w-lg">
                       {fieldsMonitored > 0 ? t('dashboard.farmStatus') : 'Add your first crop to get personalized insights.'}
                     </p>
-                    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
                             <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
                             <p className="font-bold text-lg">{fieldsMonitored > 0 ? t('dashboard.metrics.healthValue') : '--'}</p>
