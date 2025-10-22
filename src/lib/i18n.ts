@@ -360,8 +360,8 @@ export const translations = {
     bn: 'আপনার অবস্থান',
   },
   'seasonalSuggestions.seasonLabel': {
-    en: 'Planning For',
-    bn: 'জন্য পরিকল্পনা',
+    en: 'Season',
+    bn: 'ঋতু',
   },
   'seasonalSuggestions.suitability': {
     en: 'Suitability',
