@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, User as UserIcon, LogOut } from 'lucide-react';
+import { Loader2, User as UserIcon, LogOut, Key } from 'lucide-react';
 import { useAuth, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
@@ -27,6 +27,7 @@ export default function ProfilePage() {
   const { toast } = useToast();
 
   const [displayName, setDisplayName] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,10 @@ export default function ProfilePage() {
     }
     if (user && user.displayName) {
       setDisplayName(user.displayName);
+    }
+    const storedKey = sessionStorage.getItem('gemini_api_key');
+    if (storedKey) {
+        setApiKey(storedKey);
     }
   }, [user, isUserLoading, router]);
 
@@ -50,10 +55,12 @@ export default function ProfilePage() {
     setIsSaving(true);
     
     try {
-      await updateProfile(user, { displayName });
+      if (displayName !== user.displayName) {
+        await updateProfile(user, { displayName });
 
-      const userDocRef = doc(firestore, 'users', user.uid);
-      setDocumentNonBlocking(userDocRef, { name: displayName }, { merge: true });
+        const userDocRef = doc(firestore, 'users', user.uid);
+        setDocumentNonBlocking(userDocRef, { name: displayName }, { merge: true });
+      }
 
       toast({
         title: t('profile.toast.success.title'),
@@ -69,6 +76,16 @@ export default function ProfilePage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleSaveApiKey = () => {
+    sessionStorage.setItem('gemini_api_key', apiKey);
+    toast({
+        title: 'API Key Saved (Session)',
+        description: 'The API key has been saved for your current browser session.',
+    });
+    // Maybe force a reload to make sure Genkit re-initializes with the new key logic
+    window.location.reload();
   };
 
   if (isUserLoading || !user) {
@@ -124,6 +141,25 @@ export default function ProfilePage() {
                     <Input id="location" placeholder={t('profile.form.location.placeholder')} disabled={user.isAnonymous} />
                 </div>
             </div>
+             <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-lg flex items-center gap-2"><Key className="text-primary"/> API Key Debugging</CardTitle>
+                    <CardDescription>For testing purposes, you can temporarily provide your Google API key here. It will be stored for this session only.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="api-key">Google API Key</Label>
+                        <Input
+                            id="api-key"
+                            type="password"
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            placeholder="Paste your API key here"
+                        />
+                    </div>
+                    <Button onClick={handleSaveApiKey} className="w-full">Save Key for Session</Button>
+                </CardContent>
+            </Card>
             <div className="flex flex-col gap-2 sm:flex-row">
                 <Button className="flex-1" disabled={user.isAnonymous || isSaving} onClick={handleSaveChanges}>
                   {isSaving ? <Loader2 className="mr-2 animate-spin" /> : null}
@@ -140,5 +176,3 @@ export default function ProfilePage() {
     </SidebarInset>
   );
 }
-
-    
