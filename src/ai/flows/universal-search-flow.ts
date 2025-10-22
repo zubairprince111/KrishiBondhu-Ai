@@ -1,12 +1,15 @@
+
 'use server';
 
 /**
  * @fileOverview A universal search agent that can answer questions about crops, prices, and provide suggestions.
  */
 
-import {ai} from '@/ai/genkit';
+import { getAi } from '@/ai/genkit';
 import {z} from 'genkit';
 import { findMarketPrices } from './market-price-finder';
+
+const ai = getAi();
 
 const UniversalSearchInputSchema = z.object({
   query: z.string().describe('The user\'s search query.'),

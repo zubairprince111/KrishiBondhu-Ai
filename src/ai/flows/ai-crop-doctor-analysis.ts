@@ -7,8 +7,10 @@
  * - aiCropDoctorAnalysis - A function that analyzes crop symptoms and provides solutions in Bangla.
  */
 
-import {ai} from '@/ai/genkit';
+import { getAi } from '@/ai/genkit';
 import {z} from 'genkit';
+
+const ai = getAi();
 
 const AiCropDoctorInputSchema = z.object({
   photoDataUri: z

@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -6,8 +7,10 @@
  * - findMarketPrices - A function that returns current market prices.
  */
 
-import {ai} from '@/ai/genkit';
+import { getAi } from '@/ai/genkit';
 import {z} from 'genkit';
+
+const ai = getAi();
 
 const MarketPriceSchema = z.object({
   crop: z.string().describe('The name of the crop in both English and Bengali.'),

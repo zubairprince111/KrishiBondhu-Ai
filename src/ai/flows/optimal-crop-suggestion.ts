@@ -7,8 +7,10 @@
  * - suggestOptimalCrops - A function that takes soil type and climate data as input and returns a list of suggested crops.
  */
 
-import {ai} from '@/ai/genkit';
+import { getAi } from '@/ai/genkit';
 import {z} from 'genkit';
+
+const ai = getAi();
 
 const OptimalCropSuggestionInputSchema = z.object({
   soilType: z.string().describe('The type of soil in the region.'),
