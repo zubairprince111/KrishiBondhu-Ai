@@ -393,7 +393,7 @@ export default function DashboardPage() {
                         <div className="aspect-video overflow-hidden rounded-lg">
                            <iframe 
                                 className="w-full h-full"
-                                src="https://www.youtube.com/embed/pLwWJCa7Q1Q" 
+                                src="https://www.youtube.com/embed/videoseries?list=UUXlddtyaY2yAl-fz6-tJm-Q" 
                                 title="YouTube video player" 
                                 frameBorder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
