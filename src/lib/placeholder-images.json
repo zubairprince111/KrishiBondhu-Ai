@@ -31,10 +31,22 @@
       "imageHint": "woman farmer"
     },
     {
-      "id": "hero-image",
+      "id": "slideshow-1",
       "description": "A lush green rice paddy field at sunset, with golden light.",
       "imageUrl": "https://drive.google.com/uc?export=view&id=1abr6yHtBiozoWjGIVmQR8xf_qiiDOrdk",
       "imageHint": "farm sunset"
+    },
+    {
+      "id": "slideshow-2",
+      "description": "A farmer working in a green field.",
+      "imageUrl": "https://drive.google.com/uc?export=view&id=11ixRooG87cbKqXCxlygyxvGbIlvEwNIW",
+      "imageHint": "farmer working"
+    },
+    {
+      "id": "slideshow-3",
+      "description": "Close up of a hand holding grains.",
+      "imageUrl": "https://drive.google.com/uc?export=view&id=1GqdKjAhHUx4ZVV-jYEs5DF32cQWMnUYg",
+      "imageHint": "hand grains"
     }
   ]
 }

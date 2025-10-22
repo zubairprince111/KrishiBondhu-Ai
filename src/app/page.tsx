@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -37,11 +37,12 @@ import { useGeolocation } from '@/hooks/use-geolocation';
 import { getWeather, getConditionIcon, getCurrentSeason } from '@/lib/weather';
 import type { WeatherData } from '@/lib/weather';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, collectionGroup } from 'firebase/firestore';
 import type { CriticalWeatherAlertOutput } from '@/ai/flows/critical-weather-alert-flow';
-
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+import { useSlideshow } from '@/context/slideshow-context';
 
 const RANK_STYLES = {
     0: { icon: '🥇', color: 'bg-yellow-400/10 border-yellow-500/50', textColor: 'text-yellow-600' },
@@ -179,8 +180,11 @@ export default function DashboardPage() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
   const { t } = useLanguage();
+  const { slideshowImages } = useSlideshow();
 
-  const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
+  const autoplay = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false })
+  );
 
   const userLandsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -262,59 +266,72 @@ export default function DashboardPage() {
       <AppHeader />
       <main className="flex-1 space-y-6 bg-muted/40 p-4 md:p-6">
         {/* Hero Section */}
-        <div className="relative min-h-[300px] w-full overflow-hidden rounded-2xl p-6 text-white md:p-8 flex flex-col justify-between">
-          {heroImage && (
-            <Image
-              src={heroImage.imageUrl}
-              alt={heroImage.description}
-              data-ai-hint={heroImage.imageHint}
-              fill
-              className="object-cover"
-              priority
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <Carousel
+          className="relative min-h-[300px] w-full overflow-hidden rounded-2xl"
+          plugins={[autoplay.current]}
+          onMouseEnter={autoplay.current.stop}
+          onMouseLeave={autoplay.current.reset}
+        >
+          <CarouselContent>
+            {slideshowImages.map((image, index) => (
+              <CarouselItem key={index}>
+                <div className="h-full w-full">
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.description}
+                    data-ai-hint={image.imageHint}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+           <div className="absolute inset-0 flex flex-col justify-between p-6 text-white md:p-8">
+                <div className="ml-auto rounded-full bg-black/30 p-2 px-4 backdrop-blur-sm">
+                  {renderWeather()}
+                </div>
 
-          <div className="relative ml-auto rounded-full bg-black/30 p-2 px-4 backdrop-blur-sm">
-            {renderWeather()}
-          </div>
+                <div className="relative">
+                  <h2 className="font-headline text-3xl font-bold md:text-4xl">
+                    {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
+                  </h2>
+                  {user ? (
+                      <>
+                          <p className="mt-1 max-w-lg">
+                            {fieldsMonitored > 0 ? t('dashboard.farmStatus') : 'Add your first crop to get personalized insights.'}
+                          </p>
+                          <div className="mt-4 max-w-md">
+                              <div className="grid grid-cols-3 gap-4">
+                                  <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                                      <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
+                                      <p className="font-bold text-lg">{fieldsMonitored > 0 ? t('dashboard.metrics.healthValue') : '--'}</p>
+                                  </div>
+                                  <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                                      <p className="text-sm text-white/80">{t('dashboard.metrics.fields')}</p>
+                                      <p className="font-bold text-lg">{fieldsMonitored}</p>
+                                  </div>
+                                  <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                                      <p className="text-sm text-white/80">{t('dashboard.metrics.tasks')}</p>
+                                      <p className="font-bold text-lg">{upcomingTasks}</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </>
+                  ) : (
+                      <>
+                          <p className="mt-1 max-w-lg">Your AI farming companion. Sign in to personalize your experience.</p>
+                           <Button asChild size="lg" className="mt-4 bg-accent text-accent-foreground hover:bg-accent/80">
+                              <Link href="/login"><LogIn className="mr-2"/> Login / Get Started</Link>
+                          </Button>
+                      </>
+                  )}
+                </div>
+            </div>
+        </Carousel>
 
-          <div className="relative">
-            <h2 className="font-headline text-3xl font-bold md:text-4xl">
-              {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
-            </h2>
-            {user ? (
-                 <>
-                    <p className="mt-1 max-w-lg">
-                      {fieldsMonitored > 0 ? t('dashboard.farmStatus') : 'Add your first crop to get personalized insights.'}
-                    </p>
-                     <div className="mt-4 max-w-md">
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
-                                <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
-                                <p className="font-bold text-lg">{fieldsMonitored > 0 ? t('dashboard.metrics.healthValue') : '--'}</p>
-                            </div>
-                            <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
-                                <p className="text-sm text-white/80">{t('dashboard.metrics.fields')}</p>
-                                <p className="font-bold text-lg">{fieldsMonitored}</p>
-                            </div>
-                            <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
-                                <p className="text-sm text-white/80">{t('dashboard.metrics.tasks')}</p>
-                                <p className="font-bold text-lg">{upcomingTasks}</p>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            ) : (
-                <>
-                    <p className="mt-1 max-w-lg">Your AI farming companion. Sign in to personalize your experience.</p>
-                    <Button asChild size="lg" className="mt-4 bg-accent text-accent-foreground hover:bg-accent/80">
-                        <Link href="/login"><LogIn className="mr-2"/> Login / Get Started</Link>
-                    </Button>
-                </>
-            )}
-          </div>
-        </div>
 
         {/* Alert Bar */}
         <CriticalAlertCard />
@@ -328,7 +345,7 @@ export default function DashboardPage() {
                     <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
                 </div>
             </div>
-            <Button asChild className="bg-accent text-white hover:bg-accent/90 shrink-0">
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
                 <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
             </Button>
         </div>
