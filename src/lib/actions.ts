@@ -12,6 +12,7 @@ import { findGovernmentSchemes as findGovernmentSchemesFlow } from '@/ai/flows/g
 import { findMarketPrices } from '@/ai/flows/market-price-finder';
 import { getCropGuidance } from '@/ai/flows/crop-guidance-flow';
 import { getWeatherAdvice } from '@/ai/flows/weather-advisor-flow';
+import { getUniversalSearchResult } from '@/ai/flows/universal-search-flow';
 
 
 function getCurrentSeason(): { name: string; climate: string } {
@@ -124,5 +125,18 @@ export async function analyzeCropImage(input: any) {
   } catch (error) {
     console.error(error);
     return { data: null, error: 'Failed to analyze crop image. Please try again.' };
+  }
+}
+
+export async function universalSearch(input: any) {
+  try {
+    const result = await getUniversalSearchResult(input);
+    return { data: result, error: null };
+  } catch (error) {
+    console.error(error);
+    return {
+      data: null,
+      error: 'Failed to get search results from AI. Please try again.',
+    };
   }
 }

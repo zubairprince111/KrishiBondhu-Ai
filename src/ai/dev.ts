@@ -9,4 +9,6 @@ import '@/ai/flows/market-price-finder.ts';
 import '@/ai/flows/crop-guidance-flow.ts';
 import '@/ai/flows/weather-advisor-flow.ts';
 import '@/ai/flows/ai-crop-doctor-analysis.ts';
+import '@/ai/flows/universal-search-flow.ts';
+
 
