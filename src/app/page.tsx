@@ -236,18 +236,20 @@ export default function DashboardPage() {
                     <p className="mt-1 max-w-lg">
                       {fieldsMonitored > 0 ? t('dashboard.farmStatus') : 'Add your first crop to get personalized insights.'}
                     </p>
-                    <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
-                            <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
-                            <p className="font-bold text-lg">{fieldsMonitored > 0 ? t('dashboard.metrics.healthValue') : '--'}</p>
-                        </div>
-                        <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
-                            <p className="text-sm text-white/80">{t('dashboard.metrics.fields')}</p>
-                            <p className="font-bold text-lg">{fieldsMonitored}</p>
-                        </div>
-                        <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
-                            <p className="text-sm text-white/80">{t('dashboard.metrics.tasks')}</p>
-                            <p className="font-bold text-lg">{upcomingTasks}</p>
+                    <div className="mt-4 max-w-md">
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                                <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
+                                <p className="font-bold text-lg">{fieldsMonitored > 0 ? t('dashboard.metrics.healthValue') : '--'}</p>
+                            </div>
+                            <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                                <p className="text-sm text-white/80">{t('dashboard.metrics.fields')}</p>
+                                <p className="font-bold text-lg">{fieldsMonitored}</p>
+                            </div>
+                            <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
+                                <p className="text-sm text-white/80">{t('dashboard.metrics.tasks')}</p>
+                                <p className="font-bold text-lg">{upcomingTasks}</p>
+                            </div>
                         </div>
                     </div>
                 </>
