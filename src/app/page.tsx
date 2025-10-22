@@ -58,7 +58,14 @@ function CriticalAlertCard() {
     useEffect(() => {
         if (location) {
             startTransition(async () => {
-                const { data } = await getCriticalWeatherAlert({ location });
+                const { data } = await getCriticalWeatherAlert({ region: `lat: ${location.latitude}, long: ${location.longitude}`, country: 'Bangladesh' });
+                if (data && data.isCritical) {
+                    setAlert(data);
+                }
+            });
+        } else {
+             startTransition(async () => {
+                const { data } = await getCriticalWeatherAlert({ region: 'Bangladesh', country: 'Bangladesh' });
                 if (data && data.isCritical) {
                     setAlert(data);
                 }
@@ -274,14 +281,14 @@ export default function DashboardPage() {
 
           <div className="relative">
             <h2 className="font-headline text-3xl font-bold md:text-4xl">
-              {user ? `Welcome ${user.displayName || t('dashboard.farmer')}` : 'Welcome to KrishiBondhu!'}
+              {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
             </h2>
             {user ? (
                  <>
                     <p className="mt-1 max-w-lg">
                       {fieldsMonitored > 0 ? t('dashboard.farmStatus') : 'Add your first crop to get personalized insights.'}
                     </p>
-                    <div className="mt-4 max-w-md">
+                     <div className="mt-4 max-w-md">
                         <div className="grid grid-cols-3 gap-4">
                             <div className="rounded-lg bg-white/10 p-3 backdrop-blur-sm">
                                 <p className="text-sm text-white/80">{t('dashboard.metrics.health')}</p>
@@ -311,6 +318,21 @@ export default function DashboardPage() {
 
         {/* Alert Bar */}
         <CriticalAlertCard />
+        
+        {/* My Crops Banner */}
+        <div className="rounded-xl bg-primary p-6 text-primary-foreground flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+                <Tractor className="size-10"/>
+                <div>
+                    <h3 className="font-headline text-xl font-bold">{t('sidebar.nav.myCrops')}</h3>
+                    <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
+                </div>
+            </div>
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
+                <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
+            </Button>
+        </div>
+
 
         {/* Actionable Insights */}
         <section>
@@ -332,21 +354,6 @@ export default function DashboardPage() {
                 </div>
             </div>
         </section>
-
-        {/* My Crops Banner */}
-        <div className="rounded-xl bg-primary p-6 text-primary-foreground flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-                <Tractor className="size-10"/>
-                <div>
-                    <h3 className="font-headline text-xl font-bold">{t('sidebar.nav.myCrops')}</h3>
-                    <p className="text-sm opacity-80">{t('dashboard.myCrops.description')}</p>
-                </div>
-            </div>
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
-                <Link href="/my-crops">{t('dashboard.myCrops.viewDashboard')}</Link>
-            </Button>
-        </div>
-
 
         {/* Community & Resources */}
         <section>
