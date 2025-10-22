@@ -41,6 +41,7 @@ import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebas
 import { collection, query, where, collectionGroup } from 'firebase/firestore';
 import type { CriticalWeatherAlertOutput } from '@/ai/flows/critical-weather-alert-flow';
 import type { FarmingNewsOutput } from '@/ai/flows/farming-news-flow';
+import { cn } from '@/lib/utils';
 
 const RANK_STYLES = {
     0: { icon: '🥇', color: 'bg-yellow-400/10 border-yellow-500/50', textColor: 'text-yellow-600' },
