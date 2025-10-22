@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -252,7 +251,7 @@ export default function DashboardPage() {
 
   const fieldsMonitored = lands?.length ?? 0;
   const upcomingTasks = lands?.length ?? 0; 
-  const videoSrc = "https://drive.google.com/uc?export=view&id=1CQF9Gs2e8iM8HePHUhmwo1ojtYo2kcPB";
+  const videoSrc = "/hero-video.mp4";
 
   return (
     <SidebarInset>
