@@ -31,10 +31,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'picsum.photos',
+        hostname: 'drive.google.com',
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https'
+      }
     ],
   },
 };
