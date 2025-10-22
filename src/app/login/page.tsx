@@ -20,7 +20,8 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Sprout, LogIn, UserPlus, VenetianMask, Loader2 } from 'lucide-react';
-import { AuthError, AuthErrorCodes, UserCredential } from 'firebase/auth';
+import { AuthErrorCodes, UserCredential } from 'firebase/auth';
+import { useLanguage } from '@/context/language-context';
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address.'),
@@ -41,6 +42,7 @@ const GoogleIcon = () => (
 
 
 export default function LoginPage() {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState< 'signIn' | 'signUp' | 'anonymous' | 'google' | null >(null);
   const auth = useAuth();
   const router = useRouter();
@@ -58,24 +60,23 @@ export default function LoginPage() {
 
   const handleError = (error: any) => {
     setIsLoading(null);
-    let description = 'An unexpected error occurred. Please try again.';
+    let description = t('login.toast.error.generic');
     
-    // Don't show a toast for user-cancelled popups
     if (error.code === AuthErrorCodes.POPUP_CLOSED_BY_USER) {
         return;
     }
     
     if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
-        description = 'An account with this email already exists. Please sign in instead.';
+        description = t('login.toast.error.emailExists');
     } else if (error.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS) {
-        description = 'Invalid email or password. Please check your credentials and try again.';
+        description = t('login.toast.error.invalidCredentials');
     } else if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
-        description = 'The password is too weak. Please use at least 6 characters.';
+        description = t('login.toast.error.weakPassword');
     }
 
     toast({
       variant: 'destructive',
-      title: 'Authentication Failed',
+      title: t('login.toast.error.title'),
       description,
     });
   };
@@ -124,40 +125,40 @@ export default function LoginPage() {
         <div className="mb-6 flex flex-col items-center text-center">
             <div className="mb-4 flex items-center justify-center gap-2">
                 <Sprout className="size-10 text-primary" />
-                <h1 className="font-headline text-4xl font-semibold text-primary">KrishiBondhu</h1>
+                <h1 className="font-headline text-4xl font-semibold text-primary">{t('login.title')}</h1>
             </div>
-            <p className="text-muted-foreground">Your AI farming companion. Sign in to personalize your experience.</p>
+            <p className="text-muted-foreground">{t('login.description')}</p>
         </div>
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin"><LogIn className="mr-2"/>Sign In</TabsTrigger>
-            <TabsTrigger value="signup"><UserPlus className="mr-2"/>Sign Up</TabsTrigger>
+            <TabsTrigger value="signin"><LogIn className="mr-2"/>{t('login.tabs.signIn')}</TabsTrigger>
+            <TabsTrigger value="signup"><UserPlus className="mr-2"/>{t('login.tabs.signUp')}</TabsTrigger>
           </TabsList>
           <TabsContent value="signin">
             <Card>
               <CardHeader>
-                <CardTitle>Sign In</CardTitle>
-                <CardDescription>Welcome back! Please enter your details.</CardDescription>
+                <CardTitle>{t('login.signIn.title')}</CardTitle>
+                <CardDescription>{t('login.signIn.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...signInForm}>
                   <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4">
                     <FormField control={signInForm.control} name="email" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl><Input type="email" placeholder="farmer@example.com" {...field} /></FormControl>
+                        <FormLabel>{t('login.form.email.label')}</FormLabel>
+                        <FormControl><Input type="email" placeholder={t('login.form.email.placeholder')} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <FormField control={signInForm.control} name="password" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
+                        <FormLabel>{t('login.form.password.label')}</FormLabel>
+                        <FormControl><Input type="password" placeholder={t('login.form.password.placeholder')} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <Button type="submit" className="w-full" disabled={!!isLoading}>
-                      {isLoading === 'signIn' ? <Loader2 className="animate-spin" /> : 'Sign In'}
+                      {isLoading === 'signIn' ? <Loader2 className="animate-spin" /> : t('login.form.button.signIn')}
                     </Button>
                   </form>
                 </Form>
@@ -167,28 +168,28 @@ export default function LoginPage() {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>Create an Account</CardTitle>
-                <CardDescription>Join our community to get personalized advice.</CardDescription>
+                <CardTitle>{t('login.signUp.title')}</CardTitle>
+                <CardDescription>{t('login.signUp.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...signUpForm}>
                   <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4">
                      <FormField control={signUpForm.control} name="email" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl><Input type="email" placeholder="farmer@example.com" {...field} /></FormControl>
+                        <FormLabel>{t('login.form.email.label')}</FormLabel>
+                        <FormControl><Input type="email" placeholder={t('login.form.email.placeholder')} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <FormField control={signUpForm.control} name="password" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
+                        <FormLabel>{t('login.form.password.label')}</FormLabel>
+                        <FormControl><Input type="password" placeholder={t('login.form.password.placeholder')} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <Button type="submit" className="w-full" disabled={!!isLoading}>
-                      {isLoading === 'signUp' ? <Loader2 className="animate-spin" /> : 'Sign Up'}
+                      {isLoading === 'signUp' ? <Loader2 className="animate-spin" /> : t('login.form.button.signUp')}
                     </Button>
                   </form>
                 </Form>
@@ -200,19 +201,21 @@ export default function LoginPage() {
         <div className="relative my-4">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                <span className="bg-background px-2 text-muted-foreground">{t('login.divider')}</span>
             </div>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Button variant="outline" onClick={onGoogleSignIn} disabled={!!isLoading}>
-                {isLoading === 'google' ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> Google</>}
+                {isLoading === 'google' ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> {t('login.google')}</>}
             </Button>
             <Button variant="secondary" onClick={onAnonymousSignIn} disabled={!!isLoading}>
-                {isLoading === 'anonymous' ? <Loader2 className="animate-spin" /> : <><VenetianMask className="mr-2"/>Guest</>}
+                {isLoading === 'anonymous' ? <Loader2 className="animate-spin" /> : <><VenetianMask className="mr-2"/>{t('login.guest')}</>}
             </Button>
         </div>
       </div>
     </div>
   );
 }
+
+    

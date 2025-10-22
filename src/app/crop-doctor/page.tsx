@@ -43,8 +43,8 @@ export default function CropDoctorPage() {
     if (!imageData) {
       toast({
         variant: 'destructive',
-        title: 'No Image Selected',
-        description: 'Please upload an image of your crop to analyze.',
+        title: t('cropDoctor.toast.noImage.title'),
+        description: t('cropDoctor.toast.noImage.description'),
       });
       return;
     }
@@ -54,7 +54,7 @@ export default function CropDoctorPage() {
       if (error) {
         toast({
           variant: 'destructive',
-          title: 'Analysis Failed',
+          title: t('cropDoctor.toast.error.title'),
           description: error,
         });
       } else {
@@ -115,16 +115,16 @@ export default function CropDoctorPage() {
             <CardContent className="space-y-4">
               <Button onClick={handleAnalyze} disabled={isPending || !imageData} className="w-full">
                 {isPending ? (
-                  <><Loader2 className="mr-2 animate-spin"/> Analyzing...</>
+                  <><Loader2 className="mr-2 animate-spin"/> {t('cropDoctor.analysis.button.loading')}</>
                 ) : (
-                  <>Analyze Image</>
+                  <>{t('cropDoctor.analysis.button')}</>
                 )}
               </Button>
 
               {isPending && (
                 <div className="flex flex-col items-center justify-center min-h-[200px] text-primary">
                     <Loader2 className="size-10 animate-spin"/>
-                    <p className="mt-4">AI is analyzing your crop...</p>
+                    <p className="mt-4">{t('cropDoctor.analysis.loading')}</p>
                 </div>
               )}
 
@@ -147,7 +147,7 @@ export default function CropDoctorPage() {
                 </>
               ) : !isPending && (
                 <div className="flex flex-col items-center justify-center min-h-[200px] text-muted-foreground">
-                    <p>Analysis results will appear here.</p>
+                    <p>{t('cropDoctor.analysis.resultsPlaceholder')}</p>
                 </div>
               )}
             </CardContent>
@@ -157,3 +157,5 @@ export default function CropDoctorPage() {
     </SidebarInset>
   );
 }
+
+    

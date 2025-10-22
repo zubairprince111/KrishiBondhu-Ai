@@ -60,8 +60,8 @@ export default function FindOfficerPage() {
         <div className="mx-auto max-w-4xl grid gap-8 lg:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-headline">Find Your Local Officer</CardTitle>
-                  <CardDescription>Select your area to get contact details for the Upazila Agriculture Officer.</CardDescription>
+                  <CardTitle className="font-headline">{t('findOfficer.title')}</CardTitle>
+                  <CardDescription>{t('findOfficer.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Form {...officerForm}>
@@ -71,7 +71,7 @@ export default function FindOfficerPage() {
                         name="zila"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Zila (District)</FormLabel>
+                            <FormLabel>{t('findOfficer.form.zila.label')}</FormLabel>
                             <Select
                               onValueChange={(value) => {
                                 field.onChange(value);
@@ -81,7 +81,7 @@ export default function FindOfficerPage() {
                               defaultValue={field.value}
                             >
                               <FormControl>
-                                <SelectTrigger><SelectValue placeholder="Select a Zila" /></SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder={t('findOfficer.form.zila.placeholder')} /></SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {bdZilas.map((zila) => (
@@ -98,14 +98,14 @@ export default function FindOfficerPage() {
                         name="upazila"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Upazila (Sub-district)</FormLabel>
+                            <FormLabel>{t('findOfficer.form.upazila.label')}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                               disabled={!selectedZila}
                             >
                               <FormControl>
-                                <SelectTrigger><SelectValue placeholder="Select an Upazila" /></SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder={t('findOfficer.form.upazila.placeholder')} /></SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {(bdUpazilas[selectedZila] || []).map((upazila) => (
@@ -118,7 +118,7 @@ export default function FindOfficerPage() {
                         )}
                       />
                       <Button type="submit" disabled={isOfficerPending} className="w-full">
-                        {isOfficerPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Searching...</> : <><Search className="mr-2" /> Find Officer</>}
+                        {isOfficerPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('findOfficer.form.button.loading')}</> : <><Search className="mr-2" />{t('findOfficer.form.button')}</>}
                       </Button>
                     </form>
                   </Form>
@@ -128,14 +128,14 @@ export default function FindOfficerPage() {
                 <CardHeader>
                   <CardTitle className="font-headline flex items-center gap-2">
                     <User className="text-primary" />
-                    Officer Details
+                    {t('findOfficer.results.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {isOfficerPending ? (
                         <div className="flex flex-col items-center justify-center space-y-4 text-center h-full min-h-64">
                             <Loader2 className="size-12 text-primary animate-spin" />
-                            <p className="text-primary">Searching for officer details...</p>
+                            <p className="text-primary">{t('findOfficer.results.loading')}</p>
                         </div>
                     ) : officerResult ? (
                         <div className="space-y-4">
@@ -147,14 +147,14 @@ export default function FindOfficerPage() {
                                 <div className="flex items-start gap-3">
                                     <Phone className="size-5 mt-1 text-primary"/>
                                     <div>
-                                        <p className="font-semibold text-sm">Contact Number</p>
+                                        <p className="font-semibold text-sm">{t('findOfficer.results.contact')}</p>
                                         <p className="text-sm text-muted-foreground">{officerResult.contactNumber}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <Building className="size-5 mt-1 text-primary"/>
                                     <div>
-                                        <p className="font-semibold text-sm">Office Address</p>
+                                        <p className="font-semibold text-sm">{t('findOfficer.results.address')}</p>
                                         <p className="text-sm text-muted-foreground">{officerResult.officeAddress}</p>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@ export default function FindOfficerPage() {
                     ) : (
                         <div className="flex flex-col items-center justify-center space-y-4 text-center h-full min-h-64">
                             <User className="size-12 text-muted-foreground" />
-                            <p className="text-muted-foreground">Officer details will appear here.</p>
+                            <p className="text-muted-foreground">{t('findOfficer.results.placeholder')}</p>
                         </div>
                     )}
                 </CardContent>

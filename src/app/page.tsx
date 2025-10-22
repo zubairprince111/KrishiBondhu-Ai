@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -74,7 +75,7 @@ function CriticalAlertCard() {
         return (
             <div className="flex items-center justify-start gap-4 rounded-xl border-l-4 border-muted-foreground/50 bg-muted/50 p-4 text-muted-foreground">
                 <Loader2 className="size-6 animate-spin" />
-                <p className="font-semibold">Checking for critical alerts...</p>
+                <p className="font-semibold">{t('dashboard.alert.checking')}</p>
             </div>
         );
     }
@@ -123,6 +124,7 @@ function SeasonalSuggestionCard() {
                 </CardHeader>
                 <CardContent className="flex items-center justify-center min-h-[200px]">
                     <Loader2 className="animate-spin text-primary" />
+                    <span className="ml-2">{t('dashboard.insights.loading')}</span>
                 </CardContent>
             </Card>
         );
@@ -168,6 +170,7 @@ function SeasonalSuggestionCard() {
 }
 
 function FarmingNewsCard() {
+    const { t } = useLanguage();
     const [news, setNews] = useState<FarmingNewsOutput | null>(null);
     const [isPending, startTransition] = useTransition();
 
@@ -186,8 +189,8 @@ function FarmingNewsCard() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between">
-                    <CardTitle>Daily Farming News</CardTitle>
-                    <Button variant="ghost" size="icon" onClick={fetchNews} disabled={isPending}>
+                    <CardTitle className="font-headline">{t('dashboard.news.title')}</CardTitle>
+                    <Button variant="ghost" size="icon" onClick={fetchNews} disabled={isPending} aria-label={t('dashboard.news.refresh')}>
                         <RefreshCw className={cn("size-4", isPending && "animate-spin")} />
                     </Button>
                 </div>
@@ -196,6 +199,7 @@ function FarmingNewsCard() {
                 {isPending ? (
                     <div className="flex items-center justify-center h-full">
                         <Loader2 className="animate-spin text-primary" />
+                        <span className="ml-2">{t('dashboard.news.loading')}</span>
                     </div>
                 ) : news?.articles ? (
                     news.articles.map((article) => (
@@ -205,7 +209,7 @@ function FarmingNewsCard() {
                         </div>
                     ))
                 ) : (
-                    <p className="text-sm text-muted-foreground text-center">Could not load news.</p>
+                    <p className="text-sm text-muted-foreground text-center">{t('dashboard.news.error')}</p>
                 )}
             </CardContent>
         </Card>
@@ -318,12 +322,12 @@ export default function DashboardPage() {
 
                 <div className="relative">
                   <h2 className="font-headline text-3xl font-bold md:text-4xl">
-                    {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : 'Welcome to KrishiBondhu!'}
+                    {user ? t('dashboard.welcome', { name: user.displayName || t('dashboard.farmer') }) : t('dashboard.welcome.anonymous')}
                   </h2>
                   {user ? (
                       <>
                           <p className="mt-1 max-w-lg">
-                            {fieldsMonitored > 0 ? t('dashboard.farmStatus') : 'Add your first crop to get personalized insights.'}
+                            {fieldsMonitored > 0 ? t('dashboard.farmStatus') : t('dashboard.farmStatus.empty')}
                           </p>
                           <div className="mt-4 max-w-md">
                               <div className="grid grid-cols-3 gap-4">
@@ -344,9 +348,9 @@ export default function DashboardPage() {
                       </>
                   ) : (
                       <>
-                          <p className="mt-1 max-w-lg">Your AI farming companion. Sign in to personalize your experience.</p>
+                          <p className="mt-1 max-w-lg">{t('dashboard.loginPrompt.description')}</p>
                            <Button asChild size="lg" className="mt-4 bg-accent text-accent-foreground hover:bg-accent/80">
-                              <Link href="/login"><LogIn className="mr-2"/> Login / Get Started</Link>
+                              <Link href="/login"><LogIn className="mr-2"/>{t('dashboard.loginPrompt.button')}</Link>
                           </Button>
                       </>
                   )}
@@ -401,7 +405,7 @@ export default function DashboardPage() {
              <div className="mt-4 grid gap-6 md:grid-cols-3">
                  <Card>
                     <CardHeader>
-                        <CardTitle>{t('dashboard.community.title')}</CardTitle>
+                        <CardTitle className="font-headline">{t('dashboard.community.title')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                          <div className="group">
@@ -417,7 +421,7 @@ export default function DashboardPage() {
                  </Card>
                  <Card>
                     <CardHeader>
-                        <CardTitle>{t('dashboard.resources.title')}</CardTitle>
+                        <CardTitle className="font-headline">{t('dashboard.resources.title')}</CardTitle>
                     </CardHeader>
                      <CardContent className="space-y-2">
                         {resources.map((res, i) => (

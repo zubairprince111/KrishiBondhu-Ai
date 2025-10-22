@@ -57,6 +57,7 @@ const demoPosts = [
 ];
 
 function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
+  const { t } = useLanguage();
   const { user } = useUser();
   const firestore = useFirestore();
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
@@ -136,18 +137,18 @@ function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
       <CardFooter className="flex justify-start gap-4 border-t pt-4">
         <Button variant={hasLiked ? 'default' : 'ghost'} size="sm" className="flex items-center gap-1" onClick={handleLike} disabled={!user || isDemo}>
           <ThumbsUp className="size-4" />
-          <span>{likeCount} {likeCount === 1 ? 'Like' : 'Likes'}</span>
+          <span>{likeCount} {likeCount === 1 ? t('community.post.like') : t('community.post.likes')}</span>
         </Button>
         <Dialog open={isCommentDialogOpen} onOpenChange={setIsCommentDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="ghost" size="sm" className="flex items-center gap-1">
               <MessageSquare className="size-4" />
-              <span>{commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}</span>
+              <span>{commentCount} {commentCount === 1 ? t('community.post.comment') : t('community.post.comments')}</span>
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-                <DialogTitle>Comments on {post.authorName}'s post</DialogTitle>
+                <DialogTitle>{t('community.comments.title', { author: post.authorName })}</DialogTitle>
             </DialogHeader>
             <div className="max-h-[400px] overflow-y-auto space-y-4 p-4">
               {areCommentsLoading ? <Loader2 className="animate-spin" /> : finalComments?.map((comment: any) => (
@@ -165,7 +166,7 @@ function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
                       </div>
                   </div>
               ))}
-              {finalComments?.length === 0 && !areCommentsLoading && <p className="text-center text-muted-foreground">No comments yet.</p>}
+              {finalComments?.length === 0 && !areCommentsLoading && <p className="text-center text-muted-foreground">{t('community.comments.empty')}</p>}
             </div>
             {user && !isDemo && (
                  <Form {...commentForm}>
@@ -177,7 +178,7 @@ function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
                         <FormField control={commentForm.control} name="content" render={({ field }) => (
                             <FormItem className="flex-1">
                                 <FormControl>
-                                    <Textarea placeholder="Write a comment..." {...field} className="min-h-[40px]"/>
+                                    <Textarea placeholder={t('community.comments.form.placeholder')} {...field} className="min-h-[40px]"/>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -197,6 +198,7 @@ function PostCard({ post, isDemo = false }: { post: any, isDemo?: boolean }) {
 
 
 function NewPostCard() {
+  const { t } = useLanguage();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const [isPosting, setIsPosting] = useState(false);
@@ -237,14 +239,14 @@ function NewPostCard() {
       return (
           <Card>
                <CardHeader>
-                  <CardTitle className="font-headline">Join the Conversation</CardTitle>
+                  <CardTitle className="font-headline">{t('community.login.title')}</CardTitle>
               </CardHeader>
               <CardContent className="text-center">
-                  <p className="text-muted-foreground mb-4">You must be logged in to create a post.</p>
+                  <p className="text-muted-foreground mb-4">{t('community.login.description')}</p>
                   <Button asChild>
                       <Link href="/login">
                           <LogIn className="mr-2"/>
-                          Login / Sign Up
+                          {t('community.login.button')}
                       </Link>
                   </Button>
               </CardContent>
@@ -255,7 +257,7 @@ function NewPostCard() {
   return (
       <Card>
           <CardHeader>
-          <CardTitle className="font-headline">Share with the Community</CardTitle>
+          <CardTitle className="font-headline">{t('community.newPost.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...postForm}>
@@ -263,14 +265,14 @@ function NewPostCard() {
                 <FormField control={postForm.control} name="content" render={({ field }) => (
                     <FormItem>
                         <FormControl>
-                            <Textarea placeholder="আপনার অভিজ্ঞতা বা প্রশ্ন শেয়ার করুন..." {...field} />
+                            <Textarea placeholder={t('community.newPost.placeholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )} />
                 <Button type="submit" disabled={isPosting}>
                   {isPosting ? <Loader2 className="mr-2 animate-spin"/> : <Send className="mr-2" />}
-                  Post
+                  {t('community.newPost.button')}
                 </Button>
               </form>
             </Form>
@@ -314,3 +316,5 @@ export default function CommunityPage() {
     </SidebarInset>
   );
 }
+
+    

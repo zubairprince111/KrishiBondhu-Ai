@@ -1,3 +1,4 @@
+
 export const translations = {
   // App Header
   'app.header.title.welcome': {
@@ -10,19 +11,19 @@ export const translations = {
   },
   'app.header.title.voiceAssistant': {
     en: 'Mati AI',
-    bn: 'মাটি Ai',
+    bn: 'মাটি AI',
   },
   'app.header.title.weather': {
-    en: 'Weather Alerts',
-    bn: 'আবহাওয়ার সতর্কতা',
+    en: 'Weather',
+    bn: 'আবহাওয়া',
   },
   'app.header.title.myCrops': {
     en: 'My Crops',
     bn: 'আমার ফসল',
   },
   'app.header.title.community': {
-    en: 'Community Chat',
-    bn: 'কমিউনিটি চ্যাট',
+    en: 'Community',
+    bn: 'কমিউনিটি',
   },
   'app.header.title.marketInfo': {
     en: 'Market Information',
@@ -44,6 +45,10 @@ export const translations = {
     en: 'BN',
     bn: 'BN',
   },
+  'app.header.search.placeholder': {
+    en: 'Search crops, prices, suggestions...',
+    bn: 'ফসল, দাম, পরামর্শ খুঁজুন...',
+  },
   // App Sidebar
   'sidebar.title': {
     en: 'KrishiBondhu',
@@ -59,7 +64,7 @@ export const translations = {
   },
   'sidebar.nav.matiAI': {
     en: 'Mati AI',
-    bn: 'মাটি Ai',
+    bn: 'মাটি AI',
   },
   'sidebar.nav.weather': {
     en: 'Weather',
@@ -89,10 +94,27 @@ export const translations = {
     en: 'Profile',
     bn: 'প্রোফাইল',
   },
-  // Dashboard Page - New
+  'sidebar.profile.guest': {
+    en: 'Guest User',
+    bn: 'অতিথি ব্যবহারকারী',
+  },
+  'sidebar.profile.myAccount': {
+    en: 'My Account',
+    bn: 'আমার অ্যাকাউন্ট',
+  },
+  'sidebar.profile.login': {
+    en: 'Login',
+    bn: 'লগইন',
+  },
+
+  // Dashboard Page
   'dashboard.welcome': {
-    en: 'Welcome {{name}}',
-    bn: 'স্বাগতম {{name}}',
+    en: 'Welcome, {{name}}!',
+    bn: 'স্বাগতম, {{name}}!',
+  },
+  'dashboard.welcome.anonymous': {
+    en: 'Welcome to KrishiBondhu!',
+    bn: 'কৃষিবন্ধুতে স্বাগতম!',
   },
   'dashboard.farmer': {
     en: 'Farmer',
@@ -101,6 +123,18 @@ export const translations = {
   'dashboard.farmStatus': {
     en: "Here's a snapshot of your farm's health and upcoming tasks.",
     bn: 'এখানে আপনার খামারের স্বাস্থ্য এবং আসন্ন কাজগুলির একটি চিত্র।',
+  },
+  'dashboard.farmStatus.empty': {
+    en: 'Add your first crop to get personalized insights.',
+    bn: 'ব্যক্তিগত অন্তর্দৃষ্টি পেতে আপনার প্রথম ফসল যোগ করুন।',
+  },
+  'dashboard.loginPrompt.description': {
+    en: 'Your AI farming companion. Sign in to personalize your experience.',
+    bn: 'আপনার এআই কৃষি সঙ্গী। আপনার অভিজ্ঞতা ব্যক্তিগতকৃত করতে সাইন ইন করুন।',
+  },
+  'dashboard.loginPrompt.button': {
+    en: 'Login / Get Started',
+    bn: 'লগইন / শুরু করুন',
   },
   'dashboard.metrics.health': {
     en: 'Overall Health',
@@ -118,17 +152,17 @@ export const translations = {
     en: 'Upcoming Tasks',
     bn: 'আসন্ন কাজ',
   },
-  'dashboard.alert.critical': {
-    en: 'CRITICAL:',
-    bn: 'গুরুতর:',
+  'dashboard.alert.checking': {
+    en: 'Checking for critical alerts...',
+    bn: 'গুরুতর সতর্কতা পরীক্ষা করা হচ্ছে...',
   },
-  'dashboard.alert.floodWarning': {
-    en: 'Flood Warning Issued for Dhaka. View impacted fields.',
-    bn: 'ঢাকার জন্য বন্যা সতর্কতা জারি করা হয়েছে। প্রভাবিত জমি দেখুন।',
+  'dashboard.myCrops.description': {
+    en: 'Manage fields & view health status at a glance.',
+    bn: 'জমি পরিচালনা করুন এবং এক নজরে স্বাস্থ্যের অবস্থা দেখুন।',
   },
-  'dashboard.alert.openAlerts': {
-    en: 'Open Alerts',
-    bn: 'সতর্কতা দেখুন',
+  'dashboard.myCrops.viewDashboard': {
+    en: 'View My Fields Dashboard',
+    bn: 'আমার জমির ড্যাশবোর্ড দেখুন',
   },
   'dashboard.actionableInsights.title': {
     en: 'Actionable Insights',
@@ -142,41 +176,9 @@ export const translations = {
     en: 'AI Seasonal Crop Suggestions',
     bn: 'এআই মৌসুমী ফসল পরামর্শ',
   },
-  'dashboard.insights.refresh': {
-    en: 'Refresh',
-    bn: 'রিফ্রেশ',
-  },
-  'dashboard.insights.fertilize': {
-    en: 'Fertilize in 2 days',
-    bn: '২ দিনের মধ্যে সার দিন',
-  },
-  'dashboard.insights.fertilizeDesc': {
-    en: 'Optimal window for Wheat Field 2',
-    bn: 'গম ক্ষেত ২ এর জন্য সেরা সময়',
-  },
-  'dashboard.insights.monitorBlight': {
-    en: 'Monitor Early Blight',
-    bn: 'আর্লি ব্লাইট পর্যবেক্ষণ করুন',
-  },
-  'dashboard.insights.monitorBlightDesc': {
-    en: 'Potato Field 1 risk rising',
-    bn: 'আলু ক্ষেত ১-এ ঝুঁকি বাড়ছে',
-  },
-  'dashboard.insights.nextSeason': {
-    en: 'Next Season Planting',
-    bn: 'পরবর্তী মৌসুমের রোপণ',
-  },
-  'dashboard.insights.nextSeasonDesc': {
-    en: 'Recommended: Maize after Rice',
-    bn: 'সুপারিশ: ধানের পর ভুট্টা',
-  },
-  'dashboard.insights.irrigation': {
-    en: 'Irrigation Check',
-    bn: 'সেচ পরীক্ষা করুন',
-  },
-  'dashboard.insights.irrigationDesc': {
-    en: 'Low soil moisture in Plot B',
-    bn: 'প্লট বি-তে মাটির আর্দ্রতা কম',
+  'dashboard.insights.loading': {
+    en: 'AI is analyzing your location...',
+    bn: 'এআই আপনার অবস্থান বিশ্লেষণ করছে...',
   },
   'dashboard.action.diagnose': {
     en: 'Crop Doctor',
@@ -190,17 +192,9 @@ export const translations = {
     en: 'Market Prices',
     bn: 'বাজার দর',
   },
-   'dashboard.action.findOfficer': {
+  'dashboard.action.findOfficer': {
     en: 'Find Officer',
     bn: 'অফিসার খুঁজুন',
-  },
-  'dashboard.myCrops.description': {
-    en: 'Manage fields & view health status at a glance.',
-    bn: 'জমি পরিচালনা করুন এবং এক নজরে স্বাস্থ্যের অবস্থা দেখুন।',
-  },
-  'dashboard.myCrops.viewDashboard': {
-    en: 'View My Fields Dashboard',
-    bn: 'আমার জমির ড্যাশবোর্ড দেখুন',
   },
   'dashboard.communityAndResources.title': {
     en: 'Community & Resources',
@@ -208,35 +202,35 @@ export const translations = {
   },
   'dashboard.communityAndResources.description': {
     en: 'Learn from others and stay informed.',
-    bn: ' অন্যদের কাছ থেকে শিখুন এবং অবগত থাকুন।',
+    bn: 'অন্যদের কাছ থেকে শিখুন এবং অবগত থাকুন।',
   },
   'dashboard.community.title': {
     en: 'Community Discussions',
     bn: 'সম্প্রদায় আলোচনা',
   },
   'dashboard.community.post1': {
-    en: 'Best practices for flood prep?',
-    bn: 'বন্যার প্রস্তুতির সেরা অনুশীলন?',
+    en: 'Best practices for monsoon prep?',
+    bn: 'বর্ষার প্রস্তুতির সেরা অনুশীলন?',
   },
   'dashboard.community.post2': {
-    en: '#PestControl: Tomato hornworm',
-    bn: '# কীটপতঙ্গ নিয়ন্ত্রণ: টমেটো হর্নওয়ার্ম',
+    en: '#PestControl: Dealing with rice bugs',
+    bn: '#কীটপতঙ্গ নিয়ন্ত্রণ: ধানের গান্ধী পোকা দমন',
   },
   'dashboard.community.openCommunity': {
     en: 'Open Community',
-    bn: 'সম্প্রদায় খুলুন',
+    bn: 'কমিউনিটি খুলুন',
   },
   'dashboard.resources.title': {
-    en: 'KrishiBondhu Insights',
-    bn: 'কৃষিবন্ধু অন্তর্দৃষ্টি',
+    en: 'Farming Resources',
+    bn: 'কৃষি সম্পদ',
   },
   'dashboard.resources.fertilizerGuide': {
-    en: 'Monsoon fertilizer guide',
-    bn: 'বর্ষা মৌসুমের সার নির্দেশিকা',
+    en: 'Rabi season fertilizer guide',
+    bn: 'রবি মৌসুমের সার নির্দেশিকা',
   },
   'dashboard.resources.leafSpotsVideo': {
-    en: 'Video: Identify leaf spots fast',
-    bn: 'ভিডিও: দ্রুত পাতার দাগ শনাক্ত করুন',
+    en: 'Video: Identify leaf spots',
+    bn: 'ভিডিও: পাতার দাগ শনাক্তকরণ',
   },
   'dashboard.resources.planningChecklist': {
     en: 'Next-season planning checklist',
@@ -246,78 +240,31 @@ export const translations = {
     en: 'View All',
     bn: 'সব দেখুন',
   },
-  'dashboard.market.title': {
-    en: 'Latest Market Trends',
-    bn: 'সর্বশেষ বাজার প্রবণতা',
+  'dashboard.news.title': {
+    en: 'Daily Farming News',
+    bn: 'দৈনিক কৃষি সংবাদ',
   },
-  'dashboard.market.placeholder': {
-    en: 'Price trends chart placeholder',
-    bn: 'মূল্য প্রবণতা চার্ট স্থানধারক',
+  'dashboard.news.refresh': {
+    en: 'Refresh news',
+    bn: 'সংবাদ রিফ্রেশ করুন',
   },
-  'dashboard.feature.cropDoctor.title': {
-    en: 'Crop Doctor',
-    bn: 'ফসল ডাক্তার',
+  'dashboard.news.loading': {
+    en: 'Loading latest news...',
+    bn: 'সর্বশেষ সংবাদ লোড হচ্ছে...',
   },
-  'dashboard.feature.cropDoctor.description': {
-    en: 'Diagnose crop diseases from a picture.',
-    bn: 'ছবি থেকে ফসলের রোগ নির্ণয় করুন।',
-  },
-  'dashboard.feature.voiceAssistant.title': {
-    en: 'Mati AI',
-    bn: 'মাটি Ai',
-  },
-  'dashboard.feature.voiceAssistant.description': {
-    en: 'Ask questions in Bangla.',
-    bn: 'বাংলায় প্রশ্ন জিজ্ঞাসা করুন।',
-  },
-  'dashboard.feature.weather.title': {
-    en: 'Weather Alerts',
-    bn: 'আবহাওয়ার সতর্কতা',
-  },
-  'dashboard.feature.weather.description': {
-    en: 'Real-time forecasts and warnings.',
-    bn: 'রিয়েল-টাইম পূর্বাভাস ও সতর্কতা।',
-  },
-  'dashboard.feature.myCrops.title': {
-    en: 'My Crops',
-    bn: 'আমার ফসল',
-  },
-  'dashboard.feature.myCrops.description': {
-    en: 'Get personalized guidance for your crops.',
-    bn: 'আপনার ফসলের জন্য ব্যক্তিগতকৃত নির্দেশিকা পান।',
-  },
-  'dashboard.feature.community.title': {
-    en: 'Community Chat',
-    bn: 'কমিউনিটি',
-  },
-  'dashboard.feature.community.description': {
-    en: 'Connect with other farmers.',
-    bn: 'অন্যান্য কৃষকদের সাথে সংযোগ করুন।',
-  },
-  'dashboard.feature.marketInfo.title': {
-    en: 'Market Info',
-    bn: 'বাজার তথ্য',
-  },
-  'dashboard.feature.marketInfo.description': {
-    en: 'Govt. schemes and market prices.',
-    bn: 'সরকারি প্রকল্প এবং বাজার দর।',
-  },
-  'dashboard.offline.title': {
-    en: 'Offline Access',
-    bn: 'অফলাইন অ্যাক্সেস',
-  },
-  'dashboard.offline.description': {
-    en: 'Key features and your data are available even without an internet connection.',
-    bn: 'ইন্টারনেট সংযোগ ছাড়াই মূল বৈশিষ্ট্য এবং আপনার ডেটা উপলব্ধ।',
+  'dashboard.news.error': {
+    en: 'Could not load news.',
+    bn: 'সংবাদ লোড করা যায়নি।',
   },
   'dashboard.weather.loading': {
-      en: 'Loading...',
-      bn: 'লোড হচ্ছে...'
+      en: 'Loading weather...',
+      bn: 'আবহাওয়া লোড হচ্ছে...'
   },
   'dashboard.weather.locationOff': {
       en: 'Location Off',
       bn: 'অবস্থান বন্ধ'
   },
+  // Voice Assistant Page
   'voiceAssistant.greeting': {
     en: 'Good morning! I am Mati, your agricultural assistant. How can I help you?',
     bn: 'শুভ সকাল! আমি মাটি, আপনার কৃষি সহায়ক। আমি আপনাকে কিভাবে সাহায্য করতে পারি?',
@@ -330,6 +277,60 @@ export const translations = {
     en: 'Type your question in English or Bangla...',
     bn: 'আপনার প্রশ্ন বাংলায় টাইপ করুন...',
   },
+  // Weather Page
+  'weather.title': {
+    en: 'Current Weather',
+    bn: 'বর্তমান আবহাওয়া',
+  },
+  'weather.location': {
+    en: '{{location}} • {{season}}',
+    bn: '{{location}} • {{season}}',
+  },
+  'weather.cycloneWarning': {
+    en: 'Cyclone Warning Issued',
+    bn: 'ঘূর্ণিঝড় সতর্কতা জারি',
+  },
+  'weather.humidity': {
+    en: 'Humidity',
+    bn: 'আর্দ্রতা',
+  },
+  'weather.wind': {
+    en: 'Wind',
+    bn: 'বাতাস',
+  },
+  'weather.uvIndex': {
+    en: 'UV Index',
+    bn: 'ইউভি ইনডেক্স',
+  },
+  'weather.aiTip.title': {
+    en: 'AI Weather Tip',
+    bn: 'এআই আবহাওয়ার টিপস',
+  },
+  'weather.aiTip.loading': {
+    en: 'Generating AI advice...',
+    bn: 'এআই পরামর্শ তৈরি করছে...',
+  },
+  'weather.aiTip.error': {
+    en: 'Could not load AI advice.',
+    bn: 'এআই পরামর্শ লোড করা যায়নি।',
+  },
+  'weather.forecast.title': {
+    en: '5-Day Forecast',
+    bn: '৫ দিনের পূর্বাভাস',
+  },
+  'weather.loading.title': {
+    en: 'Fetching weather for your location...',
+    bn: 'আপনার অবস্থানের জন্য আবহাওয়া আনা হচ্ছে...',
+  },
+  'weather.loading.error.title': {
+    en: 'Could not access your location.',
+    bn: 'আপনার অবস্থান অ্যাক্সেস করা যায়নি।',
+  },
+  'weather.loading.error.description': {
+    en: 'Please enable location services in your browser to get local weather.',
+    bn: 'স্থানীয় আবহাওয়া পেতে আপনার ব্রাউজারে অবস্থান পরিষেবা সক্ষম করুন।',
+  },
+  // Weather Conditions & Seasons
   'weather.season.winter': { en: 'Winter', bn: 'শীতকাল' },
   'weather.season.summer': { en: 'Summer', bn: 'গ্রীষ্মকাল' },
   'weather.season.monsoon': { en: 'Monsoon', bn: 'বর্ষাকাল' },
@@ -356,6 +357,7 @@ export const translations = {
   'weather.condition.thunderstormHailSlight': { en: 'Thunderstorm with slight hail', bn: 'হালকা শিলাবৃষ্টি সহ বজ্রঝড়' },
   'weather.condition.thunderstormHailHeavy': { en: 'Thunderstorm with heavy hail', bn: 'ভারী শিলাবৃষ্টি সহ বজ্রঝড়' },
   'weather.condition.unknown': { en: 'Unknown condition', bn: 'অজানা অবস্থা' },
+  // Seasonal Suggestions
   'seasonalSuggestions.locationLabel': {
     en: 'Your Location',
     bn: 'আপনার অবস্থান',
@@ -368,6 +370,7 @@ export const translations = {
     en: 'Suitability',
     bn: 'উপযুক্ততা',
   },
+  // Crop Doctor Page
   'cropDoctor.upload.title': {
     en: 'Upload a Photo',
     bn: 'একটি ছবি আপলোড করুন',
@@ -375,10 +378,6 @@ export const translations = {
   'cropDoctor.upload.description': {
     en: 'Take or upload a clear picture of the affected crop area. For best results, focus on the leaves or stem.',
     bn: 'আক্রান্ত ফসলের একটি পরিষ্কার ছবি তুলুন বা আপলোড করুন। সেরা ফলাফলের জন্য, পাতা বা কান্ডের উপর ফোকাস করুন।',
-  },
-  'cropDoctor.upload.preview': {
-    en: 'Example of a diseased leaf',
-    bn: 'রোগাক্রান্ত পাতার উদাহরণ',
   },
   'cropDoctor.upload.button': {
     en: 'Upload from Device',
@@ -392,38 +391,47 @@ export const translations = {
     en: 'Our AI gives you an instant diagnosis and actionable steps to save your crop.',
     bn: 'আমাদের এআই আপনাকে তাত্ক্ষণিক রোগ নির্ণয় এবং আপনার ফসল বাঁচাতে কার্যকরী পদক্ষেপ প্রদান করে।',
   },
+  'cropDoctor.analysis.button': {
+    en: 'Analyze Image',
+    bn: 'ছবি বিশ্লেষণ করুন',
+  },
+  'cropDoctor.analysis.button.loading': {
+    en: 'Analyzing...',
+    bn: 'বিশ্লেষণ চলছে...',
+  },
+  'cropDoctor.analysis.loading': {
+    en: 'AI is analyzing your crop...',
+    bn: 'এআই আপনার ফসল বিশ্লেষণ করছে...',
+  },
   'cropDoctor.analysis.diagnosisTitle': {
     en: 'Diagnosis:',
     bn: 'রোগ নির্ণয়:',
-  },
-  'cropDoctor.analysis.diagnosisResult': {
-    en: 'Early Blight',
-    bn: 'আর্লি ব্লাইট',
-  },
-  'cropDoctor.analysis.diagnosisText': {
-    en: 'This fungal disease is common in potatoes and tomatoes during humid weather. It appears as small, dark brown to black spots on lower leaves.',
-    bn: 'এই ছত্রাকজনিত রোগ আর্দ্র আবহাওয়ায় আলু এবং টমেটোতে সাধারণ। এটি নীচের পাতায় ছোট, গাঢ় বাদামী থেকে কালো দাগ হিসাবে দেখা যায়।',
   },
   'cropDoctor.analysis.recommendationTitle': {
     en: 'Recommended Actions',
     bn: 'সুপারিশকৃত পদক্ষেপ',
   },
-  'cropDoctor.analysis.action1': {
-    en: 'Apply a copper-based fungicide immediately.',
-    bn: 'অবিলম্বে কপার-ভিত্তিক ছত্রাকনাশক প্রয়োগ করুন।',
-  },
-  'cropDoctor.analysis.action2': {
-    en: 'Ensure proper spacing between plants for better air circulation.',
-    bn: 'উন্নত বায়ু চলাচলের জন্য গাছের মধ্যে সঠিক দূরত্ব নিশ্চিত করুন।',
-  },
-  'cropDoctor.analysis.action3': {
-    en: 'Avoid overhead watering to keep foliage dry.',
-    bn: 'পাতা শুকনো রাখতে উপরের দিক থেকে জল দেওয়া এড়িয়ে চলুন।',
-  },
   'cropDoctor.analysis.findProductsButton': {
     en: 'Find Recommended Products',
     bn: 'সুপারিশকৃত পণ্য খুঁজুন',
   },
+  'cropDoctor.analysis.resultsPlaceholder': {
+    en: 'Analysis results will appear here.',
+    bn: 'বিশ্লেষণের ফলাফল এখানে দেখা যাবে।',
+  },
+  'cropDoctor.toast.noImage.title': {
+    en: 'No Image Selected',
+    bn: 'কোনো ছবি নির্বাচন করা হয়নি',
+  },
+  'cropDoctor.toast.noImage.description': {
+    en: 'Please upload an image of your crop to analyze.',
+    bn: 'বিশ্লেষণ করার জন্য অনুগ্রহ করে আপনার ফসলের একটি ছবি আপলোড করুন।',
+  },
+  'cropDoctor.toast.error.title': {
+    en: 'Analysis Failed',
+    bn: 'বিশ্লেষণ ব্যর্থ হয়েছে',
+  },
+  // My Crops Pages
   'myCrops.lands.title': {
     en: 'My Lands',
     bn: 'আমার জমি',
@@ -504,6 +512,10 @@ export const translations = {
     en: 'Could not add the land. Please try again.',
     bn: 'জমি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
   },
+  'myCrops.land.noLocation': {
+    en: 'No location',
+    bn: 'কোনো অবস্থান নেই',
+  },
    'myCrops.crops.title': {
     en: 'Crops on this Land',
     bn: 'এই জমির ফসল',
@@ -570,7 +582,6 @@ export const translations = {
   'myCrops.form.cropName.options.sugarcane': { en: 'Sugarcane', bn: 'আখ' },
   'myCrops.form.cropName.options.onion': { en: 'Onion', bn: 'পেঁয়াজ' },
   'myCrops.form.cropName.options.mustard': { en: 'Mustard', bn: 'সরিষা' },
-
   'myCrops.form.sowingDate.label': {
     en: 'Sowing Date',
     bn: 'বপনের তারিখ',
@@ -593,6 +604,31 @@ export const translations = {
   'myCrops.form.stage.options.floweringandfruiting': { en: 'Flowering & Fruiting', bn: 'ফুল ও ফল ধারণ' },
   'myCrops.form.stage.options.harvesting': { en: 'Harvesting', bn: 'ফসল সংগ্রহ' },
   'myCrops.form.stage.options.postharvest': { en: 'Post-Harvest', bn: 'ফসল কাটার পরবর্তী পর্যায়' },
+  // Crop Details Page
+  'myCrops.cropDetails.notFound': {
+    en: 'Crop not found.',
+    bn: 'ফসল পাওয়া যায়নি।',
+  },
+  'myCrops.cropDetails.growthProgress.title': {
+    en: 'Growth Progress',
+    bn: 'বৃদ্ধির অগ্রগতি',
+  },
+  'myCrops.cropDetails.growthProgress.daysPassed': {
+    en: 'Days Passed',
+    bn: 'দিন পার হয়েছে',
+  },
+  'myCrops.cropDetails.growthProgress.daysRemaining': {
+    en: 'Days Remaining (Current Stage)',
+    bn: 'বাকি দিন (বর্তমান পর্যায়)',
+  },
+  'myCrops.cropDetails.growthProgress.stageProgress': {
+    en: '{{stage}} Stage Progress',
+    bn: '{{stage}} পর্যায়ের অগ্রগতি',
+  },
+  'myCrops.cropDetails.growthProgress.completed': {
+    en: 'Completed',
+    bn: 'সম্পন্ন',
+  },
   'myCrops.guide.title': {
     en: 'AI Guidance Plan',
     bn: 'এআই নির্দেশিকা পরিকল্পনা',
@@ -608,6 +644,485 @@ export const translations = {
   'myCrops.guide.loading': {
     en: 'Generating your personalized AI guidance plan...',
     bn: 'আপনার ব্যক্তিগতকৃত এআই নির্দেশিকা পরিকল্পনা তৈরি করা হচ্ছে...',
+  },
+  'myCrops.guide.toast.error.title': {
+    en: 'Error',
+    bn: 'ত্রুটি',
+  },
+  'myCrops.guide.toast.error.description': {
+    en: 'Could not fetch AI guidance for this crop.',
+    bn: 'এই ফসলের জন্য এআই নির্দেশিকা আনা যায়নি।',
+  },
+  'myCrops.guide.task.duration': {
+    en: 'Typical Duration: {{days}} days',
+    bn: 'সাধারণ সময়কাল: {{days}} দিন',
+  },
+  'myCrops.guide.toast.updateFailed.title': {
+    en: 'Update Failed',
+    bn: 'আপডেট ব্যর্থ হয়েছে',
+  },
+  'myCrops.guide.toast.updateFailed.description': {
+    en: 'Could not save your changes. Please try again.',
+    bn: 'আপনার পরিবর্তনগুলি সংরক্ষণ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
+  },
+  // Community Page
+  'community.newPost.title': {
+    en: 'Share with the Community',
+    bn: 'সম্প্রদায়ের সাথে শেয়ার করুন',
+  },
+  'community.newPost.placeholder': {
+    en: 'Share your experience or ask a question...',
+    bn: 'আপনার অভিজ্ঞতা বা প্রশ্ন শেয়ার করুন...',
+  },
+  'community.newPost.button': {
+    en: 'Post',
+    bn: 'পোস্ট',
+  },
+  'community.newPost.loading': {
+    en: 'Please wait...',
+    bn: 'অনুগ্রহ করে অপেক্ষা করুন...',
+  },
+  'community.login.title': {
+    en: 'Join the Conversation',
+    bn: 'আলোচনায় যোগ দিন',
+  },
+  'community.login.description': {
+    en: 'You must be logged in to create a post.',
+    bn: 'একটি পোস্ট তৈরি করতে আপনাকে অবশ্যই লগ ইন করতে হবে।',
+  },
+  'community.login.button': {
+    en: 'Login / Sign Up',
+    bn: 'লগইন / সাইন আপ',
+  },
+  'community.posts.loading': {
+    en: 'Loading community posts...',
+    bn: 'সম্প্রদায়ের পোস্ট লোড হচ্ছে...',
+  },
+  'community.post.like': {
+    en: 'Like',
+    bn: 'লাইক',
+  },
+  'community.post.likes': {
+    en: 'Likes',
+    bn: 'লাইক',
+  },
+  'community.post.comment': {
+    en: 'Comment',
+    bn: 'কমেন্ট',
+  },
+  'community.post.comments': {
+    en: 'Comments',
+    bn: 'কমেন্টস',
+  },
+  'community.comments.title': {
+    en: "Comments on {{author}}'s post",
+    bn: '{{author}} এর পোস্টে কমেন্টস',
+  },
+  'community.comments.loading': {
+    en: 'Loading comments...',
+    bn: 'কমেন্ট লোড হচ্ছে...',
+  },
+  'community.comments.empty': {
+    en: 'No comments yet.',
+    bn: 'এখনো কোনো কমেন্ট নেই।',
+  },
+  'community.comments.form.placeholder': {
+    en: 'Write a comment...',
+    bn: 'একটি কমেন্ট লিখুন...',
+  },
+  // Login Page
+  'login.title': {
+    en: 'KrishiBondhu',
+    bn: 'কৃষিবন্ধু',
+  },
+  'login.description': {
+    en: 'Your AI farming companion. Sign in to personalize your experience.',
+    bn: 'আপনার এআই কৃষি সঙ্গী। আপনার অভিজ্ঞতা ব্যক্তিগতকৃত করতে সাইন ইন করুন।',
+  },
+  'login.tabs.signIn': {
+    en: 'Sign In',
+    bn: 'সাইন ইন',
+  },
+  'login.tabs.signUp': {
+    en: 'Sign Up',
+    bn: 'সাইন আপ',
+  },
+  'login.signIn.title': {
+    en: 'Sign In',
+    bn: 'সাইন ইন',
+  },
+  'login.signIn.description': {
+    en: 'Welcome back! Please enter your details.',
+    bn: 'আবার স্বাগতম! অনুগ্রহ করে আপনার বিবরণ লিখুন।',
+  },
+  'login.signUp.title': {
+    en: 'Create an Account',
+    bn: 'একটি অ্যাকাউন্ট তৈরি করুন',
+  },
+  'login.signUp.description': {
+    en: 'Join our community to get personalized advice.',
+    bn: 'ব্যক্তিগত পরামর্শ পেতে আমাদের সম্প্রদায়ে যোগ দিন।',
+  },
+  'login.form.email.label': {
+    en: 'Email',
+    bn: 'ইমেইল',
+  },
+  'login.form.email.placeholder': {
+    en: 'farmer@example.com',
+    bn: 'farmer@example.com',
+  },
+  'login.form.password.label': {
+    en: 'Password',
+    bn: 'পাসওয়ার্ড',
+  },
+  'login.form.password.placeholder': {
+    en: '••••••••',
+    bn: '••••••••',
+  },
+  'login.form.button.signIn': {
+    en: 'Sign In',
+    bn: 'সাইন ইন',
+  },
+  'login.form.button.signUp': {
+    en: 'Sign Up',
+    bn: 'সাইন আপ',
+  },
+  'login.divider': {
+    en: 'Or continue with',
+    bn: 'অথবা দিয়ে চালিয়ে যান',
+  },
+  'login.google': {
+    en: 'Google',
+    bn: 'Google',
+  },
+  'login.guest': {
+    en: 'Guest',
+    bn: 'অতিথি',
+  },
+  'login.toast.error.title': {
+    en: 'Authentication Failed',
+    bn: 'প্রমাণীকরণ ব্যর্থ হয়েছে',
+  },
+  'login.toast.error.generic': {
+    en: 'An unexpected error occurred. Please try again.',
+    bn: 'একটি অপ্রত্যাশিত ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
+  },
+  'login.toast.error.emailExists': {
+    en: 'An account with this email already exists. Please sign in instead.',
+    bn: 'এই ইমেইল দিয়ে একটি অ্যাকাউন্ট ইতিমধ্যে বিদ্যমান। অনুগ্রহ করে সাইন ইন করুন।',
+  },
+  'login.toast.error.invalidCredentials': {
+    en: 'Invalid email or password. Please check your credentials and try again.',
+    bn: 'অবৈধ ইমেইল বা পাসওয়ার্ড। অনুগ্রহ করে আপনার প্রমাণপত্র পরীক্ষা করে আবার চেষ্টা করুন।',
+  },
+  'login.toast.error.weakPassword': {
+    en: 'The password is too weak. Please use at least 6 characters.',
+    bn: 'পাসওয়ার্ডটি খুব দুর্বল। অনুগ্রহ করে কমপক্ষে ৬টি অক্ষর ব্যবহার করুন।',
+  },
+  // Profile Page
+  'profile.guest.title': {
+    en: 'Guest User',
+    bn: 'অতিথি ব্যবহারকারী',
+  },
+  'profile.guest.description': {
+    en: 'Sign up to personalize your profile.',
+    bn: 'আপনার প্রোফাইল ব্যক্তিগতকৃত করতে সাইন আপ করুন।',
+  },
+  'profile.user.description': {
+    en: 'Manage your profile information below.',
+    bn: 'নীচে আপনার প্রোফাইল তথ্য পরিচালনা করুন।',
+  },
+  'profile.form.email.label': {
+    en: 'Email Address',
+    bn: 'ইমেইল ঠিকানা',
+  },
+  'profile.form.email.guestPlaceholder': {
+    en: 'Not available for guest users',
+    bn: 'অতিথি ব্যবহারকারীদের জন্য উপলব্ধ নয়',
+  },
+  'profile.form.uid.label': {
+    en: 'User ID',
+    bn: 'ব্যবহারকারী আইডি',
+  },
+  'profile.form.name.label': {
+    en: 'Full Name',
+    bn: 'পুরো নাম',
+  },
+  'profile.form.name.placeholder': {
+    en: 'Enter your full name',
+    bn: 'আপনার পুরো নাম লিখুন',
+  },
+  'profile.form.location.label': {
+    en: 'Location',
+    bn: 'অবস্থান',
+  },
+  'profile.form.location.placeholder': {
+    en: 'e.g., Dhaka, Bangladesh',
+    bn: 'যেমন, ঢাকা, বাংলাদেশ',
+  },
+  'profile.button.save': {
+    en: 'Save Changes',
+    bn: 'পরিবর্তন সংরক্ষণ করুন',
+  },
+  'profile.button.logout': {
+    en: 'Logout',
+    bn: 'লগ আউট',
+  },
+  'profile.toast.success.title': {
+    en: 'Profile Update In Progress',
+    bn: 'প্রোফাইল আপডেট চলছে',
+  },
+  'profile.toast.success.description': {
+    en: 'Your name is being saved.',
+    bn: 'আপনার নাম সংরক্ষণ করা হচ্ছে।',
+  },
+  'profile.toast.error.title': {
+    en: 'Error',
+    bn: 'ত্রুটি',
+  },
+  'profile.toast.error.description': {
+    en: 'Failed to update your authentication profile. Please try again.',
+    bn: 'আপনার প্রমাণীকরণ প্রোফাইল আপডেট করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
+  },
+  // About Page
+  'about.title': {
+    en: 'About KrishiBondhu AI',
+    bn: 'কৃষিবন্ধু এআই সম্পর্কে',
+  },
+  'about.subtitle': {
+    en: 'Your AI-Powered Farming Assistant',
+    bn: 'আপনার এআই-চালিত কৃষি সহায়ক',
+  },
+  'about.p1': {
+    en: 'KrishiBondhu AI is more than an app — it is a friend of every Bangladeshi farmer, standing beside you in your fields, guiding your hands, and listening to your worries. We understand that farming is more than work — it’s a way of life, a connection to the soil, and the heartbeat of our villages.',
+    bn: 'কৃষিবন্ধু এআই একটি অ্যাপের চেয়েও বেশি কিছু — এটি প্রতিটি বাংলাদেশী কৃষকের বন্ধু, আপনার মাঠে আপনার পাশে দাঁড়িয়ে, আপনার হাতকে পথ দেখায় এবং আপনার উদ্বেগ শোনে। আমরা বুঝি যে কৃষি কাজের চেয়েও বেশি কিছু — এটি একটি জীবনধারা, মাটির সাথে একটি সংযোগ, এবং আমাদের গ্রামের হৃদস্পন্দন।',
+  },
+  'about.featureSection.title': {
+    en: 'With KrishiBondhu AI, you are never alone in your fields:',
+    bn: 'কৃষিবন্ধু এআই-এর সাথে, আপনি আপনার মাঠে কখনো একা নন:',
+  },
+  'about.feature1.title': {
+    en: 'Instantly diagnose crop diseases:',
+    bn: 'তাত্ক্ষণিকভাবে ফসলের রোগ নির্ণয় করুন:',
+  },
+  'about.feature1.description': {
+    en: 'Take a photo of your crops, and instantly know what’s harming them and how to heal them.',
+    bn: 'আপনার ফসলের একটি ছবি তুলুন, এবং তাত্ক্ষণিকভাবে জানুন কী তাদের ক্ষতি করছে এবং কীভাবে তাদের নিরাময় করা যায়।',
+  },
+  'about.feature2.title': {
+    en: 'Speak in Bangla:',
+    bn: 'বাংলায় কথা বলুন:',
+  },
+  'about.feature2.description': {
+    en: 'Speak naturally in Bangla to get advice — our AI listens and talks like a trusted companion.',
+    bn: 'পরামর্শ পেতে স্বাভাবিকভাবে বাংলায় কথা বলুন — আমাদের এআই একজন বিশ্বস্ত সঙ্গীর মতো শোনে এবং কথা বলে।',
+  },
+  'about.feature3.title': {
+    en: 'Get personalized guidance:',
+    bn: 'ব্যক্তিগতকৃত নির্দেশিকা পান:',
+  },
+  'about.feature3.description': {
+    en: 'Receive guidance on weather, soil, planting, and harvesting — tailored just for your land.',
+    bn: 'আবহাওয়া, মাটি, রোপণ, এবং ফসল কাটার বিষয়ে নির্দেশিকা পান — শুধুমাত্র আপনার জমির জন্য বিশেষভাবে তৈরি।',
+  },
+  'about.feature4.title': {
+    en: 'Learn best practices:',
+    bn: 'সেরা অনুশীলনগুলি শিখুন:',
+  },
+  'about.feature4.description': {
+    en: 'Learn simple techniques and best practices to grow healthy, thriving crops.',
+    bn: 'স্বাস্থ্যকর, সমৃদ্ধ ফসল ফলাতে সহজ কৌশল এবং সেরা অনুশীলনগুলি শিখুন।',
+  },
+  'about.feature5.title': {
+    en: 'Stay informed:',
+    bn: 'অবগত থাকুন:',
+  },
+  'about.feature5.description': {
+    en: 'Stay informed about market prices, government schemes, and local support — so your hard work is rewarded.',
+    bn: 'বাজারের দাম, সরকারি প্রকল্প এবং স্থানীয় সহায়তা সম্পর্কে অবগত থাকুন — যাতে আপনার কঠোর পরিশ্রম পুরস্কৃত হয়।',
+  },
+  'about.p2': {
+    en: 'We built KrishiBondhu AI because we believe in the power of the farmer’s hands. Every seed you plant, every field you nurture, is a story of hope, struggle, and resilience. Our AI is here to honor that story — to protect your crops, guide your decisions, and help your harvest shine.',
+    bn: 'আমরা কৃষিবন্ধু এআই তৈরি করেছি কারণ আমরা কৃষকের হাতের শক্তিতে বিশ্বাস করি। আপনার রোপণ করা প্রতিটি বীজ, আপনার পরিচর্যা করা প্রতিটি মাঠ, আশা, সংগ্রাম এবং সহনশীলতার একটি গল্প। আমাদের এআই সেই গল্পকে সম্মান জানাতে এখানে রয়েছে — আপনার ফসল রক্ষা করতে, আপনার সিদ্ধান্তগুলিকে পথ দেখাতে এবং আপনার ফসলকে উজ্জ্বল করতে সাহায্য করতে।',
+  },
+  'about.p3': {
+    en: 'KrishiBondhu AI is your companion, your guide, your friend.',
+    bn: 'কৃষিবন্ধু এআই আপনার সঙ্গী, আপনার পথপ্রদর্শক, আপনার বন্ধু।',
+  },
+  'about.p4': {
+    en: 'We dream of a Bangladesh where every farmer feels supported, confident, and proud of the fruits of their labor — and we are here to make that dream real.',
+    bn: 'আমরা এমন একটি বাংলাদেশের স্বপ্ন দেখি যেখানে প্রতিটি কৃষক সমর্থিত, আত্মবিশ্বাসী এবং তাদের পরিশ্রমের ফলে গর্বিত বোধ করে — এবং আমরা সেই স্বপ্নকে বাস্তবে পরিণত করতে এখানে আছি।',
+  },
+  'about.footer.author': {
+    en: 'Made by Abdullah Al Jubair prince',
+    bn: 'তৈরি করেছেন আব্দুল্লাহ আল জুবায়ের প্রিন্স',
+  },
+  // Market Info Page
+  'marketInfo.tabs.schemes': {
+    en: 'Government Schemes',
+    bn: 'সরকারি প্রকল্প',
+  },
+  'marketInfo.tabs.prices': {
+    en: 'Market Prices',
+    bn: 'বাজার দর',
+  },
+  'marketInfo.schemes.title': {
+    en: 'Find Relevant Schemes',
+    bn: 'প্রাসঙ্গিক প্রকল্প খুঁজুন',
+  },
+  'marketInfo.schemes.description': {
+    en: 'Enter your crop and region to find government subsidies and grants.',
+    bn: 'সরকারি ভর্তুকি এবং অনুদান খুঁজে পেতে আপনার ফসল এবং অঞ্চল লিখুন।',
+  },
+  'marketInfo.schemes.form.crop.label': {
+    en: 'Crop Name (e.g., Rice, Jute)',
+    bn: 'ফসলের নাম (যেমন, ধান, পাট)',
+  },
+  'marketInfo.schemes.form.crop.placeholder': {
+    en: 'e.g., Paddy',
+    bn: 'যেমন, ধান',
+  },
+  'marketInfo.schemes.form.region.label': {
+    en: 'Region',
+    bn: 'অঞ্চল',
+  },
+  'marketInfo.schemes.form.region.placeholder': {
+    en: 'Select a region',
+    bn: 'একটি অঞ্চল নির্বাচন করুন',
+  },
+  'marketInfo.schemes.form.button': {
+    en: 'Find Schemes',
+    bn: 'প্রকল্প খুঁজুন',
+  },
+  'marketInfo.schemes.form.button.loading': {
+    en: 'Searching...',
+    bn: 'অনুসন্ধান চলছে...',
+  },
+  'marketInfo.schemes.results.title': {
+    en: 'Available Programs',
+    bn: 'উপলব্ধ প্রোগ্রাম',
+  },
+  'marketInfo.schemes.results.placeholder': {
+    en: 'Scheme details will appear here.',
+    bn: 'প্রকল্পের বিবরণ এখানে প্রদর্শিত হবে।',
+  },
+  'marketInfo.schemes.results.loading': {
+    en: 'Searching for schemes...',
+    bn: 'প্রকল্পের জন্য অনুসন্ধান চলছে...',
+  },
+  'marketInfo.schemes.results.schemesTitle': {
+    en: 'Government Schemes',
+    bn: 'সরকারি প্রকল্প',
+  },
+  'marketInfo.schemes.results.marketTitle': {
+    en: 'Market Details',
+    bn: 'বাজারের বিবরণ',
+  },
+  'marketInfo.prices.title': {
+    en: "Today's Market Prices",
+    bn: 'আজকের বাজার দর',
+  },
+  'marketInfo.prices.description': {
+    en: 'Daily prices from major markets across Bangladesh, updated in real-time.',
+    bn: 'সারা বাংলাদেশের প্রধান বাজারগুলো থেকে দৈনিক মূল্য, রিয়েল-টাইমে আপডেট করা হয়।',
+  },
+  'marketInfo.prices.loading': {
+    en: 'Fetching latest prices...',
+    bn: 'সর্বশেষ মূল্য আনা হচ্ছে...',
+  },
+  'marketInfo.prices.table.crop': {
+    en: 'Crop',
+    bn: 'ফসল',
+  },
+  'marketInfo.prices.table.price': {
+    en: 'Price',
+    bn: 'মূল্য',
+  },
+  'marketInfo.prices.table.location': {
+    en: 'Market Location',
+    bn: 'বাজারের অবস্থান',
+  },
+  // Find Officer Page
+  'findOfficer.title': {
+    en: 'Find Your Local Officer',
+    bn: 'আপনার স্থানীয় অফিসার খুঁজুন',
+  },
+  'findOfficer.description': {
+    en: 'Select your area to get contact details for the Upazila Agriculture Officer.',
+    bn: 'উপজেলা কৃষি অফিসারের যোগাযোগের বিবরণ পেতে আপনার এলাকা নির্বাচন করুন।',
+  },
+  'findOfficer.form.zila.label': {
+    en: 'Zila (District)',
+    bn: 'জেলা',
+  },
+  'findOfficer.form.zila.placeholder': {
+    en: 'Select a Zila',
+    bn: 'একটি জেলা নির্বাচন করুন',
+  },
+  'findOfficer.form.upazila.label': {
+    en: 'Upazila (Sub-district)',
+    bn: 'উপজেলা',
+  },
+  'findOfficer.form.upazila.placeholder': {
+    en: 'Select an Upazila',
+    bn: 'একটি উপজেলা নির্বাচন করুন',
+  },
+  'findOfficer.form.button': {
+    en: 'Find Officer',
+    bn: 'অফিসার খুঁজুন',
+  },
+  'findOfficer.form.button.loading': {
+    en: 'Searching...',
+    bn: 'অনুসন্ধান চলছে...',
+  },
+  'findOfficer.results.title': {
+    en: 'Officer Details',
+    bn: 'অফিসারের বিবরণ',
+  },
+  'findOfficer.results.loading': {
+    en: 'Searching for officer details...',
+    bn: 'অফিসারের বিবরণ খোঁজা হচ্ছে...',
+  },
+  'findOfficer.results.placeholder': {
+    en: 'Officer details will appear here.',
+    bn: 'অফিসারের বিবরণ এখানে প্রদর্শিত হবে।',
+  },
+  'findOfficer.results.designation': {
+    en: 'Designation',
+    bn: 'পদবী',
+  },
+  'findOfficer.results.contact': {
+    en: 'Contact Number',
+    bn: 'যোগাযোগ নম্বর',
+  },
+  'findOfficer.results.address': {
+    en: 'Office Address',
+    bn: 'অফিসের ঠিকানা',
+  },
+  // Search Dialog
+  'searchDialog.title': {
+    en: 'AI-Powered Search',
+    bn: 'এআই-চালিত অনুসন্ধান',
+  },
+  'searchDialog.description': {
+    en: 'Ask about crops, market prices, or farming techniques.',
+    bn: 'ফসল, বাজার দর, বা কৃষি কৌশল সম্পর্কে জিজ্ঞাসা করুন।',
+  },
+  'searchDialog.placeholder': {
+    en: "e.g., 'Market price for jute' or 'How to treat leaf blight?'",
+    bn: "যেমন, 'পাটের বাজার দর' বা 'পাতার ব্লাইট কীভাবে চিকিৎসা করা যায়?'",
+  },
+  'searchDialog.loading': {
+    en: 'AI is searching...',
+    bn: 'এআই অনুসন্ধান করছে...',
+  },
+  'searchDialog.error.title': {
+    en: 'Sorry, something went wrong.',
+    bn: 'দুঃখিত, কিছু ভুল হয়েছে।',
+  },
+  'searchDialog.results.placeholder': {
+    en: 'Search results will appear here.',
+    bn: 'অনুসন্ধানের ফলাফল এখানে প্রদর্শিত হবে।',
   },
 };
 

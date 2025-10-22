@@ -16,8 +16,10 @@ import { useAuth, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/context/language-context';
 
 export default function ProfilePage() {
+  const { t } = useLanguage();
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const auth = useAuth();
@@ -48,26 +50,23 @@ export default function ProfilePage() {
     setIsSaving(true);
     
     try {
-      // First, update the Firebase Auth display name. This usually doesn't fail with permissions.
       await updateProfile(user, { displayName });
 
-      // Then, initiate the non-blocking Firestore update.
       const userDocRef = doc(firestore, 'users', user.uid);
       setDocumentNonBlocking(userDocRef, { name: displayName }, { merge: true });
 
       toast({
-        title: 'Profile Update In Progress',
-        description: 'Your name is being saved.',
+        title: t('profile.toast.success.title'),
+        description: t('profile.toast.success.description'),
       });
     } catch (error) {
        console.error('Error updating auth profile:', error);
        toast({
         variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to update your authentication profile. Please try again.',
+        title: t('profile.toast.error.title'),
+        description: t('profile.toast.error.description'),
       });
     } finally {
-      // We set saving to false immediately because the Firestore write is non-blocking.
       setIsSaving(false);
     }
   };
@@ -94,45 +93,45 @@ export default function ProfilePage() {
                 </Avatar>
             </div>
             <CardTitle className="mt-4 font-headline text-2xl">
-              {user.isAnonymous ? 'Guest User' : displayName || user.email}
+              {user.isAnonymous ? t('profile.guest.title') : displayName || user.email}
             </CardTitle>
             <CardDescription>
-              {user.isAnonymous ? "Sign up to personalize your profile." : "Manage your profile information below."}
+              {user.isAnonymous ? t('profile.guest.description') : t('profile.user.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4 rounded-lg border bg-background/50 p-6">
                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" value={user.email || 'Not available for guest users'} disabled />
+                    <Label htmlFor="email">{t('profile.form.email.label')}</Label>
+                    <Input id="email" value={user.email || t('profile.form.email.guestPlaceholder')} disabled />
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="uid">User ID</Label>
+                    <Label htmlFor="uid">{t('profile.form.uid.label')}</Label>
                     <Input id="uid" value={user.uid} disabled />
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">{t('profile.form.name.label')}</Label>
                     <Input 
                       id="name" 
-                      placeholder="Enter your full name" 
+                      placeholder={t('profile.form.name.placeholder')}
                       disabled={user.isAnonymous || isSaving} 
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                     />
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input id="location" placeholder="e.g., Dhaka, Bangladesh" disabled={user.isAnonymous} />
+                    <Label htmlFor="location">{t('profile.form.location.label')}</Label>
+                    <Input id="location" placeholder={t('profile.form.location.placeholder')} disabled={user.isAnonymous} />
                 </div>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
                 <Button className="flex-1" disabled={user.isAnonymous || isSaving} onClick={handleSaveChanges}>
                   {isSaving ? <Loader2 className="mr-2 animate-spin" /> : null}
-                  Save Changes
+                  {t('profile.button.save')}
                 </Button>
                 <Button variant="destructive-outline" className="flex-1" onClick={handleLogout}>
                     <LogOut className="mr-2"/>
-                    Logout
+                    {t('profile.button.logout')}
                 </Button>
             </div>
           </CardContent>
@@ -141,3 +140,5 @@ export default function ProfilePage() {
     </SidebarInset>
   );
 }
+
+    

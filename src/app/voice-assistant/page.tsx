@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useTransition } from 'react';
@@ -68,10 +69,9 @@ export default function VoiceAssistantPage() {
       if (error) {
         toast({
           variant: 'destructive',
-          title: 'Error',
+          title: t('myCrops.addLandDialog.toast.error.title'),
           description: error,
         });
-        // Restore user input on error
         setInput(currentInput);
         setMessages(prev => prev.slice(0, -1));
 
@@ -174,3 +174,5 @@ export default function VoiceAssistantPage() {
     </SidebarInset>
   );
 }
+
+    

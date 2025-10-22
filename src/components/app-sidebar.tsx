@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -147,11 +148,11 @@ export function AppSidebar() {
             <Link href="/profile" onClick={handleLinkClick}>
                 <Button variant="ghost" className="flex w-full items-center justify-start gap-2 p-2">
                     <Avatar className="size-8">
-                    <AvatarFallback>{user.isAnonymous ? 'G' : user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{user.isAnonymous ? 'G' : user.displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start">
                         <span className="truncate text-sm font-medium">
-                        {user.isAnonymous ? 'Guest User' : 'My Account'}
+                        {user.isAnonymous ? t('sidebar.profile.guest') : user.displayName || t('sidebar.profile.myAccount')}
                         </span>
                          {!user.isAnonymous && <span className="truncate text-xs text-muted-foreground">{user.email}</span>}
                     </div>
@@ -159,10 +160,10 @@ export function AppSidebar() {
             </Link>
           </div>
         ) : (
-          <SidebarMenuButton asChild tooltip="Login" onClick={handleLinkClick}>
+          <SidebarMenuButton asChild tooltip={t('sidebar.profile.login')} onClick={handleLinkClick}>
             <Link href="/login">
               <LogIn />
-              <span>Login</span>
+              <span>{t('sidebar.profile.login')}</span>
             </Link>
           </SidebarMenuButton>
         )}

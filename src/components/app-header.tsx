@@ -87,7 +87,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/>
                     <Input 
-                        placeholder="Search crops, prices, suggestions..." 
+                        placeholder={t('app.header.search.placeholder')}
                         className="h-9 border-x-0 border-t-0 border-b-2 border-primary-foreground/20 bg-transparent text-primary-foreground placeholder:text-muted-foreground/80 focus-visible:ring-0 focus-visible:border-b-accent pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -111,7 +111,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                     <AvatarFallback className="bg-accent text-accent-foreground">
                       {user.isAnonymous
                         ? 'G'
-                        : user.email?.charAt(0).toUpperCase()}
+                        : user.displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -120,7 +120,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {user.isAnonymous ? 'Guest User' : 'My Account'}
+                      {user.isAnonymous ? t('sidebar.profile.guest') : user.displayName || t('sidebar.profile.myAccount')}
                     </p>
                     {!user.isAnonymous && (
                       <p className="text-xs leading-none text-muted-foreground">
@@ -133,12 +133,12 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
                 <Link href="/profile">
                   <DropdownMenuItem>
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <span>{t('sidebar.nav.profile')}</span>
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogIn className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>{t('profile.button.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -150,7 +150,7 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
             >
               <Link href="/login">
                 <LogIn className="mr-0 sm:mr-2" />
-                <span className="hidden sm:inline">Login</span>
+                <span className="hidden sm:inline">{t('sidebar.profile.login')}</span>
               </Link>
             </Button>
           )}
@@ -160,3 +160,5 @@ export function AppHeader({ titleKey }: AppHeaderProps) {
     </>
   );
 }
+
+    

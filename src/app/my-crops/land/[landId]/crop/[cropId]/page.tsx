@@ -72,15 +72,15 @@ export default function CropDetailsPage() {
         if (error) {
           toast({
             variant: 'destructive',
-            title: 'Error',
-            description: 'Could not fetch AI guidance for this crop.',
+            title: t('myCrops.guide.toast.error.title'),
+            description: t('myCrops.guide.toast.error.description'),
           });
         } else if (guidanceData) {
           await updateDoc(cropDocRef, { guidance: guidanceData });
         }
       });
     }
-  }, [crop, land, cropDocRef, isGuidanceLoading, toast]);
+  }, [crop, land, cropDocRef, isGuidanceLoading, toast, t]);
 
   const result: CropGuidanceOutput | null = crop?.guidance || null;
 
@@ -105,8 +105,8 @@ export default function CropDetailsPage() {
         console.error("Failed to update task status:", error);
         toast({
             variant: 'destructive',
-            title: 'Update Failed',
-            description: 'Could not save your changes. Please try again.',
+            title: t('myCrops.guide.toast.updateFailed.title'),
+            description: t('myCrops.guide.toast.updateFailed.description'),
         });
     }
   };
@@ -174,23 +174,23 @@ export default function CropDetailsPage() {
             <>
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="font-headline text-lg">Growth Progress</CardTitle>
+                        <CardTitle className="font-headline text-lg">{t('myCrops.cropDetails.growthProgress.title')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div className="rounded-lg bg-background p-3">
-                                <p className="text-sm text-muted-foreground">Days Passed</p>
+                                <p className="text-sm text-muted-foreground">{t('myCrops.cropDetails.growthProgress.daysPassed')}</p>
                                 <p className="text-2xl font-bold">{daysPassed}</p>
                             </div>
                             <div className="rounded-lg bg-background p-3">
-                                <p className="text-sm text-muted-foreground">Days Remaining (Current Stage)</p>
+                                <p className="text-sm text-muted-foreground">{t('myCrops.cropDetails.growthProgress.daysRemaining')}</p>
                                 <p className="text-2xl font-bold">{daysRemaining}</p>
                             </div>
                         </div>
                         <div>
                              <Progress value={progressPercentage} className="h-2" />
                              <p className="mt-2 text-center text-xs text-muted-foreground">
-                                {currentStageByTime?.title ?? 'Completed'} Stage Progress
+                                {t('myCrops.cropDetails.growthProgress.stageProgress', { stage: currentStageByTime?.title ?? t('myCrops.cropDetails.growthProgress.completed') })}
                             </p>
                         </div>
                     </CardContent>
@@ -239,7 +239,7 @@ export default function CropDetailsPage() {
                             <AccordionContent className="pl-10 text-muted-foreground space-y-2">
                                 <div className="flex items-center gap-2 text-xs">
                                     <Timer className="size-4"/>
-                                    <span>Typical Duration: {step.durationInDays} days</span>
+                                    <span>{t('myCrops.guide.task.duration', { days: step.durationInDays.toString() })}</span>
                                 </div>
                                 <p>{step.details}</p>
                             </AccordionContent>
@@ -254,7 +254,7 @@ export default function CropDetailsPage() {
             <Card>
                 <CardContent className="flex min-h-80 flex-col items-center justify-center space-y-4 text-center">
                     <Tractor className="size-12 text-muted-foreground"/>
-                    <p className="text-muted-foreground">Crop not found.</p>
+                    <p className="text-muted-foreground">{t('myCrops.cropDetails.notFound')}</p>
                 </CardContent>
             </Card>
         )}
@@ -262,3 +262,5 @@ export default function CropDetailsPage() {
     </SidebarInset>
   );
 }
+
+    

@@ -210,7 +210,7 @@ export default function MyCropsPage() {
                            <LandPlot className="size-8 text-primary" />
                            <div>
                                 <h3 className="font-headline font-semibold">{land.name}</h3>
-                                <p className="text-sm text-muted-foreground">{land.location || 'No location'}</p>
+                                <p className="text-sm text-muted-foreground">{land.location || t('myCrops.land.noLocation')}</p>
                            </div>
                         </div>
                         <ChevronRight className="size-5 text-muted-foreground" />
@@ -231,3 +231,5 @@ export default function MyCropsPage() {
     </SidebarInset>
   );
 }
+
+    

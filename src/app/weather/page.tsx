@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect, useTransition } from 'react';
 import { AppHeader } from '@/components/app-header';
@@ -51,7 +52,7 @@ export default function WeatherPage() {
       return (
         <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border-2 border-dashed p-8 text-center min-h-[50vh]">
           <Loader2 className="size-12 animate-spin text-primary" />
-          <p className="text-muted-foreground">Fetching weather for your location...</p>
+          <p className="text-muted-foreground">{t('weather.loading.title')}</p>
         </div>
       );
     }
@@ -60,8 +61,8 @@ export default function WeatherPage() {
        return (
         <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border-2 border-dashed p-8 text-center min-h-[50vh]">
           <MapPin className="size-12 text-muted-foreground" />
-          <p className="text-muted-foreground font-semibold">Could not access your location.</p>
-          <p className="text-sm text-muted-foreground">Please enable location services in your browser to get local weather.</p>
+          <p className="text-muted-foreground font-semibold">{t('weather.loading.error.title')}</p>
+          <p className="text-sm text-muted-foreground">{t('weather.loading.error.description')}</p>
         </div>
       );
     }
@@ -72,12 +73,12 @@ export default function WeatherPage() {
           <CardHeader>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div>
-                      <CardTitle className="font-headline">Current Weather</CardTitle>
-                      <CardDescription className="flex items-center gap-1"><MapPin className="size-4"/>{weatherData.locationName} &bull; {t(weatherData.current.seasonKey)}</CardDescription>
+                      <CardTitle className="font-headline">{t('weather.title')}</CardTitle>
+                      <CardDescription className="flex items-center gap-1"><MapPin className="size-4"/>{t('weather.location', {location: weatherData.locationName, season: t(weatherData.current.seasonKey)})}</CardDescription>
                   </div>
                    <div className="flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive">
                       <Zap className="size-4"/>
-                      <span>Cyclone Warning Issued</span>
+                      <span>{t('weather.cycloneWarning')}</span>
                    </div>
               </div>
           </CardHeader>
@@ -92,15 +93,15 @@ export default function WeatherPage() {
             <div className="flex flex-1 items-center justify-center">{getConditionIcon(weatherData.current.conditionCode, "size-16 text-yellow-500")}</div>
             <div className="grid grid-cols-1 sm:grid-cols-3 flex-1 gap-4 text-center w-full">
               <div>
-                <p className="text-sm text-muted-foreground">Humidity</p>
+                <p className="text-sm text-muted-foreground">{t('weather.humidity')}</p>
                 <p className="font-semibold">{weatherData.current.humidity}%</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Wind</p>
+                <p className="text-sm text-muted-foreground">{t('weather.wind')}</p>
                 <p className="font-semibold">{weatherData.current.windSpeed} km/h</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">UV Index</p>
+                <p className="text-sm text-muted-foreground">{t('weather.uvIndex')}</p>
                 <p className="font-semibold">{weatherData.current.uvIndex}</p>
               </div>
             </div>
@@ -111,23 +112,26 @@ export default function WeatherPage() {
           <CardHeader>
             <CardTitle className="font-headline flex items-center gap-2">
               <Lightbulb className="text-primary"/>
-              AI Weather Tip
+              {t('weather.aiTip.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-center min-h-16">
              {isAdvicePending ? (
-                  <Loader2 className="size-6 animate-spin text-primary"/>
+                  <div className="flex items-center gap-2 text-primary">
+                    <Loader2 className="size-6 animate-spin"/>
+                    <span>{t('weather.aiTip.loading')}</span>
+                  </div>
               ) : advice ? (
                   <p className="text-center text-primary-foreground/90">{advice.advice}</p>
               ) : (
-                  <p className="text-muted-foreground">Could not load AI advice.</p>
+                  <p className="text-muted-foreground">{t('weather.aiTip.error')}</p>
               )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">5-Day Forecast</CardTitle>
+            <CardTitle className="font-headline">{t('weather.forecast.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-4">
@@ -154,3 +158,5 @@ export default function WeatherPage() {
     </SidebarInset>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 'use client';
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
@@ -33,53 +34,45 @@ export default function AboutPage() {
                     </div>
                 )}
                 <div className="p-6">
-                    <CardTitle className="font-headline text-3xl">About KrishiBondhu AI</CardTitle>
-                    <CardDescription>Your AI-Powered Farming Assistant</CardDescription>
+                    <CardTitle className="font-headline text-3xl">{t('about.title')}</CardTitle>
+                    <CardDescription>{t('about.subtitle')}</CardDescription>
                 </div>
             </CardHeader>
             <CardContent className="space-y-6 text-muted-foreground text-center">
-                <p className="text-base">
-                    KrishiBondhu AI is more than an app — it is a friend of every Bangladeshi farmer, standing beside you in your fields, guiding your hands, and listening to your worries. We understand that farming is more than work — it’s a way of life, a connection to the soil, and the heartbeat of our villages.
-                </p>
+                <p className="text-base">{t('about.p1')}</p>
 
                 <div className="text-left space-y-4 rounded-lg border bg-background p-6">
-                    <h3 className="font-headline text-xl font-semibold text-center text-foreground">With KrishiBondhu AI, you are never alone in your fields:</h3>
+                    <h3 className="font-headline text-xl font-semibold text-center text-foreground">{t('about.featureSection.title')}</h3>
                     <ul className="space-y-3">
                         <li className="flex items-start gap-3">
                             <CheckCircle className="size-5 shrink-0 text-primary mt-1" />
-                            <span><span className="font-semibold text-foreground">Instantly diagnose crop diseases:</span> Take a photo of your crops, and instantly know what’s harming them and how to heal them.</span>
+                            <span><span className="font-semibold text-foreground">{t('about.feature1.title')}</span> {t('about.feature1.description')}</span>
                         </li>
                         <li className="flex items-start gap-3">
                             <CheckCircle className="size-5 shrink-0 text-primary mt-1" />
-                           <span><span className="font-semibold text-foreground">Speak in Bangla:</span> Speak naturally in Bangla to get advice — our AI listens and talks like a trusted companion.</span>
+                           <span><span className="font-semibold text-foreground">{t('about.feature2.title')}</span> {t('about.feature2.description')}</span>
                         </li>
                         <li className="flex items-start gap-3">
                             <CheckCircle className="size-5 shrink-0 text-primary mt-1" />
-                            <span><span className="font-semibold text-foreground">Get personalized guidance:</span> Receive guidance on weather, soil, planting, and harvesting — tailored just for your land.</span>
+                            <span><span className="font-semibold text-foreground">{t('about.feature3.title')}</span> {t('about.feature3.description')}</span>
                         </li>
                         <li className="flex items-start gap-3">
                             <CheckCircle className="size-5 shrink-0 text-primary mt-1" />
-                            <span><span className="font-semibold text-foreground">Learn best practices:</span> Learn simple techniques and best practices to grow healthy, thriving crops.</span>
+                            <span><span className="font-semibold text-foreground">{t('about.feature4.title')}</span> {t('about.feature4.description')}</span>
                         </li>
                          <li className="flex items-start gap-3">
                             <CheckCircle className="size-5 shrink-0 text-primary mt-1" />
-                            <span><span className="font-semibold text-foreground">Stay informed:</span> Stay informed about market prices, government schemes, and local support — so your hard work is rewarded.</span>
+                            <span><span className="font-semibold text-foreground">{t('about.feature5.title')}</span> {t('about.feature5.description')}</span>
                         </li>
                     </ul>
                 </div>
                 
-                <p className="text-base">
-                    We built KrishiBondhu AI because we believe in the power of the farmer’s hands. Every seed you plant, every field you nurture, is a story of hope, struggle, and resilience. Our AI is here to honor that story — to protect your crops, guide your decisions, and help your harvest shine.
-                </p>
-                 <p className="font-semibold text-foreground text-lg">
-                    KrishiBondhu AI is your companion, your guide, your friend.
-                </p>
-                <p className="text-base italic">
-                    We dream of a Bangladesh where every farmer feels supported, confident, and proud of the fruits of their labor — and we are here to make that dream real.
-                </p>
+                <p className="text-base">{t('about.p2')}</p>
+                 <p className="font-semibold text-foreground text-lg">{t('about.p3')}</p>
+                <p className="text-base italic">{t('about.p4')}</p>
             </CardContent>
              <CardFooter className="flex-col gap-2 justify-center text-center text-sm text-muted-foreground">
-                <p>Made by Abdullah Al Jubair prince</p>
+                <p>{t('about.footer.author')}</p>
                 <div className="flex items-center gap-4">
                   <a href="https://www.linkedin.com/in/aajubairprincee/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-muted-foreground transition-colors hover:text-primary">
                     <Linkedin className="size-5" />
@@ -94,3 +87,5 @@ export default function AboutPage() {
     </SidebarInset>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition, useEffect, useCallback } from 'react';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Search, Loader2, Wand2 } from 'lucide-react';
 import { universalSearch } from '@/lib/actions';
 import type { UniversalSearchOutput } from '@/ai/flows/universal-search-flow';
+import { useLanguage } from '@/context/language-context';
 
 type SearchDialogProps = {
   open: boolean;
@@ -16,6 +18,7 @@ type SearchDialogProps = {
 };
 
 export function SearchDialog({ open, onOpenChange, initialQuery = '', setInitialQuery }: SearchDialogProps) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState(initialQuery);
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<UniversalSearchOutput | null>(null);
@@ -65,13 +68,13 @@ export function SearchDialog({ open, onOpenChange, initialQuery = '', setInitial
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle>AI-Powered Search</DialogTitle>
-          <DialogDescription>Ask about crops, market prices, or farming techniques.</DialogDescription>
+          <DialogTitle>{t('searchDialog.title')}</DialogTitle>
+          <DialogDescription>{t('searchDialog.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={onFormSubmit}>
             <div className="relative">
                 <Input 
-                    placeholder="e.g., 'Market price for jute' or 'How to treat leaf blight?'"
+                    placeholder={t('searchDialog.placeholder')}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
@@ -84,12 +87,12 @@ export function SearchDialog({ open, onOpenChange, initialQuery = '', setInitial
             {isPending && (
                 <div className="flex flex-col items-center justify-center h-full text-primary">
                     <Loader2 className="size-8 animate-spin"/>
-                    <p className="mt-2 text-sm">AI is searching...</p>
+                    <p className="mt-2 text-sm">{t('searchDialog.loading')}</p>
                 </div>
             )}
             {error && (
                 <div className="flex flex-col items-center justify-center h-full text-destructive">
-                    <p>Sorry, something went wrong.</p>
+                    <p>{t('searchDialog.error.title')}</p>
                     <p className="text-xs">{error}</p>
                 </div>
             )}
@@ -107,7 +110,7 @@ export function SearchDialog({ open, onOpenChange, initialQuery = '', setInitial
             )}
             {!isPending && !result && !error && (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                    <p>Search results will appear here.</p>
+                    <p>{t('searchDialog.results.placeholder')}</p>
                 </div>
             )}
         </div>
@@ -115,3 +118,5 @@ export function SearchDialog({ open, onOpenChange, initialQuery = '', setInitial
     </Dialog>
   );
 }
+
+    
