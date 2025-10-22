@@ -3,12 +3,15 @@ import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { CheckCircle, Linkedin, Facebook } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 
 export default function AboutPage() {
-  const aboutImage = PlaceHolderImages.find(p => p.id === 'community-post-1');
+  const aboutImage = {
+      imageUrl: 'https://drive.google.com/uc?export=preview&id=1GqdKjAhHUx4ZVV-jYEs5DF32cQWMnUYg',
+      description: 'Farmers working in a field',
+      imageHint: 'farmers field'
+  };
   const { t } = useLanguage();
 
   return (
@@ -16,7 +19,7 @@ export default function AboutPage() {
       <AppHeader titleKey="app.header.title.about" />
       <main className="flex-1 p-4 md:p-6">
         <Card className="mx-auto max-w-4xl">
-            <CardHeader className="items-center text-center">
+            <CardHeader className="items-center text-center p-0">
                  {aboutImage && (
                     <div className="relative h-56 w-full rounded-t-lg overflow-hidden">
                         <Image
