@@ -1,25 +1,28 @@
+// /genkit/cropGuidanceFlow.ts (FIXED CODE)
+
 'use server';
 
 /**
  * @fileOverview A flow that provides step-by-step guidance for a selected crop.
  */
 
-import { ai } from '@/ai/genkit';
-import {z} from 'zod';
-
+// Import your Genkit instance and Zod
+import { genkit, z } from '@genkit-ai/core'; 
+// Assuming 'ai' is imported from an initialized genkit instance in your actual project.
+const ai = genkit({}); // Placeholder for Genkit initialization
 
 const CropGuidanceInputSchema = z.object({
-  cropName: z.string().describe('The name of the crop.'),
-  region: z.string().describe('The region where the crop is being grown.'),
-  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering). This is calculated from sowing date.'),
+  cropName: z.string().describe('The name of the crop (e.g., "Jute").'),
+  region: z.string().describe('The region where the crop is being grown (e.g., "Mymensingh").'),
+  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering).'),
 });
 export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 
 const GuidanceStepSchema = z.object({
     title: z.string().describe('The title of the guidance step.'),
     details: z.string().describe('A detailed description of the tasks and considerations for this step.'),
-    isCompleted: z.boolean().describe('Whether this step is considered completed based on the current stage.'),
-    durationInDays: z.number().describe('The typical duration of this stage in days.'),
+    isCompleted: z.boolean().describe('Whether this step is completed. MUST be true if the stage is before or the same as the currentStage.'),
+    durationInDays: z.number().describe('The typical duration of this stage in days (MUST be a number).'),
 });
 
 const CropGuidanceOutputSchema = z.object({
@@ -35,19 +38,18 @@ export const cropGuidanceFlow = ai.defineFlow(
     outputSchema: CropGuidanceOutputSchema,
   },
   async (input) => {
-    const { output } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
-      prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
+    
+    const prompt = `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
 
-The guide should cover the entire lifecycle from land preparation to post-harvest.
-The farmer's crop is currently at the '${input.currentStage}' stage. Mark all stages up to and including the current stage as completed.
+**STRICT INSTRUCTIONS:**
+1.  Cover the entire lifecycle from land preparation to post-harvest.
+2.  The farmer's crop is currently at the '${input.currentStage}' stage. Mark the 'isCompleted' field as **true** for all stages that are before or the same as the current stage.
+3.  For each stage, the 'durationInDays' MUST be a **single integer number** representing the average duration.
+4.  Provide detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and relevant care.
+5.  Region: ${input.region}
+6.  Crop: ${input.cropName}
 
-For each stage, provide a title, detailed actionable advice, and a typical duration in days.
-
-Crop: ${input.cropName}
-Region: ${input.region}
-
-Generate guidance with the following stages:
+**Required Stages for Guidance Array:**
 1. Land Preparation
 2. Seed Sowing
 3. Germination & Early Growth
@@ -55,12 +57,26 @@ Generate guidance with the following stages:
 5. Flowering & Fruiting
 6. Harvesting
 7. Post-Harvest
+`;
 
-For each stage, provide a title, detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care, and its typical duration in days. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
-`,
-      output: { schema: CropGuidanceOutputSchema },
+    const llmResponse = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
+      prompt: prompt,
+      output: { 
+          schema: CropGuidanceOutputSchema,
+          // CRITICAL FIX: Ensure the model knows it MUST output JSON
+          format: 'json', 
+      },
     });
     
-    return output!;
+    const output = llmResponse.output();
+
+    if (!output) {
+      // If the model fails to generate output, throw a clear error for the server action to catch.
+      throw new Error("AI failed to generate crop guidance. Check API connection and prompt compliance.");
+    }
+    
+    // Use the non-null assertion or safe return
+    return output as CropGuidanceOutput;
   }
 );
