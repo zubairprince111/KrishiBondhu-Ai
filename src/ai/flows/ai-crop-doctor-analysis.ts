@@ -16,7 +16,7 @@ const AiCropDoctorInputSchema = z
       .string()
       .optional()
       .describe(
-        "A photo of the diseased crop, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+        "A photo of the diseased crop, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'.",
       ),
     // Accept either a data URI or a public URL (mobile can upload first and give a URL)
     photoUrl: z
@@ -95,6 +95,13 @@ async function connectivityTest() {
   }
 }
 
+/**
+ * Helper to pause execution for a given number of milliseconds.
+ */
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const aiCropDoctorAnalysisFlow = ai.defineFlow(
   {
     name: 'aiCropDoctorAnalysisFlow',
@@ -120,7 +127,7 @@ export const aiCropDoctorAnalysisFlow = ai.defineFlow(
       if (info.byteLength > 5_000_000) {
         console.warn(
           `aiCropDoctorAnalysisFlow - large image detected (${(info.byteLength / 1_048_576).toFixed(2)} MB). ` +
-            'Large data URIs may fail to upload or cause timeouts. Consider uploading the image to a public URL and pass that instead (photoUrl).'
+            'Large data URIs may fail to upload or cause timeouts. Consider uploading the image to a public URL and pass that instead (photoUrl).',
         );
       }
     }
@@ -132,22 +139,26 @@ export const aiCropDoctorAnalysisFlow = ai.defineFlow(
       console.error(util.inspect(conn.error, { depth: 4 }));
       // Throw a safe, short message but log the details
       throw new Error(
-        'Failed to reach generative model during connectivity test. Check API key, network, model access, and server environment. See server logs for details.'
+        'Failed to reach generative model during connectivity test. Check API key, network, model access, and server environment. See server logs for details.',
       );
     }
 
-    try {
-      // Prefer photoUrl if provided (safer for mobile / large images)
-      const mediaRef = input.photoUrl ? input.photoUrl : `{{media url="${input.photoDataUri}"}}`;
+    const MAX_RETRIES = 3;
+    let lastError: any = null;
 
-      // If we have mime/size diagnostics, attach them to logs to assist debugging mobile issues
-      if (info) {
-        console.info('aiCropDoctorAnalysisFlow - incoming image info:', info);
-      } else if (input.photoUrl) {
-        console.info('aiCropDoctorAnalysisFlow - using photoUrl:', input.photoUrl);
-      }
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        // Prefer photoUrl if provided (safer for mobile / large images)
+        const mediaRef = input.photoUrl ? input.photoUrl : `{{media url="${input.photoDataUri}"}}`;
 
-      const prompt = `You are an expert agricultural advisor specializing in diagnosing crop diseases and providing solutions in Bangla.
+        // If we have mime/size diagnostics, attach them to logs to assist debugging mobile issues
+        if (info) {
+          console.info('aiCropDoctorAnalysisFlow - incoming image info:', info);
+        } else if (input.photoUrl) {
+          console.info('aiCropDoctorAnalysisFlow - using photoUrl:', input.photoUrl);
+        }
+
+        const prompt = `You are an expert agricultural advisor specializing in diagnosing crop diseases and providing solutions in Bangla.
 
 You will analyze the provided image of the diseased crop and provide a diagnosis and a list of at least 3 potential solutions in Bangla.
 
@@ -156,43 +167,59 @@ Crop Image: ${mediaRef}
 Respond entirely in the Bangla language.
 `;
 
-      const { output } = await ai.generate({
-        model: 'googleai/gemini-2.5-flash',
-        prompt,
-        temperature: 0.2,
-        maxOutputTokens: 1000,
-        // If your SDK supports a separate media/attachments param, use that instead of an inline media tag.
-        output: { schema: AiCropDoctorOutputSchema },
-      });
+        // --- Core AI Call ---
+        const { output } = await ai.generate({
+          model: 'googleai/gemini-2.5-flash',
+          prompt,
+          temperature: 0.2,
+          maxOutputTokens: 1000,
+          // If your SDK supports a separate media/attachments param, use that instead of an inline media tag.
+          output: { schema: AiCropDoctorOutputSchema },
+        });
+        // -------------------
 
-      if (!output) {
-        throw new Error('AI returned no output.');
+        if (!output) {
+          throw new Error('AI returned no output.');
+        }
+
+        // If successful, return the output and break the loop
+        return output as AiCropDoctorOutput;
+
+      } catch (err) {
+        lastError = err;
+        const providerSummary = summarizeProviderError(err);
+        const status = providerSummary.status;
+
+        // Check for transient errors (500, 503) that indicate server overload or temporary failure
+        if (attempt < MAX_RETRIES && (status === 503 || status === 500)) {
+          const delay = 1000 * Math.pow(2, attempt - 1); // 1s, 2s, 4s delay
+          console.warn(`Attempt ${attempt} failed with status ${status}. Retrying in ${delay / 1000}s...`);
+          await sleep(delay);
+          continue; // Go to the next iteration (retry)
+        }
+        
+        // For non-retryable errors (400, 401, 404, schema failure) or if max retries are reached, log and re-throw
+        console.error(`aiCropDoctorAnalysisFlow - error calling ai.generate after ${attempt} attempts:`);
+        try {
+          console.error('Error (util.inspect):', util.inspect(err, { depth: 6 }));
+        } catch {
+          console.error('Error (toString):', String(err));
+        }
+
+        // Provide a safe, structured error message that client code can decode for diagnostics.
+        const safeDiag = {
+          message: 'AI provider call failed. See server logs for full details.',
+          provider: providerSummary,
+          connectivityTestOk: true,
+          imageInfo: info ?? null,
+        };
+
+        // Throw a JSON-encoded message so the caller/API wrapper can parse it (don’t expose secrets).
+        throw new Error(JSON.stringify(safeDiag));
       }
-
-      return output;
-    } catch (err) {
-      console.error('aiCropDoctorAnalysisFlow - error calling ai.generate:');
-      try {
-        console.error('Error (util.inspect):', util.inspect(err, { depth: 6 }));
-      } catch {
-        console.error('Error (toString):', String(err));
-      }
-
-      if (err && (err as any).response) {
-        console.error('Error response:', util.inspect((err as any).response, { depth: 6 }));
-      }
-
-      // Provide a safe, structured error message that client code can decode for diagnostics.
-      const providerSummary = summarizeProviderError(err);
-      const safeDiag = {
-        message: 'AI provider call failed. See server logs for full details.',
-        provider: providerSummary,
-        connectivityTestOk: true,
-        imageInfo: info ?? null,
-      };
-
-      // Throw a JSON-encoded message so the caller/API wrapper can parse it (don’t expose secrets).
-      throw new Error(JSON.stringify(safeDiag));
     }
-  }
+    
+    // Fallback in case of unexpected loop exit (shouldn't happen with the final throw inside the catch)
+    throw new Error('Analysis failed after maximum retries.');
+  },
 );
