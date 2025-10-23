@@ -4,17 +4,16 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 /**
- * Changes in this mobile-first variant:
- * - Input: optional mobilePreferred boolean to ask for a "best-effort" fallback when Google/search pages are not available.
- * - Output: added `verified` boolean to indicate whether returned data is verified (from fetched pages) or unverified (best-effort).
- * - If mobilePreferred=true and strict Gemini returns null, a second "best-effort" Gemini pass is performed and returned as unverified.
- * - DEBUG_KOFLOW logic retained.
+ * Simplified Gemini-only variant:
+ * - No Google CSE or fetchHtml usage.
+ * - Calls Gemini strict extraction first (internal knowledge only).
+ * - If strict yields nothing and mobilePreferred=true, calls best-effort Gemini.
+ * - Marks verified=true only if Gemini returned a non-null sourceUrl (authoritative).
  */
 
 const KrishiOfficerFinderInputSchema = z.object({
   zila: z.string().describe('The Zila (District) in Bangladesh.'),
   upazila: z.string().describe('The Upazila (Sub-district) in Bangladesh.'),
-  // New optional flag - set true from mobile client to prefer a best-effort response if precise extraction yields nothing.
   mobilePreferred: z.boolean().optional().describe('If true, allow a best-effort (unverified) fallback from Gemini when strict extraction fails.'),
 });
 export type KrishiOfficerFinderInput = z.infer<typeof KrishiOfficerFinderInputSchema>;
@@ -25,83 +24,15 @@ const KrishiOfficerFinderOutputSchema = z.object({
   contactNumber: z.string().nullable().describe('A phone number found on authoritative pages, if any.'),
   officeAddress: z.string().nullable().describe('The address of the Upazila Agriculture Office, if found.'),
   sourceUrl: z.string().nullable().describe('The source URL from which the information was extracted.'),
-  // New field to indicate whether the returned values are verified (from fetched authoritative pages) or unverified (best-effort)
-  verified: z.boolean().describe('true if the result is verified from fetched pages / Google CSE; false for best-effort/unverified results'),
+  verified: z.boolean().describe('true if the result is verified from an authoritative sourceUrl reported by Gemini; false otherwise'),
 });
 export type KrishiOfficerFinderOutput = z.infer<typeof KrishiOfficerFinderOutputSchema>;
 
-/* ------------------ Configuration / Env ------------------ */
+/* ------------------ Config ------------------ */
 
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID;
 const DEBUG = process.env.DEBUG_KOFLOW === '1';
 
-const MAX_SEARCH_RESULTS = 6;
-const MAX_SNIPPET_CHARS = 30_000;
-
-/* ------------------ Helpers ------------------ */
-
-function normalize(s?: string) {
-  return (s ?? '').trim().toLowerCase();
-}
-
-async function googleCustomSearch(query: string, count = 6) {
-  if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    return { items: [] };
-  }
-  const url = new URL('https://www.googleapis.com/customsearch/v1');
-  url.searchParams.set('key', GOOGLE_API_KEY);
-  url.searchParams.set('cx', GOOGLE_CSE_ID);
-  url.searchParams.set('q', query);
-  url.searchParams.set('num', String(Math.min(count, 10)));
-  const res = await fetch(url.toString());
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Google Custom Search failed: ${res.status} ${res.statusText} ${text}`);
-  }
-  return res.json();
-}
-
-async function fetchHtml(url: string) {
-  try {
-    const res = await fetch(url, { method: 'GET' });
-    if (!res.ok) return null;
-    return await res.text();
-  } catch (err) {
-    return null;
-  }
-}
-
-function stripHtml(html: string) {
-  return html
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<\/?[^>]+(>|$)/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function makeSnippet(text: string, zila: string, upazila: string) {
-  const lc = text.toLowerCase();
-  const keywords = ['upazila agriculture', 'upazila agriculture officer', 'upazila agriculture office', 'contact', 'telephone', 'tel', 'phone', 'office'];
-  let bestIdx = -1;
-  for (const kw of keywords) {
-    bestIdx = lc.indexOf(kw);
-    if (bestIdx >= 0) break;
-  }
-  if (bestIdx < 0) {
-    bestIdx = lc.indexOf(upazila.toLowerCase());
-    if (bestIdx < 0) bestIdx = lc.indexOf(zila.toLowerCase());
-  }
-  if (bestIdx < 0) {
-    return text.slice(0, 2000);
-  }
-  const start = Math.max(0, bestIdx - 800);
-  const end = Math.min(text.length, bestIdx + 2000);
-  return text.slice(start, end);
-}
-
-/* ------------------ Gemini-only fallback (strict and best-effort) ------------------ */
+/* ------------------ Gemini calls ------------------ */
 
 async function geminiDirectLookupStrict(zila: string, upazila: string) {
   const instruction = `
@@ -132,18 +63,22 @@ Upazila="${upazila}"
 Now produce the single JSON object.
 `.trim();
 
-  const { output } = await ai.generate({
-    model: 'googleai/gemini-2.5-flash',
-    prompt: instruction,
-    output: { schema: KrishiOfficerFinderOutputSchema.omit({ verified: true }) }, // schema without verified for this internal call
-    params: { temperature: 0.0, maxOutputTokens: 800 },
-  });
-
-  return output ?? null;
+  try {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
+      prompt: instruction,
+      output: { schema: KrishiOfficerFinderOutputSchema.omit({ verified: true }) },
+      params: { temperature: 0.0, maxOutputTokens: 800 },
+    });
+    if (DEBUG) console.debug('[krishi-officer-finder] geminiDirectLookupStrict output', output);
+    return output ?? null;
+  } catch (err: any) {
+    if (DEBUG) console.debug('[krishi-officer-finder] geminiDirectLookupStrict error', err?.message || err);
+    return null;
+  }
 }
 
 async function geminiBestEffortLookup(zila: string, upazila: string) {
-  // Relaxed: allow best-effort answers, but require the model to mark whether it's confident.
   const instruction = `
 You are an extraction assistant. The user asked for contact information for the Upazila Agriculture Office.
 This is a BEST-EFFORT extraction. You may use your knowledge and inference to provide likely values, but be explicit about confidence.
@@ -171,18 +106,21 @@ Upazila="${upazila}"
 Now produce the single JSON object.
 `.trim();
 
-  const { output } = await ai.generate({
-    model: 'googleai/gemini-2.5-flash',
-    prompt: instruction,
-    // We cannot validate the extended schema with the same Zod object, so request raw output and parse defensively.
-    params: { temperature: 0.2, maxOutputTokens: 800 },
-  });
-
-  // The ai wrapper may return parsed output or raw text depending on integration; handle both.
-  return (output as any) ?? null;
+  try {
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
+      prompt: instruction,
+      params: { temperature: 0.2, maxOutputTokens: 800 },
+    });
+    if (DEBUG) console.debug('[krishi-officer-finder] geminiBestEffortLookup output', output);
+    return (output as any) ?? null;
+  } catch (err: any) {
+    if (DEBUG) console.debug('[krishi-officer-finder] geminiBestEffortLookup error', err?.message || err);
+    return null;
+  }
 }
 
-/* ------------------ Flow Implementation ------------------ */
+/* ------------------ Flow ------------------ */
 
 function notFoundResponse(diagnostic?: Record<string, any>): KrishiOfficerFinderOutput {
   if (DEBUG && diagnostic) {
@@ -217,213 +155,48 @@ export const krishiOfficerFinderFlow = ai.defineFlow(
     const zila = input.zila.trim();
     const mobilePreferred = !!input.mobilePreferred;
 
-    const query = `${upazila} Upazila Agriculture Office contact ${zila} Bangladesh site:gov.bd OR site:dae.gov.bd OR site:extension.gov.bd OR "Upazila Agriculture Officer"`;
-
     if (DEBUG) {
-      console.debug('[krishi-officer-finder] DEBUG enabled');
+      console.debug('[krishi-officer-finder] DEBUG enabled - Gemini-only flow');
       console.debug('[krishi-officer-finder] mobilePreferred?', mobilePreferred);
-      console.debug('[krishi-officer-finder] GOOGLE_API_KEY present?', !!GOOGLE_API_KEY);
-      console.debug('[krishi-officer-finder] GOOGLE_CSE_ID present?', !!GOOGLE_CSE_ID);
-      console.debug('[krishi-officer-finder] Query:', query);
     }
 
-    let searchJson: any = { items: [] };
-    try {
-      searchJson = await googleCustomSearch(query, MAX_SEARCH_RESULTS);
-      if (DEBUG) console.debug('[krishi-officer-finder] searchJson items length:', Array.isArray(searchJson.items) ? searchJson.items.length : 0);
-    } catch (err) {
-      console.warn('Google Custom Search error:', (err as Error).message);
-      searchJson = { items: [] };
-    }
-
-    const items = Array.isArray(searchJson.items) ? searchJson.items : [];
-
-    // Helper to format a verified output with verified=true
-    function verifiedWrap(obj: any): KrishiOfficerFinderOutput {
+    // 1) Strict Gemini (internal knowledge only)
+    const geminiStrict = await geminiDirectLookupStrict(zila, upazila);
+    if (geminiStrict && Object.values(geminiStrict).some((v) => v !== null)) {
+      // If Gemini provided a sourceUrl, treat as verified; otherwise treat as unverified.
+      const isVerified = typeof geminiStrict.sourceUrl === 'string' && geminiStrict.sourceUrl.length > 0;
       return {
-        name: obj.name ?? null,
-        designation: obj.designation ?? null,
-        contactNumber: obj.contactNumber ?? null,
-        officeAddress: obj.officeAddress ?? null,
-        sourceUrl: obj.sourceUrl ?? null,
-        verified: true,
+        name: geminiStrict.name ?? null,
+        designation: geminiStrict.designation ?? null,
+        contactNumber: geminiStrict.contactNumber ?? null,
+        officeAddress: geminiStrict.officeAddress ?? null,
+        sourceUrl: geminiStrict.sourceUrl ?? null,
+        verified: !!isVerified,
       };
     }
 
-    if (items.length === 0) {
-      // No discovered pages -> strict Gemini-only lookup first.
-      if (DEBUG) console.debug('[krishi-officer-finder] No search items - trying strict Gemini');
-
-      const geminiStrict = await geminiDirectLookupStrict(zila, upazila);
-      if (geminiStrict && Object.values(geminiStrict).some((v) => v !== null)) {
-        return verifiedWrap(geminiStrict);
-      }
-
-      // If mobilePreferred, attempt a best-effort pass
-      if (mobilePreferred) {
-        if (DEBUG) console.debug('[krishi-officer-finder] strict returned nulls - trying best-effort for mobile');
-        const best = await geminiBestEffortLookup(zila, upazila);
-        if (best) {
-          // Normalize best-effort response into our schema; mark verified=false
-          const result = {
-            name: best.name ?? null,
-            designation: best.designation ?? null,
-            contactNumber: best.contactNumber ?? null,
-            officeAddress: best.officeAddress ?? null,
-            sourceUrl: best.sourceUrl ?? null,
-            verified: false,
-          };
-          // Attach confidence note into sourceUrl if no sourceUrl provided (compact)
-          if (!result.sourceUrl && (best as any).confidenceNote) {
-            result.sourceUrl = `UNVERIFIED_NOTE:${String((best as any).confidenceNote).slice(0, 400)}`;
-          }
-          return result;
+    // 2) If strict returned nothing and mobilePreferred requested, try best-effort
+    if (mobilePreferred) {
+      const best = await geminiBestEffortLookup(zila, upazila);
+      if (best) {
+        const result = {
+          name: best.name ?? null,
+          designation: best.designation ?? null,
+          contactNumber: best.contactNumber ?? null,
+          officeAddress: best.officeAddress ?? null,
+          sourceUrl: best.sourceUrl ?? null,
+          verified: false,
+        };
+        // If model gave a confidenceNote but no sourceUrl, embed short note
+        if (!result.sourceUrl && (best as any).confidenceNote) {
+          result.sourceUrl = `UNVERIFIED_NOTE:${String((best as any).confidenceNote).slice(0, 400)}`;
         }
-        return notFoundResponse({ googleAvailable: !!GOOGLE_API_KEY && !!GOOGLE_CSE_ID, itemsCount: items.length, reason: 'gemini_best_effort_no_output' });
+        return result;
       }
-
-      // Not mobilePreferred -> return not found / strict nulls
-      return notFoundResponse({ googleAvailable: !!GOOGLE_API_KEY && !!GOOGLE_CSE_ID, itemsCount: items.length, reason: 'strict_no_output' });
+      return notFoundResponse({ reason: 'gemini_best_effort_no_output' });
     }
 
-    // If we have search items, fetch top candidate pages and prepare snippets for Gemini to analyze.
-    const candidates: Array<{ url: string; title?: string; snippet: string }> = [];
-    for (let i = 0; i < Math.min(items.length, MAX_SEARCH_RESULTS); i++) {
-      const it = items[i];
-      if (!it?.link) continue;
-      const html = await fetchHtml(it.link);
-      if (!html) continue;
-      const text = stripHtml(html);
-      const snippet = makeSnippet(text, zila, upazila);
-      candidates.push({ url: it.link, title: it.title, snippet });
-    }
-
-    if (DEBUG) console.debug('[krishi-officer-finder] candidates length:', candidates.length);
-
-    if (candidates.length === 0) {
-      // If we couldn't fetch any candidate pages, behave like above.
-      if (DEBUG) console.debug('[krishi-officer-finder] No candidates fetched - falling back');
-
-      const geminiStrict = await geminiDirectLookupStrict(zila, upazila);
-      if (geminiStrict && Object.values(geminiStrict).some((v) => v !== null)) {
-        return verifiedWrap(geminiStrict);
-      }
-
-      if (mobilePreferred) {
-        const best = await geminiBestEffortLookup(zila, upazila);
-        if (best) {
-          const result = {
-            name: best.name ?? null,
-            designation: best.designation ?? null,
-            contactNumber: best.contactNumber ?? null,
-            officeAddress: best.officeAddress ?? null,
-            sourceUrl: best.sourceUrl ?? null,
-            verified: false,
-          };
-          if (!result.sourceUrl && (best as any).confidenceNote) {
-            result.sourceUrl = `UNVERIFIED_NOTE:${String((best as any).confidenceNote).slice(0, 400)}`;
-          }
-          return result;
-        }
-        return notFoundResponse({ googleAvailable: !!GOOGLE_API_KEY && !!GOOGLE_CSE_ID, itemsCount: items.length, candidatesCount: candidates.length, reason: 'no_candidates_and_best_effort_failed' });
-      }
-
-      return notFoundResponse({ googleAvailable: !!GOOGLE_API_KEY && !!GOOGLE_CSE_ID, itemsCount: items.length, candidatesCount: candidates.length, reason: 'no_candidates_strict_only' });
-    }
-
-    const combinedSnippets = candidates
-      .map((c, idx) => `---PAGE ${idx + 1} - URL: ${c.url}\n${c.snippet}`)
-      .join('\n\n')
-      .slice(0, MAX_SNIPPET_CHARS);
-
-    const instruction = `
-You are an extraction assistant. You will be given snippets (plain text, already stripped of HTML) from multiple web pages that may contain contact information for the Upazila Agriculture Office.
-
-Important rules (must follow exactly):
-1) DO NOT INVENT OR GUESS. Only extract values that are explicitly present in the provided snippets.
-2) If a field is not present in any snippet, set that field to null.
-3) Always provide a single JSON object and NOTHING ELSE (no commentary, no explanation).
-4) The JSON must follow this schema exactly:
-{
-  "name": string|null,
-  "designation": string|null,
-  "contactNumber": string|null,
-  "officeAddress": string|null,
-  "sourceUrl": string|null
-}
-
-Now, using the provided PAGE snippets below, find the best values for these fields. If different pages provide different fields, choose the page that offers the most complete combination and set sourceUrl accordingly.
-
-Begin. Produce ONLY the JSON object.
-`;
-
-    const prompt = `${instruction}\n\nCONTEXT: Zila="${zila}", Upazila="${upazila}"\n\n${combinedSnippets}`;
-
-    if (DEBUG) console.debug('[krishi-officer-finder] Sending prompt to Gemini, combinedSnippets length:', combinedSnippets.length);
-
-    const { output } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
-      prompt,
-      output: { schema: KrishiOfficerFinderOutputSchema.omit({ verified: true }) },
-      params: { temperature: 0.0, maxOutputTokens: 800 },
-    });
-
-    if (!output) {
-      // If mobilePreferred, attempt best-effort even when snippets failed to produce strict JSON.
-      if (mobilePreferred) {
-        if (DEBUG) console.debug('[krishi-officer-finder] strict snippet extraction yielded no output - trying best-effort');
-        const best = await geminiBestEffortLookup(zila, upazila);
-        if (best) {
-          const result = {
-            name: best.name ?? null,
-            designation: best.designation ?? null,
-            contactNumber: best.contactNumber ?? null,
-            officeAddress: best.officeAddress ?? null,
-            sourceUrl: best.sourceUrl ?? null,
-            verified: false,
-          };
-          if (!result.sourceUrl && (best as any).confidenceNote) {
-            result.sourceUrl = `UNVERIFIED_NOTE:${String((best as any).confidenceNote).slice(0, 400)}`;
-          }
-          return result;
-        }
-      }
-
-      return notFoundResponse({ googleAvailable: !!GOOGLE_API_KEY && !!GOOGLE_CSE_ID, itemsCount: items.length, candidatesCount: candidates.length, reason: 'gemini_no_output_after_snippets' });
-    }
-
-    // If Gemini returned all nulls and mobilePreferred is true, try a best-effort pass
-    if (Object.values(output).every((v) => v === null)) {
-      if (mobilePreferred) {
-        if (DEBUG) console.debug('[krishi-officer-finder] gemini returned all nulls - trying best-effort for mobile');
-        const best = await geminiBestEffortLookup(zila, upazila);
-        if (best) {
-          const result = {
-            name: best.name ?? null,
-            designation: best.designation ?? null,
-            contactNumber: best.contactNumber ?? null,
-            officeAddress: best.officeAddress ?? null,
-            sourceUrl: best.sourceUrl ?? null,
-            verified: false,
-          };
-          if (!result.sourceUrl && (best as any).confidenceNote) {
-            result.sourceUrl = `UNVERIFIED_NOTE:${String((best as any).confidenceNote).slice(0, 400)}`;
-          }
-          return result;
-        }
-      }
-
-      return notFoundResponse({ googleAvailable: !!GOOGLE_API_KEY && !!GOOGLE_CSE_ID, itemsCount: items.length, candidatesCount: candidates.length, geminiOutput: output });
-    }
-
-    // Normal verified output
-    return {
-      name: output.name ?? null,
-      designation: output.designation ?? null,
-      contactNumber: output.contactNumber ?? null,
-      officeAddress: output.officeAddress ?? null,
-      sourceUrl: output.sourceUrl ?? null,
-      verified: true,
-    };
+    // 3) Not mobilePreferred and strict returned nothing
+    return notFoundResponse({ reason: 'strict_no_output' });
   }
 );
