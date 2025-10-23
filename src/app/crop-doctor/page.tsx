@@ -4,7 +4,7 @@ import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarInset } from '@/components/ui/sidebar';
-import { Upload, Wand2, Loader2 } from 'lucide-react';
+import { Upload, Wand2, Loader2, AlertTriangle } from 'lucide-react'; // Import AlertTriangle
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 import { useState, useTransition, useRef } from 'react';
@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { analyzeCropImage } from '@/lib/actions';
 import type { AiCropDoctorOutput } from '@/ai/schemas';
 
-// 1. Define the size limit (1MB in bytes)
+// Define the size limit (1MB in bytes)
 const MAX_FILE_SIZE_BYTES = 1024 * 1024; // 1 MB
 
 export default function CropDoctorPage() {
@@ -24,25 +24,30 @@ export default function CropDoctorPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(defaultImage?.imageUrl || null);
   const [imageData, setImageData] = useState<string | null>(null);
   const [result, setResult] = useState<AiCropDoctorOutput | null>(null);
+  const [fileSizeError, setFileSizeError] = useState(false); // State to manage the visual warning
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    setFileSizeError(false); // Reset error on new file selection
+
     if (file) {
-      // 2. Add file size validation
+      // Add file size validation
       if (file.size > MAX_FILE_SIZE_BYTES) {
         toast({
           variant: 'destructive',
-          // Use a translatable key for the title
           title: t('cropDoctor.toast.fileSize.title'), 
-          // Use a translatable key for the description
           description: t('cropDoctor.toast.fileSize.description'), 
         });
+        setFileSizeError(true); // Set error state to true for the visual warning
+
         // Clear the file input so the user can try again
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
+        setImagePreview(null); // Clear preview for large file
+        setImageData(null); // Clear data for large file
         return; 
       }
 
@@ -91,10 +96,6 @@ export default function CropDoctorPage() {
               <CardTitle className="font-headline">{t('cropDoctor.upload.title')}</CardTitle>
               <CardDescription>
                 {t('cropDoctor.upload.description')}
-                {/* Add a translatable note about file size under the description */}
-                <p className="text-sm font-medium text-amber-600 dark:text-amber-400 mt-1">
-                  {t('cropDoctor.upload.sizeWarning')} 
-                </p>
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -120,10 +121,21 @@ export default function CropDoctorPage() {
                   <Upload className="mr-2" />
                   {t('cropDoctor.upload.button')}
                 </Button>
+                
+                {/* New: Red Warning Below Image/Button 
+                */}
+                <div className={`mt-4 flex items-center justify-center gap-2 p-2 rounded-md ${fileSizeError ? 'text-destructive font-semibold bg-destructive/10 border border-destructive/50' : 'text-amber-600 dark:text-amber-400 font-medium'}`}>
+                    <AlertTriangle className="size-5 shrink-0" />
+                    <span className="text-sm">
+                        {t('Upload picture under 1MB')}
+                    </span>
+                </div>
+                {/* End New Warning */}
               </div>
             </CardContent>
           </Card>
 
+          {/* ... Analysis Card remains unchanged ... */}
           <Card className="bg-primary/5">
             <CardHeader>
               <CardTitle className="font-headline flex items-center gap-2">
