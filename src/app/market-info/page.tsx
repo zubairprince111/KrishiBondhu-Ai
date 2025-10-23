@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useTransition, useState, useEffect } from 'react';
@@ -53,7 +52,8 @@ export default function MarketInfoPage() {
                 setMarketPrices(data.prices);
             }
         });
-    }, [toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
 
     function onSchemesSubmit(values: z.infer<typeof schemesFormSchema>) {
@@ -73,7 +73,7 @@ export default function MarketInfoPage() {
     <SidebarInset>
       <AppHeader titleKey="app.header.title.marketInfo" />
       <main className="flex-1 p-4 md:p-6">
-        <Tabs defaultValue="schemes">
+        <Tabs defaultValue="prices">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="schemes"><ReceiptText className="mr-2"/>{t('marketInfo.tabs.schemes')}</TabsTrigger>
             <TabsTrigger value="prices"><Tag className="mr-2"/>{t('marketInfo.tabs.prices')}</TabsTrigger>
@@ -203,5 +203,3 @@ export default function MarketInfoPage() {
     </SidebarInset>
   );
 }
-
-    
