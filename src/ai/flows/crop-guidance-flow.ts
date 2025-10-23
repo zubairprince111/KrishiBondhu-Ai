@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -6,20 +5,21 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import {z} from 'zod';
+
 
 const CropGuidanceInputSchema = z.object({
-  cropName: z.string().describe('The name of the crop (e.g., "Jute").'),
-  region: z.string().describe('The region where the crop is being grown (e.g., "Mymensingh").'),
-  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering).'),
+  cropName: z.string().describe('The name of the crop.'),
+  region: z.string().describe('The region where the crop is being grown.'),
+  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering). This is calculated from sowing date.'),
 });
 export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 
 const GuidanceStepSchema = z.object({
     title: z.string().describe('The title of the guidance step.'),
     details: z.string().describe('A detailed description of the tasks and considerations for this step.'),
-    isCompleted: z.boolean().describe('Whether this step is completed. MUST be true if the stage is before or the same as the currentStage.'),
-    durationInDays: z.number().describe('The typical duration of this stage in days (MUST be a number).'),
+    isCompleted: z.boolean().describe('Whether this step is considered completed based on the current stage.'),
+    durationInDays: z.number().describe('The typical duration of this stage in days.'),
 });
 
 const CropGuidanceOutputSchema = z.object({
@@ -28,25 +28,26 @@ const CropGuidanceOutputSchema = z.object({
 export type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
 
 
-const internalFlow = ai.defineFlow(
+export const cropGuidanceFlow = ai.defineFlow(
   {
     name: 'cropGuidanceFlow',
     inputSchema: CropGuidanceInputSchema,
     outputSchema: CropGuidanceOutputSchema,
   },
   async (input) => {
-    
-    const prompt = `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
+      prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
 
-**STRICT INSTRUCTIONS:**
-1.  Cover the entire lifecycle from land preparation to post-harvest.
-2.  The farmer's crop is currently at the '${input.currentStage}' stage. Mark the 'isCompleted' field as **true** for all stages that are before or the same as the current stage.
-3.  For each stage, the 'durationInDays' MUST be a **single integer number** representing the average duration.
-4.  Provide detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and relevant care.
-5.  Region: ${input.region}
-6.  Crop: ${input.cropName}
+The guide should cover the entire lifecycle from land preparation to post-harvest.
+The farmer's crop is currently at the '${input.currentStage}' stage. Mark all stages up to and including the current stage as completed.
 
-**Required Stages for Guidance Array:**
+For each stage, provide a title, detailed actionable advice, and a typical duration in days.
+
+Crop: ${input.cropName}
+Region: ${input.region}
+
+Generate guidance with the following stages:
 1. Land Preparation
 2. Seed Sowing
 3. Germination & Early Growth
@@ -54,26 +55,12 @@ const internalFlow = ai.defineFlow(
 5. Flowering & Fruiting
 6. Harvesting
 7. Post-Harvest
-`;
 
-    const { output } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
-      prompt: prompt,
-      output: { 
-          schema: CropGuidanceOutputSchema,
-          format: 'json', 
-      },
+For each stage, provide a title, detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care, and its typical duration in days. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
+`,
+      output: { schema: CropGuidanceOutputSchema },
     });
-
-    if (!output) {
-      // If the model fails to generate output, throw a clear error for the server action to catch.
-      throw new Error("AI failed to generate crop guidance. Check API connection and prompt compliance.");
-    }
     
-    return output;
+    return output!;
   }
 );
-
-export async function cropGuidanceFlow(input: CropGuidanceInput): Promise<CropGuidanceOutput> {
-    return await internalFlow(input);
-}
