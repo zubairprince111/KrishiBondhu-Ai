@@ -1,15 +1,11 @@
-// /genkit/cropGuidanceFlow.ts (FIXED CODE)
-
 'use server';
 
 /**
  * @fileOverview A flow that provides step-by-step guidance for a selected crop.
  */
 
-// Import your Genkit instance and Zod
-import { genkit, z } from '@genkit-ai/core'; 
-// Assuming 'ai' is imported from an initialized genkit instance in your actual project.
-const ai = genkit({}); // Placeholder for Genkit initialization
+import { ai } from '@/ai/genkit';
+import { z } from 'zod';
 
 const CropGuidanceInputSchema = z.object({
   cropName: z.string().describe('The name of the crop (e.g., "Jute").'),
@@ -31,7 +27,7 @@ const CropGuidanceOutputSchema = z.object({
 export type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
 
 
-export const cropGuidanceFlow = ai.defineFlow(
+const internalFlow = ai.defineFlow(
   {
     name: 'cropGuidanceFlow',
     inputSchema: CropGuidanceInputSchema,
@@ -59,24 +55,24 @@ export const cropGuidanceFlow = ai.defineFlow(
 7. Post-Harvest
 `;
 
-    const llmResponse = await ai.generate({
+    const { output } = await ai.generate({
       model: 'googleai/gemini-2.5-flash',
       prompt: prompt,
       output: { 
           schema: CropGuidanceOutputSchema,
-          // CRITICAL FIX: Ensure the model knows it MUST output JSON
           format: 'json', 
       },
     });
-    
-    const output = llmResponse.output();
 
     if (!output) {
       // If the model fails to generate output, throw a clear error for the server action to catch.
       throw new Error("AI failed to generate crop guidance. Check API connection and prompt compliance.");
     }
     
-    // Use the non-null assertion or safe return
-    return output as CropGuidanceOutput;
+    return output;
   }
 );
+
+export async function cropGuidanceFlow(input: CropGuidanceInput): Promise<CropGuidanceOutput> {
+    return await internalFlow(input);
+}
