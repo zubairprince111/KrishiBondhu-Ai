@@ -1,4 +1,3 @@
-
 'use client';
 import Image from 'next/image';
 import { AppHeader } from '@/components/app-header';
@@ -12,6 +11,9 @@ import { useState, useTransition, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { analyzeCropImage } from '@/lib/actions';
 import type { AiCropDoctorOutput } from '@/ai/schemas';
+
+// 1. Define the size limit (1MB in bytes)
+const MAX_FILE_SIZE_BYTES = 1024 * 1024; // 1 MB
 
 export default function CropDoctorPage() {
   const defaultImage = PlaceHolderImages.find(p => p.id === 'crop-disease');
@@ -28,6 +30,22 @@ export default function CropDoctorPage() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // 2. Add file size validation
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        toast({
+          variant: 'destructive',
+          // Use a translatable key for the title
+          title: t('cropDoctor.toast.fileSize.title'), 
+          // Use a translatable key for the description
+          description: t('cropDoctor.toast.fileSize.description'), 
+        });
+        // Clear the file input so the user can try again
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return; 
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUri = reader.result as string;
@@ -73,6 +91,10 @@ export default function CropDoctorPage() {
               <CardTitle className="font-headline">{t('cropDoctor.upload.title')}</CardTitle>
               <CardDescription>
                 {t('cropDoctor.upload.description')}
+                {/* Add a translatable note about file size under the description */}
+                <p className="text-sm font-medium text-amber-600 dark:text-amber-400 mt-1">
+                  {t('cropDoctor.upload.sizeWarning')} 
+                </p>
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -157,5 +179,3 @@ export default function CropDoctorPage() {
     </SidebarInset>
   );
 }
-
-    
