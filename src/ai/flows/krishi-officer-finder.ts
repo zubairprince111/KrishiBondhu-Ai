@@ -3,23 +3,20 @@
 /**
  * Krishi Officer Finder (Gemini-assisted extractor)
  *
- * Flow overview:
- * 1. Use Google Custom Search JSON API (programmable search) to find candidate pages for the given Zila/Upazila.
- *    - Requires GOOGLE_API_KEY and GOOGLE_CSE_ID environment variables.
- * 2. Fetch the top candidate pages and produce short, relevant snippets (HTML stripped).
- * 3. Send the collected snippets to the Google Gemini model via the repository `ai.generate` wrapper
- *    with a strict instruction: extract only values that are present in the snippets, do NOT invent anything,
- *    and return the structured JSON matching the Zod schema below.
+ * This variant supports two modes:
+ * 1) If GOOGLE_API_KEY and GOOGLE_CSE_ID are present, it uses Google Custom Search
+ *    to discover candidate pages and then asks Gemini to extract structured data
+ *    from the fetched snippets (preferred, most accurate).
+ * 2) If GOOGLE_* are NOT present (your deployment only has GEMINI_API_KEY),
+ *    it will *skip* Google Custom Search and ask Gemini directly to provide the
+ *    structured JSON based on its knowledge. This is less reliable (may be out
+ *    of date or incomplete) but will avoid runtime errors when GOOGLE_* envs
+ *    are absent. The prompt instructs Gemini to NOT INVENT data and to return
+ *    null for any unknown field.
  *
- * Notes:
- * - This design uses Gemini as an extraction/parser step (not as a primary data source). The flow still
- *   discovers pages via Google's search API (so we get real pages) and asks Gemini to reliably parse
- *   and consolidate the information present on those pages, with explicit instructions not to hallucinate.
- * - Environment variables required:
- *     GOOGLE_API_KEY  - for Programmable Search (Custom Search JSON API) and/or to call Google generative API if used that way
- *     GOOGLE_CSE_ID   - Custom Search Engine identifier (programmable search)
- *
- * If you prefer a different search provider (or direct web crawling), replace the search step accordingly.
+ * NOTE: Using Gemini alone relies on the model's knowledge and may not find
+ * authoritative, up-to-date contact info. If possible, add GOOGLE_API_KEY and
+ * GOOGLE_CSE_ID later to restore web lookups.
  */
 
 import { ai } from '@/ai/genkit';
@@ -42,11 +39,13 @@ export type KrishiOfficerFinderOutput = z.infer<typeof KrishiOfficerFinderOutput
 
 /* ------------------ Configuration / Env ------------------ */
 
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY; // for Custom Search JSON API
-const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID;   // Custom Search Engine ID (programmable search)
+// Google Custom Search envs (optional). If missing, code will fall back to Gemini-only mode.
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID;
 
-const MAX_SEARCH_RESULTS = 6; // number of candidate pages to fetch and give to Gemini
-const MAX_SNIPPET_CHARS = 30_000; // limit for combined snippet length to keep prompt size reasonable
+// The deployment provides GEMINI_API_KEY to the ai wrapper; that is used implicitly by ai.generate
+const MAX_SEARCH_RESULTS = 6;
+const MAX_SNIPPET_CHARS = 30_000;
 
 /* ------------------ Helpers ------------------ */
 
@@ -56,7 +55,8 @@ function normalize(s?: string) {
 
 async function googleCustomSearch(query: string, count = 6) {
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
-    throw new Error('GOOGLE_API_KEY and GOOGLE_CSE_ID environment variables are required for Google Custom Search.');
+    // Signal to caller that Google Search is unavailable.
+    return { items: [] };
   }
   const url = new URL('https://www.googleapis.com/customsearch/v1');
   url.searchParams.set('key', GOOGLE_API_KEY);
@@ -90,10 +90,8 @@ function stripHtml(html: string) {
     .trim();
 }
 
-/* Truncate or coalesce page text into a compact snippet that is likely to contain contact info. */
 function makeSnippet(text: string, zila: string, upazila: string) {
   const lc = text.toLowerCase();
-  // Try to find the area around keywords that are likely to contain the contact block
   const keywords = ['upazila agriculture', 'upazila agriculture officer', 'upazila agriculture office', 'contact', 'telephone', 'tel', 'phone', 'office'];
   let bestIdx = -1;
   for (const kw of keywords) {
@@ -101,17 +99,64 @@ function makeSnippet(text: string, zila: string, upazila: string) {
     if (bestIdx >= 0) break;
   }
   if (bestIdx < 0) {
-    // fallback: search for upazila or zila mentions
     bestIdx = lc.indexOf(upazila.toLowerCase());
     if (bestIdx < 0) bestIdx = lc.indexOf(zila.toLowerCase());
   }
   if (bestIdx < 0) {
-    // return the start of the document truncated
     return text.slice(0, 2000);
   }
   const start = Math.max(0, bestIdx - 800);
   const end = Math.min(text.length, bestIdx + 2000);
   return text.slice(start, end);
+}
+
+/* ------------------ Gemini-only fallback ------------------ */
+
+/**
+ * When Google search is unavailable, ask Gemini directly to provide the
+ * structured JSON. We instruct the model strictly not to invent any info:
+ * if it cannot be confident or cite a reliable source, it should set fields to null.
+ *
+ * This will use the deployment's Gemini access (GEMINI_API_KEY).
+ */
+async function geminiDirectLookup(zila: string, upazila: string) {
+  const instruction = `
+You are an extraction assistant. The user asked for contact information for the Upazila Agriculture Office.
+Only use your internal knowledge. IMPORTANT: DO NOT INVENT or GUESS any data. If you cannot be certain a value is correct, set that field to null.
+
+Return ONLY a single JSON object exactly matching the schema below and NOTHING ELSE.
+
+Schema:
+{
+  "name": string|null,
+  "designation": string|null,
+  "contactNumber": string|null,
+  "officeAddress": string|null,
+  "sourceUrl": string|null
+}
+
+Rules (must follow):
+- If you know a fact and it is reliably part of your knowledge, include it and set sourceUrl to a real authoritative URL where you know the info comes from (only official gov.bd or department pages). If you do not KNOW a reliable source URL, set sourceUrl to null.
+- If you are not certain about any field, set that field to null.
+- Do not fabricate phone numbers, names, addresses, or URLs.
+- Output must be strict JSON with the exact keys above.
+
+Context:
+Zila="${zila}"
+Upazila="${upazila}"
+
+Now produce the single JSON object.
+`.trim();
+
+  const { output } = await ai.generate({
+    model: 'googleai/gemini-2.5-flash',
+    prompt: instruction,
+    // Ask for exact schema validation
+    output: { schema: KrishiOfficerFinderOutputSchema },
+    params: { temperature: 0.0, maxOutputTokens: 800 },
+  });
+
+  return output ?? null;
 }
 
 /* ------------------ Flow Implementation ------------------ */
@@ -129,29 +174,36 @@ export const krishiOfficerFinderFlow = ai.defineFlow(
     // Build a precise search query to bias results toward official pages
     const query = `${upazila} Upazila Agriculture Office contact ${zila} Bangladesh site:gov.bd OR site:dae.gov.bd OR site:extension.gov.bd OR "Upazila Agriculture Officer"`;
 
-    // 1) Use Google Custom Search to find candidate pages
-    let searchJson: any;
+    // If Google CSE is available, use it to discover pages and give snippets to Gemini.
+    // Otherwise, fall back to Gemini-only lookup (uses only GEMINI_API_KEY).
+    let searchJson: any = { items: [] };
     try {
       searchJson = await googleCustomSearch(query, MAX_SEARCH_RESULTS);
     } catch (err) {
-      // If search fails, rethrow so caller can handle / show message to user
-      throw new Error(`Search failed: ${(err as Error).message}`);
+      // If google search fails unexpectedly, log and continue to fallback mode below.
+      console.warn('Google Custom Search error:', (err as Error).message);
+      searchJson = { items: [] };
     }
 
     const items = Array.isArray(searchJson.items) ? searchJson.items : [];
 
     if (items.length === 0) {
-      // No search hits; return an explicit NOT FOUND style response (all nulls)
-      return {
-        name: null,
-        designation: null,
-        contactNumber: null,
-        officeAddress: null,
-        sourceUrl: null,
-      };
+      // No discovered pages -> use Gemini-only direct lookup.
+      const geminiResult = await geminiDirectLookup(zila, upazila);
+      if (!geminiResult) {
+        // Return explicit NOT FOUND response if Gemini didn't produce output.
+        return {
+          name: null,
+          designation: null,
+          contactNumber: null,
+          officeAddress: null,
+          sourceUrl: null,
+        };
+      }
+      return geminiResult;
     }
 
-    // 2) Fetch top candidate pages and prepare snippets for Gemini to analyze
+    // If we have search items, fetch top candidate pages and prepare snippets for Gemini to analyze.
     const candidates: Array<{ url: string; title?: string; snippet: string }> = [];
     for (let i = 0; i < Math.min(items.length, MAX_SEARCH_RESULTS); i++) {
       const it = items[i];
@@ -164,25 +216,27 @@ export const krishiOfficerFinderFlow = ai.defineFlow(
     }
 
     if (candidates.length === 0) {
-      return {
-        name: null,
-        designation: null,
-        contactNumber: null,
-        officeAddress: null,
-        sourceUrl: null,
-      };
+      // If we couldn't fetch any candidate pages, fall back to Gemini-only.
+      const geminiResult = await geminiDirectLookup(zila, upazila);
+      if (!geminiResult) {
+        return {
+          name: null,
+          designation: null,
+          contactNumber: null,
+          officeAddress: null,
+          sourceUrl: null,
+        };
+      }
+      return geminiResult;
     }
 
-    // Build a single combined prompt payload with the top candidate snippets.
-    // We must be explicit: Gemini MUST NOT invent any data. If a field is not present in the snippets, return null.
-    // The model is asked to output strict JSON and nothing else.
     const combinedSnippets = candidates
       .map((c, idx) => `---PAGE ${idx + 1} - URL: ${c.url}\n${c.snippet}`)
       .join('\n\n')
       .slice(0, MAX_SNIPPET_CHARS);
 
     const instruction = `
-You are an extraction assistant. You will be given snippets (plain text, already stripped of HTML) from multiple web pages that may contain contact information for the Upazila Agriculture Office for a particular Upazila and Zila in Bangladesh.
+You are an extraction assistant. You will be given snippets (plain text, already stripped of HTML) from multiple web pages that may contain contact information for the Upazila Agriculture Office.
 
 Important rules (must follow exactly):
 1) DO NOT INVENT OR GUESS. Only extract values that are explicitly present in the provided snippets.
@@ -190,32 +244,27 @@ Important rules (must follow exactly):
 3) Always provide a single JSON object and NOTHING ELSE (no commentary, no explanation).
 4) The JSON must follow this schema exactly:
 {
-  "name": string|null,           // officer's name if present, otherwise null
-  "designation": string|null,    // e.g., "Upazila Agriculture Officer" if present, otherwise null
-  "contactNumber": string|null,  // phone number string if present, otherwise null
-  "officeAddress": string|null,  // office address string if present, otherwise null
-  "sourceUrl": string|null       // URL of the page that contained the extracted fields (choose the page that provides the most complete info). If no page provides any info, set to null.
+  "name": string|null,
+  "designation": string|null,
+  "contactNumber": string|null,
+  "officeAddress": string|null,
+  "sourceUrl": string|null
 }
 
-Now, using the provided PAGE snippets below, find the best values for these fields. If different pages provide different fields, choose the page that offers the most complete combination and set sourceUrl to that page. When extracting phone numbers, provide the exact sequence you find (do not canonicalize unless you can do so from text). If multiple phone numbers appear on the same best page, return the phone number that appears closest to the officer designation or office address.
+Now, using the provided PAGE snippets below, find the best values for these fields. If different pages provide different fields, choose the page that offers the most complete combination and set sourceUrl to that page's URL.
 
-Begin. Remember: produce ONLY the JSON object and nothing else.
+Begin. Produce ONLY the JSON object.
 `;
 
     const prompt = `${instruction}\n\nCONTEXT: Zila="${zila}", Upazila="${upazila}"\n\n${combinedSnippets}`;
 
-    // 3) Ask Gemini (via ai.generate) to extract structured data from the snippets
-    // We use the zod schema as the expected output shape so the flow will validate.
-    // Use a Gemini model that the repo's ai wrapper supports (adjust model string if needed in your environment)
     const { output } = await ai.generate({
       model: 'googleai/gemini-2.5-flash',
       prompt,
       output: { schema: KrishiOfficerFinderOutputSchema },
-      // Optional: adjust generation params to prioritize precision
-      // params: { temperature: 0.0, maxOutputTokens: 800 },
+      params: { temperature: 0.0, maxOutputTokens: 800 },
     });
 
-    // If output is empty, return NOT FOUND
     if (!output) {
       return {
         name: null,
@@ -226,7 +275,6 @@ Begin. Remember: produce ONLY the JSON object and nothing else.
       };
     }
 
-    // Validate and return the extracted object (zod parsing already applied by ai.generate wrapper)
     return output;
   }
 );
