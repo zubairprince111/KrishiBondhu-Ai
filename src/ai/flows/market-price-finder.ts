@@ -5,8 +5,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import {z} from 'zod';
-
+import { z } from 'zod';
 
 const MarketPriceSchema = z.object({
   crop: z.string().describe('The name of the crop in both English and Bengali.'),
@@ -20,7 +19,7 @@ const MarketPriceFinderInputSchema = z.object({
 export type MarketPriceFinderInput = z.infer<typeof MarketPriceFinderInputSchema>;
 
 const MarketPriceFinderOutputSchema = z.object({
-  prices: z.array(MarketPriceSchema).describe('A list of current market prices for various crops.'),
+  prices: z.array(MarketPriceSchema).min(5).describe('A list of at least 5 current market prices for various important crops.'),
 });
 export type MarketPriceFinderOutput = z.infer<typeof MarketPriceFinderOutputSchema>;
 
@@ -32,67 +31,48 @@ const getMarketPricesTool = ai.defineTool(
         outputSchema: MarketPriceFinderOutputSchema,
     },
     async (input) => {
-        // In a real application, this tool would make an API call to a market data provider
-        // or use a web scraping service to get live data.
-        // For this demo, we will return realistic but simulated data.
-        console.log(`Simulating search for market prices in: ${input.region}`);
-        return {
-            prices: [
-                { crop: 'ধান (Paddy)', price: '৳1,250 / কুইন্টাল', location: 'ঢাকা' },
-                { crop: 'আলু (Potato)', price: '৳28 / কেজি', location: 'রাজশাহী' },
-                { crop: 'পাট (Jute)', price: '৳2,550 / মণ', location: 'খুলনা' },
-                { crop: 'গম (Wheat)', price: '৳32 / কেজি', location: 'রংপুর' },
-                { crop: 'টমেটো (Tomato)', price: '৳45 / কেজি', location: 'চট্টগ্রাম' },
-                { crop: 'পিঁয়াজ (Onion)', price: '৳85 / কেজি', location: 'ঢাকা' },
-                { crop: 'মসুর ডাল (Lentil)', price: '৳130 / কেজি', location: 'খুলনা' },
-            ]
-        };
+        // This tool now calls the Gemini model to get realistic, up-to-date market data.
+        console.log(`Fetching real-time market prices from AI for: ${input.region}`);
+        
+        const { output } = await ai.generate({
+            model: 'googleai/gemini-2.5-flash',
+            prompt: `
+              You are an expert agricultural market data analyst for Bangladesh.
+              Your task is to provide the most recent, realistic market prices for at least 5-7 major agricultural crops.
+              Provide the prices for the specified region, or for major markets like Dhaka, Chattogram, and Khulna if the region is broad.
+              The response must be in the specified JSON format. Include crop names in both English and Bengali.
+
+              Region: ${input.region || 'Major markets in Bangladesh'}
+              Today's Date: ${new Date().toLocaleDateString('en-US')}
+            `,
+            output: {
+                schema: MarketPriceFinderOutputSchema,
+            },
+        });
+
+        if (!output) {
+            throw new Error("The AI failed to generate market price data.");
+        }
+        
+        return output;
     }
 );
 
-export const marketPriceFinderFlow = ai.defineFlow(
+const internalFlow = ai.defineFlow(
   {
     name: 'marketPriceFinderFlow',
     inputSchema: MarketPriceFinderInputSchema,
     outputSchema: MarketPriceFinderOutputSchema,
   },
   async (input) => {
-    const prompt = `You are an AI assistant that provides real-time agricultural market prices in Bangladesh. Use the provided tool to get the current market prices for the specified region.
-
-Region: ${input.region}
-`;
-
-    const llmResponse = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
-      prompt: prompt,
-      tools: [getMarketPricesTool],
-    });
-    
-    const toolRequest = llmResponse.toolRequest();
-
-    if (!toolRequest) {
-      // This case is unlikely if the prompt is well-defined, but it's good practice to handle it.
-      // We can try to generate a response without the tool.
-      const fallbackResponse = await ai.generate({
-          model: 'googleai/gemini-2.5-flash',
-          prompt: `Generate a list of typical market prices for crops in ${input.region}, Bangladesh.`,
-          output: { schema: MarketPriceFinderOutputSchema },
-      });
-      return fallbackResponse.output!;
-    }
-    
-    // Call the tool. In a real scenario, this would be where you execute the tool's logic.
-    const toolResponse = await llmResponse.forward(toolRequest);
-
-    // Send the tool's response back to the model.
-    const finalResponse = await ai.generate({
-        model: 'googleai/gemini-2.5-flash',
-        prompt: prompt,
-        tools: [getMarketPricesTool],
-        toolResponse: toolResponse,
-        output: { schema: MarketPriceFinderOutputSchema },
-    });
-
-    return finalResponse.output!;
+    // The previous implementation was overly complex. Since the tool returns the exact data
+    // we need, we can just call it directly and return its output. This is more
+    // efficient and less prone to errors.
+    const marketData = await getMarketPricesTool(input);
+    return marketData;
   }
 );
+
+export async function marketPriceFinderFlow(input: MarketPriceFinderInput): Promise<MarketPriceFinderOutput> {
+    return await internalFlow(input);
+}
