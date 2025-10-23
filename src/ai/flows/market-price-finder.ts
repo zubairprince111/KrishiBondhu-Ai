@@ -53,7 +53,7 @@ export default function MarketInfoPage() {
                 setMarketPrices(data.prices);
             }
         });
-    }, [startPricesTransition, toast]);
+    }, [toast, t]);
 
 
     useEffect(() => {
@@ -220,5 +220,3 @@ export default function MarketInfoPage() {
     </SidebarInset>
   );
 }
-
-    
