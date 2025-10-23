@@ -10,13 +10,32 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import util from 'util';
 
-const AiCropDoctorInputSchema = z.object({
-  photoDataUri: z
-    .string()
-    .describe(
-      "A photo of the diseased crop, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
-});
+const AiCropDoctorInputSchema = z
+  .object({
+    photoDataUri: z
+      .string()
+      .optional()
+      .describe(
+        "A photo of the diseased crop, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      ),
+    // Accept either a data URI or a public URL (mobile can upload first and give a URL)
+    photoUrl: z
+      .string()
+      .url()
+      .optional()
+      .describe('A public URL to the image. Prefer this for large images or mobile uploads.'),
+    // Optional client-supplied diagnostics (e.g., userAgent or originalFileName)
+    clientInfo: z
+      .object({
+        userAgent: z.string().optional(),
+        originalFileName: z.string().optional(),
+      })
+      .optional(),
+  })
+  .refine(data => Boolean(data.photoDataUri) || Boolean(data.photoUrl), {
+    message: 'Either photoDataUri or photoUrl must be provided.',
+  });
+
 export type AiCropDoctorInput = z.infer<typeof AiCropDoctorInputSchema>;
 
 const AiCropDoctorOutputSchema = z.object({
@@ -35,6 +54,27 @@ function getDataUriInfo(dataUri: string) {
   const base64 = match[2];
   const byteLength = Math.ceil((base64.length * 3) / 4);
   return { mime, base64Length: base64.length, byteLength };
+}
+
+// Safe provider error summarizer: don't leak secrets or full responses.
+function summarizeProviderError(err: any) {
+  try {
+    const status = err?.status || err?.response?.status || err?.statusCode || null;
+    let bodyPreview = null;
+    const candidate = err?.response?.body ?? err?.response ?? err?.body ?? err?.message ?? String(err);
+    if (typeof candidate === 'string') {
+      bodyPreview = candidate.slice(0, 2000);
+    } else {
+      try {
+        bodyPreview = JSON.stringify(candidate).slice(0, 2000);
+      } catch {
+        bodyPreview = String(candidate).slice(0, 2000);
+      }
+    }
+    return { status, bodyPreview };
+  } catch {
+    return { status: null, bodyPreview: 'unavailable' };
+  }
 }
 
 /**
@@ -62,39 +102,56 @@ export const aiCropDoctorAnalysisFlow = ai.defineFlow(
     outputSchema: AiCropDoctorOutputSchema,
   },
   async input => {
-    // Basic runtime validation for the data URI to give clearer errors early
-    const info = getDataUriInfo(input.photoDataUri);
-    if (!info) {
-      const msg = "photoDataUri must be a valid data URI using base64 encoding (e.g. 'data:image/jpeg;base64,...').";
-      console.error('aiCropDoctorAnalysisFlow - invalid data URI:', input.photoDataUri?.slice?.(0, 100));
-      throw new Error(msg);
+    // Log client info for mobile debugging
+    if (input.clientInfo) {
+      console.info('aiCropDoctorAnalysisFlow - clientInfo:', input.clientInfo);
     }
 
-    // Warn if the image is large (many providers have payload limits)
-    if (info.byteLength > 5_000_000) {
-      console.warn(
-        `aiCropDoctorAnalysisFlow - large image detected (${(info.byteLength / 1_048_576).toFixed(2)} MB). ` +
-          'Large data URIs may fail to upload or cause timeouts. Consider uploading the image to a public URL and pass that instead.'
-      );
+    // If provided a data URI, validate basic shape and size
+    let info = undefined;
+    if (input.photoDataUri) {
+      info = getDataUriInfo(input.photoDataUri);
+      if (!info) {
+        const msg = "photoDataUri must be a valid data URI using base64 encoding (e.g. 'data:image/jpeg;base64,...').";
+        console.error('aiCropDoctorAnalysisFlow - invalid data URI preview:', input.photoDataUri?.slice?.(0, 100));
+        throw new Error(msg);
+      }
+
+      if (info.byteLength > 5_000_000) {
+        console.warn(
+          `aiCropDoctorAnalysisFlow - large image detected (${(info.byteLength / 1_048_576).toFixed(2)} MB). ` +
+            'Large data URIs may fail to upload or cause timeouts. Consider uploading the image to a public URL and pass that instead (photoUrl).'
+        );
+      }
     }
 
     // Run a quick connectivity test before attempting the potentially-large media call.
     const conn = await connectivityTest();
     if (!conn.ok) {
       console.error('aiCropDoctorAnalysisFlow - connectivity test failed. Detailed error follows:');
-      // Use util.inspect to reveal non-enumerable properties on Error objects
       console.error(util.inspect(conn.error, { depth: 4 }));
+      // Throw a safe, short message but log the details
       throw new Error(
         'Failed to reach generative model during connectivity test. Check API key, network, model access, and server environment. See server logs for details.'
       );
     }
 
     try {
+      // Prefer photoUrl if provided (safer for mobile / large images)
+      const mediaRef = input.photoUrl ? input.photoUrl : `{{media url="${input.photoDataUri}"}}`;
+
+      // If we have mime/size diagnostics, attach them to logs to assist debugging mobile issues
+      if (info) {
+        console.info('aiCropDoctorAnalysisFlow - incoming image info:', info);
+      } else if (input.photoUrl) {
+        console.info('aiCropDoctorAnalysisFlow - using photoUrl:', input.photoUrl);
+      }
+
       const prompt = `You are an expert agricultural advisor specializing in diagnosing crop diseases and providing solutions in Bangla.
 
 You will analyze the provided image of the diseased crop and provide a diagnosis and a list of at least 3 potential solutions in Bangla.
 
-Crop Image: {{media url="${input.photoDataUri}"}}
+Crop Image: ${mediaRef}
 
 Respond entirely in the Bangla language.
 `;
@@ -114,23 +171,28 @@ Respond entirely in the Bangla language.
 
       return output;
     } catch (err) {
-      // Log as much diagnostic information as possible. Many SDK errors include `.status`, `.response`, `.body`, or nested properties.
       console.error('aiCropDoctorAnalysisFlow - error calling ai.generate:');
-      // Best-effort printing of common shapes
       try {
         console.error('Error (util.inspect):', util.inspect(err, { depth: 6 }));
       } catch {
         console.error('Error (toString):', String(err));
       }
 
-      // If the error object has a response/body, print it (useful for HTTP errors)
-      // @ts-expect-error - runtime check
       if (err && (err as any).response) {
-        // @ts-expect-error
         console.error('Error response:', util.inspect((err as any).response, { depth: 6 }));
       }
-      // Re-throw so caller receives the error
-      throw err;
+
+      // Provide a safe, structured error message that client code can decode for diagnostics.
+      const providerSummary = summarizeProviderError(err);
+      const safeDiag = {
+        message: 'AI provider call failed. See server logs for full details.',
+        provider: providerSummary,
+        connectivityTestOk: true,
+        imageInfo: info ?? null,
+      };
+
+      // Throw a JSON-encoded message so the caller/API wrapper can parse it (don’t expose secrets).
+      throw new Error(JSON.stringify(safeDiag));
     }
   }
 );
