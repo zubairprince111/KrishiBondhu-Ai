@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useTransition, useState, useEffect } from 'react';
@@ -38,6 +36,7 @@ import Link from 'next/link';
 import { differenceInDays } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
+import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 export default function CropDetailsPage() {
   const params = useParams();
@@ -63,7 +62,7 @@ export default function CropDetailsPage() {
   const { data: crop, isLoading: isCropLoading } = useDoc(cropDocRef);
 
   useEffect(() => {
-    if (crop && !crop.guidance && !isGuidanceLoading && cropDocRef && land) {
+    if (crop && land && !crop.guidance && !isGuidanceLoading && cropDocRef) {
       startGuidanceLoading(async () => {
         const { data: guidanceData, error } = await fetchCropGuidance({
             cropName: crop.cropName,
@@ -77,7 +76,7 @@ export default function CropDetailsPage() {
             description: t('myCrops.guide.toast.error.description'),
           });
         } else if (guidanceData) {
-          await updateDoc(cropDocRef, { guidance: guidanceData });
+          updateDocumentNonBlocking(cropDocRef, { guidance: guidanceData });
         }
       });
     }
@@ -99,17 +98,8 @@ export default function CropDetailsPage() {
             step.title === stepTitle ? { ...step, isCompleted } : step
         ),
     };
-
-    try {
-        await updateDoc(cropDocRef, { guidance: newGuidance });
-    } catch (error) {
-        console.error("Failed to update task status:", error);
-        toast({
-            variant: 'destructive',
-            title: t('myCrops.guide.toast.updateFailed.title'),
-            description: t('myCrops.guide.toast.updateFailed.description'),
-        });
-    }
+    
+    updateDocumentNonBlocking(cropDocRef, { guidance: newGuidance });
   };
 
 
@@ -209,7 +199,7 @@ export default function CropDetailsPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {!result || isGuidanceLoading ? (
+                    {isGuidanceLoading || !result ? (
                        <div className="flex min-h-60 flex-col items-center justify-center space-y-4 text-center">
                             <Loader2 className="size-12 animate-spin text-primary" />
                             <p className="text-primary">{t('myCrops.guide.loading')}</p>
@@ -263,5 +253,3 @@ export default function CropDetailsPage() {
     </SidebarInset>
   );
 }
-
-    
