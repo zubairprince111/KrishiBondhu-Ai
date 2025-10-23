@@ -1,100 +1,75 @@
-// /genkit/universalSearchFlow.ts (FIXED CODE)
+'use server';
 
-'use server'; // Keep this if used as a Next.js Server Action
-// NOTE: Make sure your imports for Genkit are configured correctly
-// (e.g., importing `ai` from your initialized Genkit instance).
-import { genkit, z, runFlow } from '@genkit-ai/core'; 
-import { marketPriceFinderFlow } from './marketPriceFinderFlow'; 
+/**
+ * @fileOverview A flow that provides step-by-step guidance for a selected crop.
+ */
 
-// Assuming you have a file that initializes genkit (e.g., in /genkit/index.ts)
-// For this example, we'll define 'ai' assuming a standard Genkit setup.
-// If you are using a separate init file, replace 'ai' with the import:
-// import { ai } from '@/ai/genkit';
-const ai = genkit({}); // Placeholder for Genkit initialization
+import { ai } from '@/ai/genkit';
+import {z} from 'zod';
 
 
-const UniversalSearchInputSchema = z.object({
-  query: z.string().describe('The user\'s search query.'),
+const CropGuidanceInputSchema = z.object({
+  cropName: z.string().describe('The name of the crop.'),
+  region: z.string().describe('The region where the crop is being grown.'),
+  currentStage: z.string().describe('The current growth stage of the crop (e.g., Sowing, Vegetative, Flowering). This is calculated from sowing date.'),
 });
-export type UniversalSearchInput = z.infer<typeof UniversalSearchInputSchema>;
+export type CropGuidanceInput = z.infer<typeof CropGuidanceInputSchema>;
 
-const UniversalSearchOutputSchema = z.object({
-  title: z.string().describe('A short, descriptive title for the search result.'),
-  response: z.string().describe('A detailed and helpful response to the user\'s query, formatted as a string which may include markdown for lists or emphasis.'),
+const GuidanceStepSchema = z.object({
+    title: z.string().describe('The title of the guidance step.'),
+    details: z.string().describe('A detailed description of the tasks and considerations for this step.'),
+    isCompleted: z.boolean().describe('Whether this step is considered completed based on the current stage.'),
+    durationInDays: z.number().describe('The typical duration of this stage in days.'),
 });
-export type UniversalSearchOutput = z.infer<typeof UniversalSearchOutputSchema>;
 
-// FIX: Ensure you are using ai.defineTool (or genkit.defineTool, depending on your setup)
-// Also, the outputSchema for the tool should be STRING since it returns a string response for the LLM.
-const searchTool = ai.defineTool(
-    {
-        name: 'searchCropInfo',
-        description: 'Searches for information about crops, market prices, or farming suggestions. Use this tool if the user query contains the word "price" or "rates".',
-        inputSchema: UniversalSearchInputSchema,
-        outputSchema: z.string().describe('A summary of the market prices found.'),
-    },
-    async (input) => {
-        // FIX: Use runFlow() instead of direct function call for robust flow execution within a tool/flow.
-        if (input.query.toLowerCase().includes('price') || input.query.toLowerCase().includes('rates')) {
-            try {
-                // IMPORTANT: The flow must be executable in this context.
-                // Using runFlow is the Genkit-recommended way to call one flow from another.
-                const prices = await runFlow(marketPriceFinderFlow, { region: 'Bangladesh' });
-                
-                if (prices.prices && prices.prices.length > 0) {
-                    const priceList = prices.prices.map(p => `- **${p.crop}**: ${p.price} (${p.location})`).join('\n');
-                    return `MARKET PRICES FOUND:\n${priceList}\n\nThis data must be synthesized into a final, helpful response.`;
-                }
-                return 'No current market price data found for the region.';
-
-            } catch (error) {
-                console.error("Error running nested marketPriceFinderFlow:", error);
-                return 'An error occurred while fetching real-time market prices.';
-            }
-        }
-        
-        // If the query is not about prices, return a non-tool-calling prompt for the LLM.
-        return 'Query does not require market price lookup.';
-    }
-);
+const CropGuidanceOutputSchema = z.object({
+  guidance: z.array(GuidanceStepSchema).describe('An array of step-by-step guidance for the crop lifecycle.'),
+});
+export type CropGuidanceOutput = z.infer<typeof CropGuidanceOutputSchema>;
 
 
-export const universalSearchFlow = ai.defineFlow(
+export const cropGuidanceFlow = ai.defineFlow(
   {
-    name: 'universalSearchFlow',
-    inputSchema: UniversalSearchInputSchema,
-    outputSchema: UniversalSearchOutputSchema,
+    name: 'cropGuidanceFlow',
+    inputSchema: CropGuidanceInputSchema,
+    outputSchema: CropGuidanceOutputSchema,
   },
+  async input => {
+    const prompt = ai.definePrompt({
+      name: 'cropGuidancePrompt',
+      input: {schema: CropGuidanceInputSchema},
+      output: {schema: CropGuidanceOutputSchema},
   async (input) => {
-    // FIX: Refine the prompt to be explicit about using the tool and outputting JSON.
-    const prompt = `You are a helpful and expert agricultural assistant. The user has a search query.
-    Your task is to provide a clear, concise, and professional answer.
-
-    1. **Tool Use**: If the query is about 'price' or 'rates', you **MUST** use the 'searchCropInfo' tool to retrieve the latest data.
-    2. **Synthesis**: Combine the tool's output (if used) with your general knowledge to form a single, detailed response.
-    3. **Format**: Your final output **MUST** strictly adhere to the requested JSON schema for the title and response fields.
-
-    User Query: "${input.query}"`;
-
-    const llmResponse = await ai.generate({
-      prompt: prompt,
+    const { output } = await ai.generate({
       model: 'googleai/gemini-2.5-flash',
-      output: {
-          schema: UniversalSearchOutputSchema,
-          format: 'json', // Explicitly ask for JSON output
-      },
-      tools: [searchTool],
-      // Allow a few turns for the LLM to call the tool and then respond
-      maxTurns: 3, 
+      prompt: `You are an expert agricultural advisor for Bangladesh. Provide a comprehensive, step-by-step guide for growing the specified crop in the given region.
+
+The guide should cover the entire lifecycle from land preparation to post-harvest.
+The farmer's crop is currently at the '{{{currentStage}}}' stage. Mark all stages up to and including the current stage as completed.
+The farmer's crop is currently at the '${input.currentStage}' stage. Mark all stages up to and including the current stage as completed.
+
+For each stage, provide a title, detailed actionable advice, and a typical duration in days.
+
+Crop: {{{cropName}}}
+Region: {{{region}}}
+Crop: ${input.cropName}
+Region: ${input.region}
+
+Generate guidance with the following stages:
+1. Land Preparation
+2. Seed Sowing
+3. Germination & Early Growth
+4. Vegetative Growth
+5. Flowering & Fruiting
+6. Harvesting
+7. Post-Harvest
+
+For each stage, provide a title, detailed, actionable advice regarding irrigation, fertilizer/pesticide use, and other relevant care, and its typical duration in days. Respond in a way that is easy for a farmer to understand. Use Bangla where appropriate for key terms if it helps clarity, but the main response should be in English.
+`,
+      output: { schema: CropGuidanceOutputSchema },
     });
 
-    const output = llmResponse.output();
-
-    if (!output) {
-        // This throw is caught by the Server Action handler
-        throw new Error("Failed to generate a structured search response from the AI model.");
-    }
-    
-    return output;
+    const {output} = await prompt(input);
+    return output!;
   }
 );
